@@ -82,6 +82,9 @@ public abstract class InjectJar {
         try {
             if (mOriginFile == null || mTempFile == null || mDestFile == null) return;
             processJar();
+            if (mTempFile.getCanonicalPath().equals(mDestFile.getCanonicalPath())) {
+                return;
+            }
             FileUtils.copyFile(mTempFile, mDestFile);
             mTempFile.delete();
         } catch (IOException e) {

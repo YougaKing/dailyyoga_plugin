@@ -1,9 +1,16 @@
 package com.dailyyoga.plugin.net;
 
+import android.content.Context;
+import android.os.Build;
+import android.provider.Settings.Secure;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.WindowManager;
 
+import com.hyphenate.util.DeviceUuidFactory;
 import com.mob.tools.MobLog;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.InetAddress;
@@ -15,6 +22,9 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+
+import static android.content.Context.WINDOW_SERVICE;
+import static com.hyphenate.chat.EMClient.getInstance;
 
 /**
  * @author: YougaKingWu@gmail.com
@@ -43,12 +53,8 @@ public class NetworkInterfaceTransform {
             HashMap<String, String> macs = new HashMap<>();
 
             for (NetworkInterface intf : interfaces) {
-                byte[] mac;
-                mac = intf.getHardwareAddress();
 
-                if (mac != null) {
-                    macs.put(intf.getName(), getNetworkInterfaces(args));
-                }
+                macs.put(intf.getName(), getNetworkInterfaces(args));
             }
             return macs;
         }
@@ -118,96 +124,51 @@ public class NetworkInterfaceTransform {
      * @link com.hyphenate.chat.EMClient.getDeviceInfo
      */
     public static JSONObject getDeviceInfo(String args) {
-        JSONObject var1 = new JSONObject();
-//        TelephonyManager var2;
-//        try {
-//            var2 = (TelephonyManager) this.mContext.getSystemService("phone");
-//            var1.put("imei", var2.getDeviceId());
-//        } catch (Exception var15) {
-//            if (var15 != null) {
-//                EMLog.d("EMClient", var15.getMessage());
-//            }
-//        }
-//
-//        String var16 = null;
-//
-//        try {
-//            ArrayList var3 = Collections.list(NetworkInterface.getNetworkInterfaces());
-//            Iterator var4 = var3.iterator();
-//
-//            label63:
-//            while (true) {
-//                NetworkInterface var5;
-//                do {
-//                    if (!var4.hasNext()) {
-//                        break label63;
-//                    }
-//
-//                    var5 = (NetworkInterface) var4.next();
-//                } while (!var5.getName().equalsIgnoreCase("wlan0"));
-//
-//                byte[] var6 = var5.getHardwareAddress();
-//                if (var6 == null) {
-//                    var2 = null;
-//                }
-//
-//                StringBuilder var7 = new StringBuilder();
-//                byte[] var8 = var6;
-//                int var9 = var6.length;
-//
-//                for (int var10 = 0; var10 < var9; ++var10) {
-//                    byte var11 = var8[var10];
-//                    var7.append(Integer.toHexString(var11 & 255) + ":");
-//                }
-//
-//                if (var7.length() > 0) {
-//                    var7.deleteCharAt(var7.length() - 1);
-//                }
-//
-//                var16 = var7.toString();
-//            }
-//        } catch (Exception var14) {
-//            EMLog.d("EMClient", var14.getMessage());
-//        }
-//
-//        WindowManager var17 = (WindowManager) this.mContext.getSystemService("window");
-//        int var18 = 0;
-//        int var19 = 0;
-//        double var20 = 0.0D;
-//
-//        try {
-//            DisplayMetrics var21 = new DisplayMetrics();
-//            var17.getDefaultDisplay().getMetrics(var21);
-//            var18 = var21.widthPixels;
-//            var19 = var21.heightPixels;
-//            var20 = (double) var21.densityDpi;
-//        } catch (Exception var13) {
-//            EMLog.d("EMClient", var13.getMessage());
-//        }
-//
-//        DeviceUuidFactory var22 = new DeviceUuidFactory(this.mContext);
-//        String var23 = var22.getDeviceUuid().toString();
-//        String var24 = Settings.Secure.getString(this.mContext.getContentResolver(), "android_id");
-//
-//        try {
-//            var1.put("deviceid", var23);
-//            var1.put("android-id", var24);
-//            var1.put("app-id", this.mContext.getPackageName());
-//            var1.put("hid", getInstance().getCurrentUser());
-//            var1.put("os", "android");
-//            var1.put("os-version", android.os.Build.VERSION.RELEASE);
-//            var1.put("manufacturer", Build.MANUFACTURER);
-//            var1.put("model", Build.MODEL);
-//            var1.put("width", var18);
-//            var1.put("height", var19);
-//            var1.put("dpi", var20);
-//            if (var16 != null) {
-//                var1.put("wifi-mac-address", var16);
-//            }
-//        } catch (JSONException var12) {
-//            EMLog.d("EMClient", var12.getMessage());
-//        }
-        return var1;
+        JSONObject jsonObject = new JSONObject();
+        String androidId = Secure.getString(getContext().getContentResolver(), Secure.ANDROID_ID);
+        try {
+            jsonObject.put("imei", androidId);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        String mac = getNetworkInterfaces(args);
+
+        WindowManager windowManager = (WindowManager) getContext().getSystemService(WINDOW_SERVICE);
+        int widthPixels = 0;
+        int heightPixels = 0;
+        double densityDpi = 0.0D;
+
+        try {
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            windowManager.getDefaultDisplay().getMetrics(displayMetrics);
+            widthPixels = displayMetrics.widthPixels;
+            heightPixels = displayMetrics.heightPixels;
+            densityDpi = displayMetrics.densityDpi;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        DeviceUuidFactory deviceUuidFactory = new DeviceUuidFactory(getContext());
+        String deviceUuid = deviceUuidFactory.getDeviceUuid().toString();
+
+        try {
+            jsonObject.put("deviceid", deviceUuid);
+            jsonObject.put("android-id", androidId);
+            jsonObject.put("app-id", getContext().getPackageName());
+            jsonObject.put("hid", getInstance().getCurrentUser());
+            jsonObject.put("os", "android");
+            jsonObject.put("os-version", android.os.Build.VERSION.RELEASE);
+            jsonObject.put("manufacturer", Build.MANUFACTURER);
+            jsonObject.put("model", Build.MODEL);
+            jsonObject.put("width", widthPixels);
+            jsonObject.put("height", heightPixels);
+            jsonObject.put("dpi", densityDpi);
+            jsonObject.put("wifi-mac-address", mac);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonObject;
     }
 
     private static String byteToHex(byte[] mac) {
@@ -215,11 +176,8 @@ public class NetworkInterfaceTransform {
             return null;
         } else {
             StringBuilder buf = new StringBuilder();
-            byte[] var3 = mac;
-            int var4 = mac.length;
 
-            for (int var5 = 0; var5 < var4; ++var5) {
-                byte aMac = var3[var5];
+            for (byte aMac : mac) {
                 buf.append(String.format("%02x:", aMac));
             }
 
@@ -229,5 +187,9 @@ public class NetworkInterfaceTransform {
 
             return buf.toString();
         }
+    }
+
+    private static Context getContext() {
+        return null;
     }
 }

@@ -145,4 +145,8 @@ public abstract class InjectJar {
     public String injectOnCreateMethodBody(String args) {
         return "return com.dailyyoga.plugin.net.NetworkInterfaceTransform.onCreate(\"" + args + "\");";
     }
+
+    public String injectInitMethodBody(String args) {
+        return "com.dailyyoga.plugin.net.NetworkInterfaceTransform.init(\"" + args + "\");";
+    }
 }

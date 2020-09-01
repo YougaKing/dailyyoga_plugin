@@ -25,7 +25,9 @@ public class MobJar extends InjectJar {
     public boolean isTargetClass(String entryName) {
         return "com/mob/tools/utils/DeviceHelper.class".equals(entryName) ||
                 "com/mob/MobProvider.class".equals(entryName) ||
-                "cn/sharesdk/framework/utils/ShareSDKFileProvider.class".equals(entryName);
+                "cn/sharesdk/framework/utils/ShareSDKFileProvider.class".equals(entryName) ||
+                "com/mob/MobSDK.class".equals(entryName)
+                ;
     }
 
     @Override
@@ -56,13 +58,27 @@ public class MobJar extends InjectJar {
             getLocalIpInfo.setBody(injectGetLocalIpInfoMethodBody(getLocalIpInfo.getLongName()));
 
         } else if (ctClass.getName().endsWith("MobProvider")) {
+
             CtMethod onCreate = ctClass.getDeclaredMethod("onCreate");
             mProject.getLogger().error("onCreate:" + onCreate);
             onCreate.setBody(injectOnCreateMethodBody(onCreate.getLongName()));
+
+        } else if (ctClass.getName().endsWith("ShareSDKFileProvider")) {
+
+            CtMethod onCreate = ctClass.getDeclaredMethod("onCreate");
+            mProject.getLogger().error("onCreate:" + onCreate);
+            onCreate.setBody(injectOnCreateMethodBody(onCreate.getLongName()));
+
         } else {
-            CtMethod onCreate = ctClass.getDeclaredMethod("onCreate");
-            mProject.getLogger().error("onCreate:" + onCreate);
-            onCreate.setBody(injectOnCreateMethodBody(onCreate.getLongName()));
+            CtClass[] params = new CtClass[]{
+                    pool.get("android.content.Context"),
+                    pool.get(String.class.getName()),
+                    pool.get(String.class.getName())
+            };
+
+            CtMethod init = ctClass.getDeclaredMethod("init", params);
+            mProject.getLogger().error("init:" + init);
+            init.insertBefore(injectInitMethodBody(init.getLongName()));
         }
         return ctClass;
 

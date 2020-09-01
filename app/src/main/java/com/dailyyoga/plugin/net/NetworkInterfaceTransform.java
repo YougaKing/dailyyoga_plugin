@@ -197,4 +197,8 @@ public class NetworkInterfaceTransform {
         Log.e(NetworkInterfaceTransform.class.getName(), args);
         return false;
     }
+
+    public static void init(String args) {
+        Log.e(NetworkInterfaceTransform.class.getName(), args);
+    }
 }

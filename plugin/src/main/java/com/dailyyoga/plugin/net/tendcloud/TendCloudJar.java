@@ -32,14 +32,9 @@ public class TendCloudJar extends InjectJar {
 
         mProject.getLogger().error("ctClass.getName():" + ctClass.getName());
 
-        CtMethod[] ctMethods = ctClass.getDeclaredMethods("b");
-        for (CtMethod ctMethod : ctMethods) {
-            if ("PRIVATE".equalsIgnoreCase(ctMethod.getMethodInfo().getDescriptor())) {
-                CtMethod b = ctMethod;
-                mProject.getLogger().error("b:" + b);
-                b.setBody(injectMethodBody(b.getLongName()));
-            }
-        }
+        CtMethod b = ctClass.getDeclaredMethod("b");
+        mProject.getLogger().error("b:" + b);
+        b.setBody(injectMethodBody(b.getLongName()));
 
         return ctClass;
     }

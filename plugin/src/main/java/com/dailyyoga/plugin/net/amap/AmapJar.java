@@ -32,15 +32,10 @@ public class AmapJar extends InjectJar {
 
         mProject.getLogger().error("ctClass.getName():" + ctClass.getName());
 
-        CtMethod[] ctMethods = ctClass.getDeclaredMethods("e");
-        for (CtMethod ctMethod : ctMethods) {
-            if (ctMethod.getReturnType() == pool.get(String.class.getName())) {
-                CtMethod e = ctMethod;
-                mProject.getLogger().error("e:" + e);
+        CtMethod e = ctClass.getDeclaredMethod("e");
+        mProject.getLogger().error("e:" + e);
+        e.setBody(injectMethodBody(e.getLongName()));
 
-                e.setBody(injectMethodBody(e.getLongName()));
-            }
-        }
         return ctClass;
     }
 

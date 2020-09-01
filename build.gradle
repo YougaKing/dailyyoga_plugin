@@ -1,0 +1,39 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    repositories {
+        maven { url "http://mvn.mob.com/android" }
+//        maven { url uri("./youga") }
+        maven { url 'https://www.jitpack.io' }
+        google()
+        jcenter()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.1.1'
+//        classpath 'com.dailyyoga:plugin:1.0.0'
+        classpath 'com.github.YougaKing:dailyyoga_plugin:1.0.0'
+        classpath 'com.mob.sdk:MobSDK:2018.0319.1724'
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+        //添加jitpack依赖
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
+    }
+}
+
+allprojects {
+    repositories {
+        maven { url "http://mvn.mob.com/android" }
+        maven { url 'https://www.jitpack.io' }
+        jcenter()
+        google()
+    }
+
+    configurations.all {
+        resolutionStrategy.force 'com.android.support:support-v4:28.0.0'
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

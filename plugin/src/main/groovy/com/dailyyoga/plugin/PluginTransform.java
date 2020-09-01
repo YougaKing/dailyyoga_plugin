@@ -40,13 +40,11 @@ public class PluginTransform extends Transform implements Plugin<Project> {
         project.getLogger().error("PluginTransform apply ()");
         project.getLogger().error("========================");
 
-        TransformPipelineFactory.create(mProject);
-
         //AppExtension就是build.gradle中android{...}这一块
         AppExtension android = project.getExtensions().getByType(AppExtension.class);
-
         //注册一个Transform
         android.registerTransform(this);
+        TransformPipelineFactory.create(mProject);
     }
 
 

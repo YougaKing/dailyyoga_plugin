@@ -2,6 +2,7 @@ package com.dailyyoga.plugin.net;
 
 import com.android.build.api.transform.DirectoryInput;
 import com.android.build.api.transform.JarInput;
+import com.android.build.gradle.AppExtension;
 import com.dailyyoga.plugin.TransformPipeline;
 import com.dailyyoga.plugin.net.alipay.AlipayJar;
 import com.dailyyoga.plugin.net.amap.AmapJar;
@@ -36,6 +37,8 @@ public class NetTransformPipeline extends TransformPipeline {
 
 
     private List<InjectJar> mInjectJarList = new ArrayList<>();
+    private AppExtension mAndroid;
+    private boolean mAppendAndroidJar;
 
     public NetTransformPipeline(Project project) {
         super(project);
@@ -48,6 +51,8 @@ public class NetTransformPipeline extends TransformPipeline {
         mInjectJarList.add(new TendCloudJar(mProject));
         mInjectJarList.add(new XiaoMiJar(mProject));
         mInjectJarList.add(new HyphenateJar(mProject));
+
+        mAndroid = project.getExtensions().getByType(AppExtension.class);
     }
 
     @Override
@@ -83,8 +88,21 @@ public class NetTransformPipeline extends TransformPipeline {
 
     @Override
     public void process() {
+        appendAndroidJar();
+
         for (InjectJar injectJar : mInjectJarList) {
             injectJar.process();
+        }
+    }
+
+    private void appendAndroidJar() {
+        try {
+            if (mAppendAndroidJar) return;
+            //android.jar
+            ClassPool.getDefault().appendClassPath(mAndroid.getBootClasspath().get(0).toString());
+            mAppendAndroidJar = true;
+        } catch (NotFoundException e) {
+            e.printStackTrace();
         }
     }
 

@@ -13,6 +13,7 @@ dependencies {
     implementation localGroovy()
 
     compileOnly 'com.android.tools.build:gradle:3.1.1'
+    //很重要 千万不要动
     compile 'org.javassist:javassist:3.20.0-GA'
 }
 

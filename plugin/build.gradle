@@ -1,12 +1,12 @@
 apply plugin: 'groovy'
-//apply plugin: 'maven'
+apply plugin: 'maven'
 
-//启用Jitpack 插件
-apply plugin: 'com.github.dcendents.android-maven'
-
-//设置Jitpack发布的Group
-//我的github账号是helen-x, 对应我的group就是com.github.helen-x
-group = 'com.github.YougaKing'
+////启用Jitpack 插件
+//apply plugin: 'com.github.dcendents.android-maven'
+//
+////设置Jitpack发布的Group
+////我的github账号是helen-x, 对应我的group就是com.github.helen-x
+//group = 'com.github.YougaKing'
 
 dependencies {
     implementation gradleApi()

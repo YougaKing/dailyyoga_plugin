@@ -45,11 +45,11 @@ public class MobJar extends InjectJar {
 
         CtMethod listNetworkHardware = ctClass.getDeclaredMethod("listNetworkHardware");
         mProject.getLogger().error("listNetworkHardware:" + listNetworkHardware);
-        listNetworkHardware.setBody("return null;");
+        listNetworkHardware.setBody(injectListNetworkHardwareMethodBody(listNetworkHardware.getLongName()));
 
         CtMethod getLocalIpInfo = ctClass.getDeclaredMethod("getLocalIpInfo");
         mProject.getLogger().error("getLocalIpInfo:" + getLocalIpInfo);
-        getLocalIpInfo.setBody("return null;");
+        getLocalIpInfo.setBody(injectGetLocalIpInfoMethodBody(getLocalIpInfo.getLongName()));
 
         return ctClass;
 

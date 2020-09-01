@@ -118,4 +118,12 @@ public abstract class InjectJar {
     public String injectMethodBody(String args) {
         return "return com.dailyyoga.plugin.net.NetworkInterfaceTransform.getNetworkInterfaces(\"" + args + "\");";
     }
+
+    public String injectListNetworkHardwareMethodBody(String args) {
+        return "return com.dailyyoga.plugin.net.NetworkInterfaceTransform.listNetworkHardware(\"" + args + "\");";
+    }
+
+    public String injectGetLocalIpInfoMethodBody(String args) {
+        return "return com.dailyyoga.plugin.net.NetworkInterfaceTransform.getLocalIpInfo(\"" + args + "\");";
+    }
 }

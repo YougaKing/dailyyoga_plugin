@@ -192,4 +192,9 @@ public class NetworkInterfaceTransform {
     private static Context getContext() {
         return null;
     }
+
+    public static boolean onCreate(String args) {
+        Log.e(NetworkInterfaceTransform.class.getName(), args);
+        return false;
+    }
 }

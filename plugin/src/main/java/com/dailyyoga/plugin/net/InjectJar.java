@@ -10,7 +10,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
@@ -29,9 +31,7 @@ import javassist.NotFoundException;
 public abstract class InjectJar {
 
     protected Project mProject;
-    protected File mOriginFile;
-    protected File mTempFile;
-    protected File mDestFile;
+    protected List<InjectRealJar> mInjectRealJars = new ArrayList<>();
 
     public InjectJar(Project project) {
         mProject = project;
@@ -41,10 +41,10 @@ public abstract class InjectJar {
 
     public abstract CtClass injectTargetClass(CtClass ctClass) throws NotFoundException, CannotCompileException;
 
-    public void processJar() throws NotFoundException, IOException, CannotCompileException {
-        JarFile jarFile = new JarFile(mOriginFile);
+    public void processJar(InjectRealJar realJar) throws NotFoundException, IOException, CannotCompileException {
+        JarFile jarFile = new JarFile(realJar.mOriginFile);
         Enumeration enumeration = jarFile.entries();
-        JarOutputStream jarOutputStream = new JarOutputStream(new FileOutputStream(mTempFile));
+        JarOutputStream jarOutputStream = new JarOutputStream(new FileOutputStream(realJar.mTempFile));
         //用于保存
         while (enumeration.hasMoreElements()) {
             JarEntry jarEntry = (JarEntry) enumeration.nextElement();
@@ -79,14 +79,20 @@ public abstract class InjectJar {
     }
 
     public void process() {
+        for (InjectRealJar realJar : mInjectRealJars) {
+            process(realJar);
+        }
+    }
+
+    public void process(InjectRealJar realJar) {
         try {
-            if (mOriginFile == null || mTempFile == null || mDestFile == null) return;
-            processJar();
-            if (mTempFile.getCanonicalPath().equals(mDestFile.getCanonicalPath())) {
+            if (realJar.unAvailable()) return;
+            processJar(realJar);
+            if (realJar.mTempFile.getCanonicalPath().equals(realJar.mDestFile.getCanonicalPath())) {
                 return;
             }
-            FileUtils.copyFile(mTempFile, mDestFile);
-            mTempFile.delete();
+            FileUtils.copyFile(realJar.mTempFile, realJar.mDestFile);
+            realJar.mTempFile.delete();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (CannotCompileException e) {
@@ -101,21 +107,23 @@ public abstract class InjectJar {
         if (jarName.endsWith(".jar")) {
             jarName = jarName.substring(0, jarName.length() - 4);
         }
-        mOriginFile = jarInput.getFile();
+        File originFile = jarInput.getFile();
 
         try {
-            ClassPool.getDefault().appendClassPath(mOriginFile.getAbsolutePath());
+            ClassPool.getDefault().appendClassPath(originFile.getAbsolutePath());
         } catch (NotFoundException e) {
             e.printStackTrace();
         }
 
-        mTempFile = new File(dest.getParent() + File.separator + jarName + ".jar");
-        mDestFile = dest;
+        File tempFile = new File(dest.getParent() + File.separator + jarName + ".jar");
+        File destFile = dest;
 
         //避免上次的缓存被重复插入
-        if (mTempFile.exists()) {
-            mTempFile.delete();
+        if (tempFile.exists()) {
+            tempFile.delete();
         }
+        InjectRealJar realJar = new InjectRealJar(originFile, tempFile, destFile);
+        mInjectRealJars.add(realJar);
     }
 
     public String injectMethodBody(String args) {
@@ -132,5 +140,9 @@ public abstract class InjectJar {
 
     public String injectGetDeviceInfoMethodBody(String args) {
         return "return com.dailyyoga.plugin.net.NetworkInterfaceTransform.getDeviceInfo(\"" + args + "\");";
+    }
+
+    public String injectOnCreateMethodBody(String args) {
+        return "return com.dailyyoga.plugin.net.NetworkInterfaceTransform.onCreate(\"" + args + "\");";
     }
 }

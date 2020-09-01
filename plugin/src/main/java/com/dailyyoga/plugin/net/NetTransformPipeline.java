@@ -5,6 +5,7 @@ import com.android.build.api.transform.JarInput;
 import com.dailyyoga.plugin.TransformPipeline;
 import com.dailyyoga.plugin.net.alipay.AlipayJar;
 import com.dailyyoga.plugin.net.amap.AmapJar;
+import com.dailyyoga.plugin.net.hyphenate.HyphenateJar;
 import com.dailyyoga.plugin.net.lebo.LeBoJar;
 import com.dailyyoga.plugin.net.mob.MobJar;
 import com.dailyyoga.plugin.net.qiyukf.QiyukfJar;
@@ -46,6 +47,7 @@ public class NetTransformPipeline extends TransformPipeline {
         mInjectJarList.add(new SensorsJar(mProject));
         mInjectJarList.add(new TendCloudJar(mProject));
         mInjectJarList.add(new XiaoMiJar(mProject));
+        mInjectJarList.add(new HyphenateJar(mProject));
     }
 
     @Override

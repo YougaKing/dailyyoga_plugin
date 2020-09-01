@@ -126,4 +126,8 @@ public abstract class InjectJar {
     public String injectGetLocalIpInfoMethodBody(String args) {
         return "return com.dailyyoga.plugin.net.NetworkInterfaceTransform.getLocalIpInfo(\"" + args + "\");";
     }
+
+    public String injectGetDeviceInfoMethodBody(String args) {
+        return "return com.dailyyoga.plugin.net.NetworkInterfaceTransform.getDeviceInfo(\"" + args + "\");";
+    }
 }

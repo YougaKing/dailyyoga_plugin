@@ -86,4 +86,20 @@ dependencies {
 
     implementation(name: 'lelink', ext: 'aar');
     implementation(name: 'alipaySdk-15.6.5-20190718211148', ext: 'aar');
+
+    implementation(name: 'MobSDK-Impl-2020.0824.1134-sources', ext: 'jar');
+
+    implementation 'com.mob:MobTools:2020.0806.1802'
+    implementation 'com.mob:MobCommons:2020.0806.1815'
+    implementation 'com.mob:MobGUI:2019.0306.1850'
+    implementation 'com.mob:SDKWrapper:2018.0801.1824'
+    implementation 'com.mob:MobGuard:1.0.8@aar'
+    implementation 'cn.sharesdk:ShareSDK:3.7.2@aar'
+    implementation 'cn.sharesdk:ShareSDK-QQ:3.7.2'
+    implementation 'cn.sharesdk:ShareSDK-QQ-Core:3.7.2'
+    implementation 'cn.sharesdk:ShareSDK-QZone:3.7.2'
+    implementation 'cn.sharesdk:ShareSDK-SinaWeibo:3.7.2'
+    implementation 'cn.sharesdk:ShareSDK-Wechat:3.7.2'
+    implementation 'cn.sharesdk:ShareSDK-Wechat-Core:3.7.2'
+    implementation 'cn.sharesdk:ShareSDK-Wechat-Moments:3.7.2'
 }

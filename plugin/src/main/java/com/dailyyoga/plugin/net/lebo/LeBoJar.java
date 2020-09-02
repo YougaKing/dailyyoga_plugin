@@ -41,12 +41,12 @@ public class LeBoJar extends InjectJar {
             CtMethod getMacAddr = ctClass.getDeclaredMethod("getMacAddr", params);
             mProject.getLogger().error("getMacAddr:" + getMacAddr);
 
-            getMacAddr.setBody(injectMethodBody(getMacAddr.getLongName()));
+            getMacAddr.setBody(injectGetMacAddrMethodBody(getMacAddr.getLongName()));
         } else {
             CtMethod getMac = ctClass.getDeclaredMethod("getMac");
             mProject.getLogger().error("getMac:" + getMac);
 
-            getMac.setBody(injectMethodBody(getMac.getLongName()));
+            getMac.setBody(injectGetMacMethodBody(getMac.getLongName()));
         }
         return ctClass;
     }

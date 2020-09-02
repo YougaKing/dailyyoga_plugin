@@ -33,12 +33,17 @@ import static com.hyphenate.chat.EMClient.getInstance;
  */
 public class NetworkInterfaceTransform {
 
-    public static final String FAKE_MAC = "02:00:00:00:00:00";
-    public static final String INVALID_MAC = "00:00:00:00:00:00";
-
     public static String getNetworkInterfaces(String args) {
         Log.e(NetworkInterfaceTransform.class.getName(), args);
-        return "12321";
+        return "";
+    }
+
+    public static String getMacAddr(String wlan, String args) {
+        return "";
+    }
+
+    public static String getMac(String args) {
+        return "";
     }
 
     /**

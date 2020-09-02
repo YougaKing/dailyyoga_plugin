@@ -130,6 +130,14 @@ public abstract class InjectJar {
         return "return com.dailyyoga.plugin.net.NetworkInterfaceTransform.getNetworkInterfaces(\"" + args + "\");";
     }
 
+    public String injectGetMacAddrMethodBody(String args) {
+        return "return com.dailyyoga.plugin.net.NetworkInterfaceTransform.getMacAddr($1,\"" + args + "\");";
+    }
+
+    public String injectGetMacMethodBody(String args) {
+        return "return com.dailyyoga.plugin.net.NetworkInterfaceTransform.getMac(\"" + args + "\");";
+    }
+
     public String injectListNetworkHardwareMethodBody(String args) {
         return "return com.dailyyoga.plugin.net.NetworkInterfaceTransform.listNetworkHardware(\"" + args + "\");";
     }

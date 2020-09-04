@@ -12,6 +12,7 @@ import com.dailyyoga.plugin.net.mob.MobJar;
 import com.dailyyoga.plugin.net.qiyukf.QiyukfJar;
 import com.dailyyoga.plugin.net.sensors.SensorsJar;
 import com.dailyyoga.plugin.net.tendcloud.TendCloudJar;
+import com.dailyyoga.plugin.net.uppay.UppayJar;
 import com.dailyyoga.plugin.net.xiaomi.XiaoMiJar;
 
 import org.apache.commons.io.FileUtils;
@@ -51,6 +52,7 @@ public class NetTransformPipeline extends TransformPipeline {
         mInjectJarList.add(new TendCloudJar(mProject));
         mInjectJarList.add(new XiaoMiJar(mProject));
         mInjectJarList.add(new HyphenateJar(mProject));
+        mInjectJarList.add(new UppayJar(mProject));
 
         mAndroid = project.getExtensions().getByType(AppExtension.class);
     }

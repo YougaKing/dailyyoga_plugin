@@ -78,14 +78,13 @@ public abstract class InjectJar {
         ClassPool.getDefault().clearImportedPackages();
     }
 
-    public void process() {
+    public void process() throws Exception{
         for (InjectRealJar realJar : mInjectRealJars) {
             process(realJar);
         }
     }
 
-    public void process(InjectRealJar realJar) {
-        try {
+    public void process(InjectRealJar realJar) throws Exception {
             if (realJar.unAvailable()) return;
             processJar(realJar);
             if (realJar.mTempFile.getCanonicalPath().equals(realJar.mDestFile.getCanonicalPath())) {
@@ -93,13 +92,6 @@ public abstract class InjectJar {
             }
             FileUtils.copyFile(realJar.mTempFile, realJar.mDestFile);
             realJar.mTempFile.delete();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (CannotCompileException e) {
-            e.printStackTrace();
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-        }
     }
 
     public void createInjectClass(JarInput jarInput, File dest) {

@@ -22,7 +22,7 @@ public abstract class TransformPipeline {
 
     public abstract void directoryInputs(DirectoryInput directoryInput);
 
-    public abstract void jarInputs(JarInput jarInput, File dest);
+    public abstract void jarInputs(JarInput jarInput, File dest) throws Exception;
 
-    public abstract void process();
+    public abstract void process() throws Exception;
 }

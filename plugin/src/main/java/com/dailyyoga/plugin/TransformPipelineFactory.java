@@ -30,13 +30,13 @@ public class TransformPipelineFactory {
         }
     }
 
-    public static void jarInputs(JarInput jarInput, File dest) {
+    public static void jarInputs(JarInput jarInput, File dest) throws Exception {
         for (TransformPipeline transformPipeline : transformPipelines) {
             transformPipeline.jarInputs(jarInput, dest);
         }
     }
 
-    public static void process() {
+    public static void process() throws Exception {
         for (TransformPipeline transformPipeline : transformPipelines) {
             transformPipeline.process();
         }

@@ -113,6 +113,7 @@ public class PluginTransform extends Transform implements Plugin<Project> {
                         FileUtils.copyDirectory(directoryInput.getFile(), dest);
                     } catch (IOException | NotFoundException e) {
                         e.printStackTrace();
+                        throw new RuntimeException("打包出错");
                     }
                 });
 
@@ -121,7 +122,12 @@ public class PluginTransform extends Transform implements Plugin<Project> {
                     File dest = outputProvider.getContentLocation(jarInput.getName() + DigestUtils.md5Hex(jarInput.getFile().getAbsolutePath()),
                             jarInput.getContentTypes(), jarInput.getScopes(), Format.JAR);
 
-                    TransformPipelineFactory.jarInputs(jarInput, dest);
+                    try {
+                        TransformPipelineFactory.jarInputs(jarInput, dest);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        throw new RuntimeException("打包出错");
+                    }
                 });
 
             });
@@ -132,6 +138,7 @@ public class PluginTransform extends Transform implements Plugin<Project> {
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
             mProject.getLogger().error("error:" + sw.toString());
+            throw new IOException("打包出错");
         }
         mProject.getLogger().error("PluginTransform cast :" + (System.currentTimeMillis() - startTime) / 1000 + " secs");
     }

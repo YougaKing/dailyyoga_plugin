@@ -63,33 +63,24 @@ public class NetTransformPipeline extends TransformPipeline {
     }
 
     @Override
-    public void jarInputs(JarInput jarInput, File dest) {
-        try {
-            boolean matching = false;
-            for (InjectJar injectJar : mInjectJarList) {
-                if (isTargetJar(jarInput.getFile(), injectJar)) {
-                    matching = true;
-                    mProject.getLogger().error(jarInput.getName() + "-" + jarInput.getFile().getAbsolutePath());
-                    injectJar.createInjectClass(jarInput, dest);
-                }
+    public void jarInputs(JarInput jarInput, File dest) throws Exception {
+        boolean matching = false;
+        for (InjectJar injectJar : mInjectJarList) {
+            if (isTargetJar(jarInput.getFile(), injectJar)) {
+                matching = true;
+                mProject.getLogger().error(jarInput.getName() + "-" + jarInput.getFile().getAbsolutePath());
+                injectJar.createInjectClass(jarInput, dest);
             }
+        }
 
-            if (!matching) {
-                try {
-                    ClassPool.getDefault().appendClassPath(jarInput.getFile().getAbsolutePath());
-                    FileUtils.copyFile(jarInput.getFile(), dest);
-                } catch (NotFoundException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (!matching) {
+            ClassPool.getDefault().appendClassPath(jarInput.getFile().getAbsolutePath());
+            FileUtils.copyFile(jarInput.getFile(), dest);
         }
     }
 
     @Override
-    public void process() {
+    public void process() throws Exception {
         appendAndroidJar();
 
         for (InjectJar injectJar : mInjectJarList) {

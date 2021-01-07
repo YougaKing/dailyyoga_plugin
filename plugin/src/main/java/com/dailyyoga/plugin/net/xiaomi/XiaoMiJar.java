@@ -34,12 +34,7 @@ public class XiaoMiJar extends InjectJar {
 
         mProject.getLogger().error("ctClass.getName():" + ctClass.getName());
 
-        if (ctClass.getName().endsWith("h")) {
-            CtMethod g = ctClass.getDeclaredMethod("g");
-            mProject.getLogger().error("g:" + g);
-
-            g.setBody(injectMethodBody(g.getLongName()));
-        } else if (ctClass.getName().endsWith("DeviceDash")) {
+        if (ctClass.getName().endsWith("DeviceDash")) {
             CtMethod getMacFromHardware = ctClass.getDeclaredMethod("getMacFromHardware");
             mProject.getLogger().error("g:" + getMacFromHardware);
 
@@ -49,8 +44,12 @@ public class XiaoMiJar extends InjectJar {
             mProject.getLogger().error("g:" + a);
 
             a.setBody(injectMethodBody(a.getLongName()));
-        }
+        } else if (ctClass.getName().endsWith("h")) {
+            CtMethod g = ctClass.getDeclaredMethod("g");
+            mProject.getLogger().error("g:" + g);
 
+            g.setBody(injectMethodBody(g.getLongName()));
+        }
         return ctClass;
     }
 

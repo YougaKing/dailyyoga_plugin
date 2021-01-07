@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.WindowManager;
 
 import com.hyphenate.util.DeviceUuidFactory;
-import com.mob.tools.MobLog;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -120,7 +119,6 @@ public class NetworkInterfaceTransform {
                 resList.add(tmpRes);
             }
         } catch (Throwable throwable) {
-            MobLog.getInstance().d(throwable);
         }
         return null;
     }

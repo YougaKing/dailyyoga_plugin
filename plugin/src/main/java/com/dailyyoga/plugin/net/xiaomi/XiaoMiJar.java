@@ -36,12 +36,22 @@ public class XiaoMiJar extends InjectJar {
 
         if (ctClass.getName().endsWith("DeviceDash")) {
             CtMethod getMacFromHardware = ctClass.getDeclaredMethod("getMacFromHardware");
-            mProject.getLogger().error("g:" + getMacFromHardware);
+            mProject.getLogger().error("getMacFromHardware:" + getMacFromHardware);
 
             getMacFromHardware.setBody(injectMethodBody(getMacFromHardware.getLongName()));
         } else if (ctClass.getName().endsWith("HardwareInfo")) {
-            CtMethod a = ctClass.getDeclaredMethod("a");
-            mProject.getLogger().error("g:" + a);
+
+            CtClass[] params = new CtClass[]{
+                    pool.get("android.content.Context"),
+            };
+            CtMethod a = ctClass.getDeclaredMethod("a", params);
+            mProject.getLogger().error("a:" + a.getLongName());
+
+            a.setBody(injectMethodBody(a.getLongName()));
+
+            params = new CtClass[]{};
+            a = ctClass.getDeclaredMethod("a", params);
+            mProject.getLogger().error("a:" + a.getLongName());
 
             a.setBody(injectMethodBody(a.getLongName()));
         } else if (ctClass.getName().endsWith("h")) {

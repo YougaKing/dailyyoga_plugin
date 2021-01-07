@@ -24,6 +24,7 @@ buildscript {
 allprojects {
     repositories {
         maven { url 'https://gitlab.com/xiaomi-passport/maven-repository/raw/master/releases' }
+        maven { url "https://dl.bintray.com/thelasterstar/maven/" }
         maven { url "http://mvn.mob.com/android" }
         maven { url 'https://www.jitpack.io' }
         jcenter()

@@ -91,6 +91,7 @@ dependencies {
 
     implementation(name: 'mio_sdk_app_3.1.1', ext: 'aar')
     implementation('com.xiaomi.account:oauth-android:latest.release')
+    implementation 'com.sina.weibo.sdk:core:10.10.0:openDefaultRelease@aar'
 
     implementation 'com.mob:MobTools:2020.0806.1802'
     implementation 'com.mob:MobCommons:2020.0806.1815'

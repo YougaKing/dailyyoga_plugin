@@ -89,6 +89,9 @@ dependencies {
 
     implementation(name: 'MobSDK-Impl-2020.0824.1134-sources', ext: 'jar');
 
+    implementation(name: 'mio_sdk_app_3.1.1', ext: 'aar')
+    implementation('com.xiaomi.account:oauth-android:latest.release')
+
     implementation 'com.mob:MobTools:2020.0806.1802'
     implementation 'com.mob:MobCommons:2020.0806.1815'
     implementation 'com.mob:MobGUI:2019.0306.1850'

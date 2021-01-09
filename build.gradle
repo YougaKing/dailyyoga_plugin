@@ -10,14 +10,14 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.1'
+        classpath 'com.android.tools.build:gradle:3.4.1'
 //        classpath 'com.dailyyoga:plugin:1.1.4'
 //        classpath 'com.github.YougaKing:dailyyoga_plugin:1.0.3'
 //        classpath 'com.mob.sdk:MobSDK:2018.0319.1724'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
         //添加jitpack依赖
-        classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'
+//        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
     }
 }
 

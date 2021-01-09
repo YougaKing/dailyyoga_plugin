@@ -47,12 +47,6 @@ android {
 //            }
 //        }
     }
-
-    packagingOptions {
-        pickFirst 'com/mob/MobSDKConfig.groovy'
-        pickFirst 'com/mob/products/SDKWrapperConfig.groovy'
-        pickFirst 'com/mob/products/BBSSDKConfig.groovy'
-    }
 }
 
 repositories {

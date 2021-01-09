@@ -1,23 +1,23 @@
-package com.dailyyoga.plugin
+package com.dailyyoga.plugin.miit
 
 import com.android.build.gradle.AppExtension
 
-class DailyyogaTransformHelper {
+class DailyyogaMIITTransformHelper {
 
-    DailyyogaExtension extension
+    DailyyogaMIITExtension extension
     AppExtension android
 
     boolean disableDailyyogaMultiThread
     boolean disableDailyyogaIncremental
 
-    DailyyogaTransformHelper(DailyyogaExtension extension, AppExtension android) {
+    DailyyogaMIITTransformHelper(DailyyogaMIITExtension extension, AppExtension android) {
         this.extension = extension
         this.android = android
     }
 
 
     void onTransform() {
-        println("sensorsAnalytics {\n" + extension + "\n}")
+        println("DailyyogaMIIT {\n" + extension + "\n}")
         ArrayList<String> excludePackages = extension.exclude
         if (excludePackages != null) {
             exclude.addAll(excludePackages)

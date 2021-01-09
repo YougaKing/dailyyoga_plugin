@@ -1,4 +1,4 @@
-package com.dailyyoga.plugin
+package com.dailyyoga.plugin.miit
 
 import com.android.build.api.transform.Context
 import com.android.build.api.transform.DirectoryInput
@@ -14,15 +14,15 @@ import com.android.ide.common.internal.WaitableExecutor
 
 import java.util.concurrent.Callable
 
-class DailyyogaTransform extends Transform {
+class DailyyogaMIITTransform extends Transform {
 
     public static final String VERSION = "1.1.5"
 
-    private DailyyogaTransformHelper transformHelper
+    private DailyyogaMIITTransformHelper transformHelper
     private WaitableExecutor waitableExecutor
     private URLClassLoader urlClassLoader
 
-    DailyyogaTransform(DailyyogaTransformHelper transformHelper) {
+    DailyyogaMIITTransform(DailyyogaMIITTransformHelper transformHelper) {
         this.transformHelper = transformHelper
         if (!transformHelper.disableDailyyogaMultiThread) {
             waitableExecutor = WaitableExecutor.useGlobalSharedThreadPool()
@@ -99,7 +99,7 @@ class DailyyogaTransform extends Transform {
         if (waitableExecutor) {
             waitableExecutor.waitForTasksWithQuickFail(true)
         }
-        println("[SensorsAnalytics]: 此次编译共耗时:${System.currentTimeMillis() - startTime}毫秒")
+        println("[DailyyogaMIIT]: 此次编译共耗时:${System.currentTimeMillis() - startTime}毫秒")
     }
 
     private void beforeTransform(TransformInvocation transformInvocation) {
@@ -107,9 +107,9 @@ class DailyyogaTransform extends Transform {
         Logger.printCopyright()
         Logger.setDebug(transformHelper.extension.debug)
         transformHelper.onTransform()
-        println("[SensorsAnalytics]: 是否开启多线程编译:${!transformHelper.disableDailyyogaMultiThread}")
-        println("[SensorsAnalytics]: 是否开启增量编译:${!transformHelper.disableDailyyogaIncremental}")
-        println("[SensorsAnalytics]: 此次是否增量编译:$transformInvocation.incremental")
+        println("[DailyyogaMIIT]: 是否开启多线程编译:${!transformHelper.disableDailyyogaMultiThread}")
+        println("[DailyyogaMIIT]: 是否开启增量编译:${!transformHelper.disableDailyyogaIncremental}")
+        println("[DailyyogaMIIT]: 此次是否增量编译:$transformInvocation.incremental")
 
         traverseForClassLoader(transformInvocation)
     }

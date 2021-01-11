@@ -11,4 +11,7 @@ public class NetworkInterfaceTransform {
         return "";
     }
 
+    public static String getName(String args, Object object) {
+        return "";
+    }
 }

@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Modifier;
+import java.util.Enumeration;
 
 import javassist.CannotCompileException;
 import javassist.ClassPool;
@@ -45,9 +47,27 @@ public class AmapJarTest {
                 @Override
                 public void edit(MethodCall m) throws CannotCompileException {
                     System.out.println("getClassName:" + m.getClassName() + "--getMethodName:" + m.getMethodName());
-                    if (m.getClassName().equals("java.net.NetworkInterface") && m.getMethodName().equals("getNetworkInterfaces")) {
-                        System.out.println("命中");
-                        m.replace("{ $_ = " + injectMethodBody(listNetworkHardware.getLongName()) + "}");
+                    if (m.getClassName().equals("java.net.NetworkInterface")) {
+                        try {
+                            CtMethod ctMethod = m.getMethod();
+                            System.out.println("命中:" + ctMethod.toString());
+
+                            if (ctMethod.getName().equals("getNetworkInterfaces")
+                                    && ctMethod.getModifiers() == Modifier.STATIC
+                                    && (ctMethod.getParameterTypes().length == 0)
+                                    && ctMethod.getReturnType() == ClassPool.getDefault().get(Enumeration.class.getName())) {
+                                m.replace("{ $_ = " + injectMethodBody(listNetworkHardware.getLongName()) + "}");
+                            } else if (ctMethod.getName().equals("getName")
+                                    && (ctMethod.getParameterTypes().length == 0)
+                                    && ctMethod.getReturnType() == ClassPool.getDefault().get(String.class.getName())) {
+
+                                m.replace("{ $_ = " + getName(listNetworkHardware.getLongName()) + "}");
+                            }
+                        } catch (NotFoundException e) {
+                            e.printStackTrace();
+                        }
+
+
                     }
                 }
             });
@@ -63,5 +83,9 @@ public class AmapJarTest {
 
     public String injectMethodBody(String args) {
         return "com.dailyyoga.plugin.net.amap.NetworkInterfaceTransform.getNetworkInterfaces(\"" + args + "\");";
+    }
+
+    public String getName(String args) {
+        return "com.dailyyoga.plugin.net.amap.NetworkInterfaceTransform.getName(\"" + args + "\",$0);";
     }
 }

@@ -24,7 +24,6 @@ class DailyyogaMIITExtension {
     public boolean debug = false
     public boolean useInclude = false
     public boolean lambdaEnabled = true
-    public boolean addUCJavaScriptInterface = false
     public boolean lambdaParamOptimize = false
 
     public ArrayList<String> exclude = []
@@ -61,7 +60,6 @@ class DailyyogaMIITExtension {
         }
         return "\tdebug=" + debug + "\n" +
                 "\tuseInclude=" + useInclude + "\n" +
-                "\taddUCJavaScriptInterface=" + addUCJavaScriptInterface + "\n" +
                 "\tlambdaParamOptimize=" + lambdaParamOptimize + "\n" +
                 "\tlambdaEnabled=" + lambdaEnabled + "\n" +
                 "\texclude=[" + excludeBuilder.toString() + "]" + "\n" +

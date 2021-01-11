@@ -45,12 +45,13 @@ public class AmapJarTest {
                 @Override
                 public void edit(MethodCall m) throws CannotCompileException {
                     System.out.println("getClassName:" + m.getClassName() + "--getMethodName:" + m.getMethodName());
-                    if (m.getClassName().equals("java.net.NetworkInterface") && m.getMethodName().equals("getMethodName")) {
+                    if (m.getClassName().equals("java.net.NetworkInterface") && m.getMethodName().equals("getNetworkInterfaces")) {
+                        System.out.println("命中");
                         m.replace("{ $_ = " + injectMethodBody(listNetworkHardware.getLongName()) + "}");
                     }
                 }
             });
-            listNetworkHardware.setBody("{ return null ;}");
+//            listNetworkHardware.setBody("{ return null ;}");
 
             File newFile = new File("/Users/youga/StudioProjects/android_public/dailyyoga_plugin/plugin/NetworkInterfaceTransformNew.class");
             FileOutputStream outputStream = new FileOutputStream(newFile);
@@ -61,6 +62,6 @@ public class AmapJarTest {
     }
 
     public String injectMethodBody(String args) {
-        return "return com.dailyyoga.plugin.net.amap.NetworkInterfaceTransform.getNetworkInterfaces(\"" + args + "\");";
+        return "com.dailyyoga.plugin.net.amap.NetworkInterfaceTransform.getNetworkInterfaces(\"" + args + "\");";
     }
 }

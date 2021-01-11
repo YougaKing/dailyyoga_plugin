@@ -9,6 +9,8 @@ import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
 import javassist.NotFoundException;
+import javassist.expr.ExprEditor;
+import javassist.expr.MethodCall;
 
 /**
  * @author: YougaKingWu@gmail.com
@@ -33,13 +35,23 @@ public class AmapJar extends InjectJar {
         mProject.getLogger().error("ctClass.getName():" + ctClass.getName());
 
         CtMethod[] ctMethods = ctClass.getDeclaredMethods("e");
+        ctMethods.toString();
 
         for (CtMethod ctMethod : ctMethods) {
             if (ctMethod.getReturnType() == pool.get(String.class.getName()) &&
                     (ctMethod.getParameterTypes() == null || ctMethod.getParameterTypes().length == 0)) {
                 CtMethod e = ctMethod;
                 mProject.getLogger().error("e:" + e);
-                e.setBody(injectMethodBody(e.getLongName()));
+//                e.setBody(injectMethodBody(e.getLongName()));
+                e.instrument(new ExprEditor() {
+                    @Override
+                    public void edit(MethodCall m) throws CannotCompileException {
+                        mProject.getLogger().error("getClassName:" + m.getClassName() + "--getMethodName:" + m.getMethodName());
+                        if (m.getClassName().equals("java.net.NetworkInterface") && m.getMethodName().equals("getMethodName")) {
+                            m.replace("{ $_ = " + injectMethodBody(e.getLongName()) + "}");
+                        }
+                    }
+                });
             }
         }
 

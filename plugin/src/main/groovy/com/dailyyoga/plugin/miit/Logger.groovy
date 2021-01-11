@@ -1,3 +1,19 @@
+/*
+ * Created by wangzhuozhou on 2015/08/12.
+ * Copyright 2015－2020 Sensors Data Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.dailyyoga.plugin.miit
 
 import org.objectweb.asm.Opcodes
@@ -19,11 +35,11 @@ class Logger {
         println("${LogUI.C_BLACK_GREEN.value}" + "####################################################################" + "${LogUI.E_NORMAL.value}")
         println("${LogUI.C_BLACK_GREEN.value}" + "###                                                              ###" + "${LogUI.E_NORMAL.value}")
         println("${LogUI.C_BLACK_GREEN.value}" + "###                                                              ###" + "${LogUI.E_NORMAL.value}")
-        println("${LogUI.C_BLACK_GREEN.value}" + "###          欢迎使用 DailyyogaMIIT® (v" + DailyyogaMIITTransform.VERSION + ")编译插件         ###" + "${LogUI.E_NORMAL.value}")
-        println("${LogUI.C_BLACK_GREEN.value}" + "###               使用过程中碰到任何问题请联系我               ###" + "${LogUI.E_NORMAL.value}")
-        println("${LogUI.C_BLACK_GREEN.value}" + "###                      QQ 号：451477973                      ###" + "${LogUI.E_NORMAL.value}")
-        println("${LogUI.C_BLACK_GREEN.value}" + "###                         邮箱 地址：                        ###" + "${LogUI.E_NORMAL.value}")
-        println("${LogUI.C_BLACK_GREEN.value}" + "###                   yougakingwu@gmail.com                   ###" + "${LogUI.E_NORMAL.value}")
+        println("${LogUI.C_BLACK_GREEN.value}" + "###          欢迎使用 SensorsAnalytics® (v" + SensorsAnalyticsTransform.VERSION + ")编译插件         ###" + "${LogUI.E_NORMAL.value}")
+        println("${LogUI.C_BLACK_GREEN.value}" + "###               使用过程中碰到任何问题请联系我们               ###" + "${LogUI.E_NORMAL.value}")
+        println("${LogUI.C_BLACK_GREEN.value}" + "###                      QQ 群号：785122381                      ###" + "${LogUI.E_NORMAL.value}")
+        println("${LogUI.C_BLACK_GREEN.value}" + "###                         GitHub 地址：                        ###" + "${LogUI.E_NORMAL.value}")
+        println("${LogUI.C_BLACK_GREEN.value}" + "###     https://github.com/sensorsdata/sa-sdk-android-plugin2    ###" + "${LogUI.E_NORMAL.value}")
         println("${LogUI.C_BLACK_GREEN.value}" + "###                                                              ###" + "${LogUI.E_NORMAL.value}")
         println("${LogUI.C_BLACK_GREEN.value}" + "###                                                              ###" + "${LogUI.E_NORMAL.value}")
         println("${LogUI.C_BLACK_GREEN.value}" + "####################################################################" + "${LogUI.E_NORMAL.value}")
@@ -43,7 +59,7 @@ class Logger {
 
     def static error(Object msg) {
         try {
-            println("${LogUI.C_ERROR.value}[DailyyogaMIIT]: ${msg}${LogUI.E_NORMAL.value}")
+            println("${LogUI.C_ERROR.value}[SensorsAnalytics]: ${msg}${LogUI.E_NORMAL.value}")
         } catch (Exception e) {
             e.printStackTrace()
         }
@@ -51,7 +67,7 @@ class Logger {
 
     def static warn(Object msg) {
         try {
-            println("${LogUI.C_WARN.value}[DailyyogaMIIT]: ${msg}${LogUI.E_NORMAL.value}")
+            println("${LogUI.C_WARN.value}[SensorsAnalytics]: ${msg}${LogUI.E_NORMAL.value}")
         } catch (Exception e) {
             e.printStackTrace()
         }
@@ -63,7 +79,7 @@ class Logger {
     def static info(Object msg) {
         if (debug)
             try {
-                println "[DailyyogaMIIT]: ${msg}"
+                println "[SensorsAnalytics]: ${msg}"
             } catch (Exception e) {
                 e.printStackTrace()
             }

@@ -27,30 +27,27 @@ class DailyyogaMIITPlugin implements Plugin<Project> {
     void apply(Project project) {
         Instantiator ins = ((DefaultGradle) project.getGradle()).getServices().get(Instantiator)
         def args = [ins] as Object[]
-        DailyyogaMIITExtension extension = project.extensions.create("sensorsAnalytics", DailyyogaMIITExtension, args)
+        DailyyogaMIITExtension extension = project.extensions.create("dailyyogaMIIT", DailyyogaMIITExtension, args)
 
-        boolean disableSensorsAnalyticsPlugin = false
-        boolean disableSensorsAnalyticsMultiThreadBuild = false
-        boolean disableSensorsAnalyticsIncrementalBuild = false
-        boolean isHookOnMethodEnter = false
+        boolean disableDailyyogaMIITPlugin = false
+        boolean disableDailyyogaMIITMultiThreadBuild = false
+        boolean disableDailyyogaMIITIncrementalBuild = false
         Properties properties = new Properties()
         if (project.rootProject.file('gradle.properties').exists()) {
             properties.load(project.rootProject.file('gradle.properties').newDataInputStream())
-            disableSensorsAnalyticsPlugin = Boolean.parseBoolean(properties.getProperty("sensorsAnalytics.disablePlugin", "false")) ||
-                    Boolean.parseBoolean(properties.getProperty("disableSensorsAnalyticsPlugin", "false"))
-            disableSensorsAnalyticsMultiThreadBuild = Boolean.parseBoolean(properties.getProperty("sensorsAnalytics.disableMultiThreadBuild", "false"))
-            disableSensorsAnalyticsIncrementalBuild = Boolean.parseBoolean(properties.getProperty("sensorsAnalytics.disableIncrementalBuild", "false"))
-            isHookOnMethodEnter = Boolean.parseBoolean(properties.getProperty("sensorsAnalytics.isHookOnMethodEnter", "false"))
+            disableDailyyogaMIITPlugin = Boolean.parseBoolean(properties.getProperty("dailyyogaMIIT.disablePlugin", "false"))
+            disableDailyyogaMIITMultiThreadBuild = Boolean.parseBoolean(properties.getProperty("dailyyogaMIIT.disableMultiThreadBuild", "false"))
+            disableDailyyogaMIITIncrementalBuild = Boolean.parseBoolean(properties.getProperty("dailyyogaMIIT.disableIncrementalBuild", "false"))
         }
-        if (!disableSensorsAnalyticsPlugin) {
+        if (!disableDailyyogaMIITPlugin) {
             AppExtension appExtension = project.extensions.findByType(AppExtension.class)
             DailyyogaMIITTransformHelper transformHelper = new DailyyogaMIITTransformHelper(extension, appExtension)
-            transformHelper.disableSensorsAnalyticsIncremental = disableSensorsAnalyticsIncrementalBuild
-            transformHelper.disableSensorsAnalyticsMultiThread = disableSensorsAnalyticsMultiThreadBuild
+            transformHelper.disableDailyyogaMIITIncremental = disableDailyyogaMIITIncrementalBuild
+            transformHelper.disableDailyyogaMIITMultiThread = disableDailyyogaMIITMultiThreadBuild
             transformHelper.isHookOnMethodEnter = isHookOnMethodEnter
             appExtension.registerTransform(new DailyyogaMIITTransform(transformHelper))
         } else {
-            Logger.error("------------您已关闭了神策插件--------------")
+            Logger.error("------------您已关闭了工信部整改插件--------------")
         }
 
     }

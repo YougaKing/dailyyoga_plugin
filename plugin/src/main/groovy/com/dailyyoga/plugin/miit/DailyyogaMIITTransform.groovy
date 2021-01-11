@@ -42,14 +42,14 @@ class DailyyogaMIITTransform extends Transform {
 
     DailyyogaMIITTransform(DailyyogaMIITTransformHelper transformHelper) {
         this.transformHelper = transformHelper
-        if (!transformHelper.disableSensorsAnalyticsMultiThread) {
+        if (!transformHelper.disableDailyyogaMIITMultiThread) {
             waitableExecutor = WaitableExecutor.useGlobalSharedThreadPool()
         }
     }
 
     @Override
     String getName() {
-        return "sensorsAnalyticsAutoTrack"
+        return "dailyyogaMIITAutoRevise"
     }
 
     @Override
@@ -64,7 +64,7 @@ class DailyyogaMIITTransform extends Transform {
 
     @Override
     boolean isIncremental() {
-        return !transformHelper.disableSensorsAnalyticsIncremental
+        return !transformHelper.disableDailyyogaMIITIncremental
     }
 
     @Override
@@ -124,8 +124,8 @@ class DailyyogaMIITTransform extends Transform {
         Logger.printCopyright()
         Logger.setDebug(transformHelper.extension.debug)
         transformHelper.onTransform()
-        println("[SensorsAnalytics]: 是否开启多线程编译:${!transformHelper.disableSensorsAnalyticsMultiThread}")
-        println("[SensorsAnalytics]: 是否开启增量编译:${!transformHelper.disableSensorsAnalyticsIncremental}")
+        println("[SensorsAnalytics]: 是否开启多线程编译:${!transformHelper.disableDailyyogaMIITMultiThread}")
+        println("[SensorsAnalytics]: 是否开启增量编译:${!transformHelper.disableDailyyogaMIITIncremental}")
         println("[SensorsAnalytics]: 此次是否增量编译:$transformInvocation.incremental")
         println("[SensorsAnalytics]: 是否在方法进入时插入代码:${transformHelper.isHookOnMethodEnter}")
 

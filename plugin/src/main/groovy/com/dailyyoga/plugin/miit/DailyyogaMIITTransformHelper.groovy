@@ -25,8 +25,8 @@ class DailyyogaMIITTransformHelper {
     RN_STATE rnState = RN_STATE.NOT_FOUND
     String rnVersion = ""
     DailyyogaMIITSDKHookConfig sensorsAnalyticsHookConfig
-    boolean disableSensorsAnalyticsMultiThread
-    boolean disableSensorsAnalyticsIncremental
+    boolean disableDailyyogaMIITMultiThread
+    boolean disableDailyyogaMIITIncremental
     boolean isHookOnMethodEnter
     HashSet<String> exclude = new HashSet<>(['com.sensorsdata.analytics.android.sdk', 'android.support', 'androidx', 'com.qiyukf', 'android.arch', 'com.google.android', "com.tencent.smtt"])
     HashSet<String> include = new HashSet<>(['butterknife.internal.DebouncingOnClickListener',

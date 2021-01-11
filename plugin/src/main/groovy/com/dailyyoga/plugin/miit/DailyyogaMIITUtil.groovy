@@ -22,7 +22,7 @@ import org.apache.commons.io.output.ByteArrayOutputStream
 import org.objectweb.asm.Opcodes
 
 @CompileStatic
-class SensorsAnalyticsUtil {
+class DailyyogaMIITUtil {
     public static final int ASM_VERSION = Opcodes.ASM6
     private static final HashSet<String> targetFragmentClass = new HashSet()
     private static final HashSet<String> targetMenuMethodDesc = new HashSet()
@@ -56,7 +56,7 @@ class SensorsAnalyticsUtil {
         targetFragmentClass.add('androidx/fragment/app/ListFragment')
         targetFragmentClass.add('androidx/fragment/app/DialogFragment')
 
-        for (className in SensorsAnalyticsTransformHelper.special) {
+        for (className in DailyyogaMIITTransformHelper.special) {
             specialClass.add(className.replace('.', '/'))
         }
 

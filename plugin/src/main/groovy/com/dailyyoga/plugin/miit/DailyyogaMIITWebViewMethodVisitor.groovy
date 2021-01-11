@@ -29,9 +29,9 @@ import org.objectweb.asm.commons.AdviceAdapter
  * 如果当前方法所在的类是 WebView 的子类，并且被处理的方法是目标方法中的一个就不处理；
  * 否则就判断 owner 是否是 WebView 的子类，如果是就处理，否则不处理。
  */
-class SensorsAnalyticsWebViewMethodVisitor extends AdviceAdapter implements Opcodes {
+class DailyyogaMIITWebViewMethodVisitor extends AdviceAdapter implements Opcodes {
 
-    private SensorsAnalyticsTransformHelper transformHelper
+    private DailyyogaMIITTransformHelper transformHelper
     private Class webView
     private Class x5WebView
     private boolean isPreviousX5WebView = false
@@ -48,8 +48,8 @@ class SensorsAnalyticsWebViewMethodVisitor extends AdviceAdapter implements Opco
     private String methodNameDesc
     private boolean shouldSkip = false
 
-    SensorsAnalyticsWebViewMethodVisitor(MethodVisitor mv, int access, String name, String desc, SensorsAnalyticsTransformHelper transformHelper, String className, String superName) {
-        super(SensorsAnalyticsUtil.ASM_VERSION, mv, access, name, desc)
+    DailyyogaMIITWebViewMethodVisitor(MethodVisitor mv, int access, String name, String desc, DailyyogaMIITTransformHelper transformHelper, String className, String superName) {
+        super(DailyyogaMIITUtil.ASM_VERSION, mv, access, name, desc)
         this.transformHelper = transformHelper
         this.className = className
         this.superName = superName
@@ -100,7 +100,7 @@ class SensorsAnalyticsWebViewMethodVisitor extends AdviceAdapter implements Opco
                         }
                         desc = reStructureDesc(desc)
                         //为保持新 SDK 使用旧版插件问题，会使用新 SDK loadUrl + 2 后缀的方法
-                        mv.visitMethodInsn(INVOKESTATIC, SensorsAnalyticsHookConfig.SENSORS_ANALYTICS_API, name + "2", desc, false)
+                        mv.visitMethodInsn(INVOKESTATIC, DailyyogaMIITHookConfig.SENSORS_ANALYTICS_API, name + "2", desc, false)
                     }
                     return
                 }
@@ -131,7 +131,7 @@ class SensorsAnalyticsWebViewMethodVisitor extends AdviceAdapter implements Opco
         }
         desc = reStructureDesc(desc)
         //为保持新 SDK 使用旧版插件问题，会使用新 SDK loadUrl + 2 后缀的方法
-        mv.visitMethodInsn(INVOKESTATIC, SensorsAnalyticsHookConfig.SENSORS_ANALYTICS_API, name + "2", desc, false)
+        mv.visitMethodInsn(INVOKESTATIC, DailyyogaMIITHookConfig.SENSORS_ANALYTICS_API, name + "2", desc, false)
         mv.visitLabel(label)
     }
 

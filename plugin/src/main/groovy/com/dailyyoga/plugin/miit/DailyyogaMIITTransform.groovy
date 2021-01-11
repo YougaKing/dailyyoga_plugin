@@ -33,14 +33,14 @@ import java.util.jar.JarEntry
 import java.util.jar.JarFile
 import java.util.jar.JarOutputStream
 
-class SensorsAnalyticsTransform extends Transform {
-    private SensorsAnalyticsTransformHelper transformHelper
+class DailyyogaMIITTransform extends Transform {
+    private DailyyogaMIITTransformHelper transformHelper
     public static final String VERSION = "3.3.1"
     public static final String MIN_SDK_VERSION = "4.3.2"
     private WaitableExecutor waitableExecutor
     private URLClassLoader urlClassLoader
 
-    SensorsAnalyticsTransform(SensorsAnalyticsTransformHelper transformHelper) {
+    DailyyogaMIITTransform(DailyyogaMIITTransformHelper transformHelper) {
         this.transformHelper = transformHelper
         if (!transformHelper.disableSensorsAnalyticsMultiThread) {
             waitableExecutor = WaitableExecutor.useGlobalSharedThreadPool()
@@ -169,12 +169,12 @@ class SensorsAnalyticsTransform extends Transform {
                 Field versionField = rnClazz.getDeclaredField("VERSION")
                 versionField.setAccessible(true)
                 transformHelper.rnVersion = versionField.get(null) as String
-                transformHelper.rnState = SensorsAnalyticsTransformHelper.RN_STATE.HAS_VERSION
+                transformHelper.rnState = DailyyogaMIITTransformHelper.RN_STATE.HAS_VERSION
             } catch (Exception e) {
-                transformHelper.rnState = SensorsAnalyticsTransformHelper.RN_STATE.NO_VERSION
+                transformHelper.rnState = DailyyogaMIITTransformHelper.RN_STATE.NO_VERSION
             }
         } catch (Exception e) {
-            transformHelper.rnState = SensorsAnalyticsTransformHelper.RN_STATE.NOT_FOUND
+            transformHelper.rnState = DailyyogaMIITTransformHelper.RN_STATE.NOT_FOUND
         }
     }
 
@@ -335,7 +335,7 @@ class SensorsAnalyticsTransform extends Transform {
                 byte[] sourceClassBytes
                 try {
                     jarOutputStream.putNextEntry(entry)
-                    sourceClassBytes = SensorsAnalyticsUtil.toByteArrayAndAutoCloseStream(inputStream)
+                    sourceClassBytes = DailyyogaMIITUtil.toByteArrayAndAutoCloseStream(inputStream)
                 } catch (Exception e) {
                     Logger.error("Exception encountered while processing jar: " + jarFile.getAbsolutePath())
                     IOUtils.closeQuietly(file)
@@ -369,7 +369,7 @@ class SensorsAnalyticsTransform extends Transform {
     private byte[] modifyClass(byte[] srcClass, ClassNameAnalytics classNameAnalytics) {
         try {
             ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS)
-            ClassVisitor classVisitor = new SensorsAnalyticsClassVisitor(classWriter, classNameAnalytics, transformHelper)
+            ClassVisitor classVisitor = new DailyyogaMIITClassVisitor(classWriter, classNameAnalytics, transformHelper)
             ClassReader cr = new ClassReader(srcClass)
             cr.accept(classVisitor, ClassReader.EXPAND_FRAMES + ClassReader.SKIP_FRAMES)
             return classWriter.toByteArray()
@@ -393,7 +393,7 @@ class SensorsAnalyticsTransform extends Transform {
             String className = path2ClassName(classFile.absolutePath.replace(dir.absolutePath + File.separator, ""))
             ClassNameAnalytics classNameAnalytics = transformHelper.analytics(className)
             if (classNameAnalytics.isShouldModify) {
-                byte[] sourceClassBytes = SensorsAnalyticsUtil.toByteArrayAndAutoCloseStream(new FileInputStream(classFile))
+                byte[] sourceClassBytes = DailyyogaMIITUtil.toByteArrayAndAutoCloseStream(new FileInputStream(classFile))
                 byte[] modifiedClassBytes = modifyClass(sourceClassBytes, classNameAnalytics)
                 if (modifiedClassBytes) {
                     modified = new File(tempDir, className.replace('.', '') + '.class')

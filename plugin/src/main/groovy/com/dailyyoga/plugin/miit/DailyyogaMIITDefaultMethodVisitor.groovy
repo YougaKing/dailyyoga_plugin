@@ -22,12 +22,12 @@ import org.objectweb.asm.Label
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.commons.AdviceAdapter
 
-class SensorsAnalyticsDefaultMethodVisitor extends AdviceAdapter {
+class DailyyogaMIITDefaultMethodVisitor extends AdviceAdapter {
 
     String methodName
 
-    SensorsAnalyticsDefaultMethodVisitor(MethodVisitor mv, int access, String name, String desc) {
-        super(SensorsAnalyticsUtil.ASM_VERSION, mv, access, name, desc)
+    DailyyogaMIITDefaultMethodVisitor(MethodVisitor mv, int access, String name, String desc) {
+        super(DailyyogaMIITUtil.ASM_VERSION, mv, access, name, desc)
         methodName = name
         if (Logger.debug) {
             Logger.info("开始扫描方法：${Logger.accCode2String(access)} ${methodName}${desc}")

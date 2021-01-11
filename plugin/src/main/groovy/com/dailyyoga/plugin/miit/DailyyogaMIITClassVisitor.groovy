@@ -18,30 +18,30 @@ package com.dailyyoga.plugin.miit
 
 import org.objectweb.asm.*
 
-class SensorsAnalyticsClassVisitor extends ClassVisitor {
+class DailyyogaMIITClassVisitor extends ClassVisitor {
     private String mClassName
     private String mSuperName
     private String[] mInterfaces
     private HashSet<String> visitedFragMethods = new HashSet<>()// 无需判空
     private ClassVisitor classVisitor
 
-    private SensorsAnalyticsTransformHelper transformHelper
+    private DailyyogaMIITTransformHelper transformHelper
 
     private ClassNameAnalytics classNameAnalytics
 
-    private ArrayList<SensorsAnalyticsMethodCell> methodCells = new ArrayList<>()
+    private ArrayList<DailyyogaMIITMethodCell> methodCells = new ArrayList<>()
 
     private int version
 
-    private HashMap<String, SensorsAnalyticsMethodCell> mLambdaMethodCells = new HashMap<>()
+    private HashMap<String, DailyyogaMIITMethodCell> mLambdaMethodCells = new HashMap<>()
 
     @Override
     protected Object clone() throws CloneNotSupportedException {
         return super.clone()
     }
 
-    SensorsAnalyticsClassVisitor(final ClassVisitor classVisitor, ClassNameAnalytics classNameAnalytics, SensorsAnalyticsTransformHelper transformHelper) {
-        super(SensorsAnalyticsUtil.ASM_VERSION, classVisitor)
+    DailyyogaMIITClassVisitor(final ClassVisitor classVisitor, ClassNameAnalytics classNameAnalytics, DailyyogaMIITTransformHelper transformHelper) {
+        super(DailyyogaMIITUtil.ASM_VERSION, classVisitor)
         this.classVisitor = classVisitor
         this.classNameAnalytics = classNameAnalytics
         this.transformHelper = transformHelper
@@ -90,14 +90,14 @@ class SensorsAnalyticsClassVisitor extends ClassVisitor {
     void visitEnd() {
         super.visitEnd()
 
-        if (SensorsAnalyticsUtil.isInstanceOfFragment(mSuperName)) {
+        if (DailyyogaMIITUtil.isInstanceOfFragment(mSuperName)) {
             MethodVisitor mv
             // 添加剩下的方法，确保super.onHiddenChanged(hidden);等先被调用
-            Iterator<Map.Entry<String, SensorsAnalyticsMethodCell>> iterator = SensorsAnalyticsHookConfig.FRAGMENT_METHODS.entrySet().iterator()
+            Iterator<Map.Entry<String, DailyyogaMIITMethodCell>> iterator = DailyyogaMIITHookConfig.FRAGMENT_METHODS.entrySet().iterator()
             while (iterator.hasNext()) {
-                Map.Entry<String, SensorsAnalyticsMethodCell> entry = iterator.next()
+                Map.Entry<String, DailyyogaMIITMethodCell> entry = iterator.next()
                 String key = entry.getKey()
-                SensorsAnalyticsMethodCell methodCell = entry.getValue()
+                DailyyogaMIITMethodCell methodCell = entry.getValue()
                 if (visitedFragMethods.contains(key)) {
                     continue
                 }
@@ -106,7 +106,7 @@ class SensorsAnalyticsClassVisitor extends ClassVisitor {
                 // call super
                 visitMethodWithLoadedParams(mv, Opcodes.INVOKESPECIAL, mSuperName, methodCell.name, methodCell.desc, methodCell.paramsStart, methodCell.paramsCount, methodCell.opcodes)
                 // call injected method
-                visitMethodWithLoadedParams(mv, Opcodes.INVOKESTATIC, SensorsAnalyticsHookConfig.SENSORS_ANALYTICS_API, methodCell.agentName, methodCell.agentDesc, methodCell.paramsStart, methodCell.paramsCount, methodCell.opcodes)
+                visitMethodWithLoadedParams(mv, Opcodes.INVOKESTATIC, DailyyogaMIITHookConfig.SENSORS_ANALYTICS_API, methodCell.agentName, methodCell.agentDesc, methodCell.paramsStart, methodCell.paramsCount, methodCell.opcodes)
                 mv.visitInsn(Opcodes.RETURN)
                 mv.visitMaxs(methodCell.paramsCount, methodCell.paramsCount)
                 mv.visitEnd()
@@ -128,16 +128,16 @@ class SensorsAnalyticsClassVisitor extends ClassVisitor {
         if (classNameAnalytics.isSensorsDataAPI) {
             if ('VERSION' == name) {
                 String version = (String) value
-                if (SensorsAnalyticsUtil.compareVersion(SensorsAnalyticsTransform.MIN_SDK_VERSION, version) > 0) {
-                    String errMessage = "你目前集成的神策埋点 SDK 版本号为 v${version}，请升级到 v${SensorsAnalyticsTransform.MIN_SDK_VERSION} 及以上的版本。详情请参考：https://github.com/sensorsdata/sa-sdk-android"
+                if (DailyyogaMIITUtil.compareVersion(DailyyogaMIITTransform.MIN_SDK_VERSION, version) > 0) {
+                    String errMessage = "你目前集成的神策埋点 SDK 版本号为 v${version}，请升级到 v${DailyyogaMIITTransform.MIN_SDK_VERSION} 及以上的版本。详情请参考：https://github.com/sensorsdata/sa-sdk-android"
                     Logger.error(errMessage)
                     throw new Error(errMessage)
                 }
             } else if ('MIN_PLUGIN_VERSION' == name) {
                 String minPluginVersion = (String) value
                 if (minPluginVersion != "" && minPluginVersion != null) {
-                    if (SensorsAnalyticsUtil.compareVersion(SensorsAnalyticsTransform.VERSION, minPluginVersion) < 0) {
-                        String errMessage = "你目前集成的神策插件版本号为 v${SensorsAnalyticsTransform.VERSION}，请升级到 v${minPluginVersion} 及以上的版本。详情请参考：https://github.com/sensorsdata/sa-sdk-android-plugin2"
+                    if (DailyyogaMIITUtil.compareVersion(DailyyogaMIITTransform.VERSION, minPluginVersion) < 0) {
+                        String errMessage = "你目前集成的神策插件版本号为 v${DailyyogaMIITTransform.VERSION}，请升级到 v${minPluginVersion} 及以上的版本。详情请参考：https://github.com/sensorsdata/sa-sdk-android-plugin2"
                         Logger.error(errMessage)
                         throw new Error(errMessage)
                     }
@@ -168,9 +168,9 @@ class SensorsAnalyticsClassVisitor extends ClassVisitor {
 
         MethodVisitor methodVisitor = cv.visitMethod(access, name, desc, signature, exceptions)
         if (transformHelper.extension != null && transformHelper.extension.autoHandleWebView && transformHelper.urlClassLoader != null) {
-            methodVisitor = new SensorsAnalyticsWebViewMethodVisitor(methodVisitor, access, name, desc, transformHelper, mClassName, mSuperName)
+            methodVisitor = new DailyyogaMIITWebViewMethodVisitor(methodVisitor, access, name, desc, transformHelper, mClassName, mSuperName)
         }
-        SensorsAnalyticsDefaultMethodVisitor sensorsAnalyticsDefaultMethodVisitor = new SensorsAnalyticsDefaultMethodVisitor(methodVisitor, access, name, desc) {
+        DailyyogaMIITDefaultMethodVisitor sensorsAnalyticsDefaultMethodVisitor = new DailyyogaMIITDefaultMethodVisitor(methodVisitor, access, name, desc) {
             boolean isSensorsDataTrackViewOnClickAnnotation = false
             boolean isSensorsDataIgnoreTrackOnClick = false
             String eventName = null
@@ -213,7 +213,7 @@ class SensorsAnalyticsClassVisitor extends ClassVisitor {
                 }
                 try {
                     String desc2 = (String) bsmArgs[0]
-                    SensorsAnalyticsMethodCell sensorsAnalyticsMethodCell = SensorsAnalyticsHookConfig.LAMBDA_METHODS.get(Type.getReturnType(desc1).getDescriptor() + name1 + desc2)
+                    DailyyogaMIITMethodCell sensorsAnalyticsMethodCell = DailyyogaMIITHookConfig.LAMBDA_METHODS.get(Type.getReturnType(desc1).getDescriptor() + name1 + desc2)
                     if (sensorsAnalyticsMethodCell != null) {
                         Handle it = (Handle) bsmArgs[1]
                         mLambdaMethodCells.put(it.name + it.desc, sensorsAnalyticsMethodCell)
@@ -227,7 +227,7 @@ class SensorsAnalyticsClassVisitor extends ClassVisitor {
             protected void onMethodEnter() {
                 super.onMethodEnter()
                 nameDesc = name + desc
-                pubAndNoStaticAccess = SensorsAnalyticsUtil.isPublic(access) && !SensorsAnalyticsUtil.isStatic(access)
+                pubAndNoStaticAccess = DailyyogaMIITUtil.isPublic(access) && !DailyyogaMIITUtil.isStatic(access)
                 if ((nameDesc == 'onClick(Landroid/view/View;)V') && pubAndNoStaticAccess) {
                     isOnClickMethod = true
                     variableID = newLocal(Type.getObjectType("java/lang/Integer"))
@@ -251,15 +251,15 @@ class SensorsAnalyticsClassVisitor extends ClassVisitor {
                     methodVisitor.visitVarInsn(ILOAD, 3)
                     methodVisitor.visitVarInsn(ISTORE, third)
                     localIds.add(third)
-                } else if (pubAndNoStaticAccess && SensorsAnalyticsUtil.isInstanceOfFragment(mSuperName)
-                        && SensorsAnalyticsHookConfig.FRAGMENT_METHODS.get(nameDesc) != null) {
-                    SensorsAnalyticsMethodCell sensorsAnalyticsMethodCell = SensorsAnalyticsHookConfig.FRAGMENT_METHODS.get(nameDesc)
+                } else if (pubAndNoStaticAccess && DailyyogaMIITUtil.isInstanceOfFragment(mSuperName)
+                        && DailyyogaMIITHookConfig.FRAGMENT_METHODS.get(nameDesc) != null) {
+                    DailyyogaMIITMethodCell sensorsAnalyticsMethodCell = DailyyogaMIITHookConfig.FRAGMENT_METHODS.get(nameDesc)
                     localIds = new ArrayList<>()
                     Type[] types = Type.getArgumentTypes(desc)
                     for (int i = 1; i < sensorsAnalyticsMethodCell.paramsCount; i++) {
                         int localId = newLocal(types[i - 1])
                         methodVisitor.visitVarInsn(sensorsAnalyticsMethodCell.opcodes.get(i), i)
-                        methodVisitor.visitVarInsn(SensorsAnalyticsUtil.convertOpcodes(sensorsAnalyticsMethodCell.opcodes.get(i)), localId)
+                        methodVisitor.visitVarInsn(DailyyogaMIITUtil.convertOpcodes(sensorsAnalyticsMethodCell.opcodes.get(i)), localId)
                         localIds.add(localId)
                     }
                 } else if (nameDesc == "onCheckedChanged(Landroid/widget/RadioGroup;I)V" && pubAndNoStaticAccess) {
@@ -288,7 +288,7 @@ class SensorsAnalyticsClassVisitor extends ClassVisitor {
                     methodVisitor.visitVarInsn(ILOAD, 2)
                     methodVisitor.visitVarInsn(ISTORE, secondLocalId)
                     localIds.add(secondLocalId)
-                } else if (SensorsAnalyticsUtil.isTargetMenuMethodDesc(nameDesc) && pubAndNoStaticAccess) {
+                } else if (DailyyogaMIITUtil.isTargetMenuMethodDesc(nameDesc) && pubAndNoStaticAccess) {
                     localIds = new ArrayList<>()
                     int firstLocalId = newLocal(Type.getObjectType("java/lang/Object"))
                     methodVisitor.visitVarInsn(ALOAD, 0)
@@ -308,10 +308,10 @@ class SensorsAnalyticsClassVisitor extends ClassVisitor {
 
                 // Lambda 参数优化部分，对现有参数进行复制
                 if (transformHelper.extension.lambdaEnabled) {
-                    SensorsAnalyticsMethodCell lambdaMethodCell = mLambdaMethodCells.get(nameDesc)
+                    DailyyogaMIITMethodCell lambdaMethodCell = mLambdaMethodCells.get(nameDesc)
                     if (lambdaMethodCell != null) {
                         //判断是否是在采样中，在采样中才会处理或者开关打开也统一处理
-                        if (transformHelper.extension.lambdaParamOptimize || SensorsAnalyticsHookConfig.SAMPLING_LAMBDA_METHODS.contains(lambdaMethodCell)) {
+                        if (transformHelper.extension.lambdaParamOptimize || DailyyogaMIITHookConfig.SAMPLING_LAMBDA_METHODS.contains(lambdaMethodCell)) {
                             Type[] types = Type.getArgumentTypes(lambdaMethodCell.desc)
                             int length = types.length
                             Type[] lambdaTypes = Type.getArgumentTypes(desc)
@@ -326,12 +326,12 @@ class SensorsAnalyticsClassVisitor extends ClassVisitor {
                                     }
                                 }
                             }
-                            boolean isStaticMethod = SensorsAnalyticsUtil.isStatic(access)
+                            boolean isStaticMethod = DailyyogaMIITUtil.isStatic(access)
                             localIds = new ArrayList<>()
                             for (int i = paramStart; i < paramStart + lambdaMethodCell.paramsCount; i++) {
                                 int localId = newLocal(types[i - paramStart])
                                 methodVisitor.visitVarInsn(lambdaMethodCell.opcodes.get(i - paramStart), getVisitPosition(lambdaTypes, i, isStaticMethod))
-                                methodVisitor.visitVarInsn(SensorsAnalyticsUtil.convertOpcodes(lambdaMethodCell.opcodes.get(i - paramStart)), localId)
+                                methodVisitor.visitVarInsn(DailyyogaMIITUtil.convertOpcodes(lambdaMethodCell.opcodes.get(i - paramStart)), localId)
                                 localIds.add(localId)
                             }
                         }
@@ -354,7 +354,7 @@ class SensorsAnalyticsClassVisitor extends ClassVisitor {
             @Override
             void visitFieldInsn(int opcode, String owner, String fieldName, String fieldDesc) {
                 if (classNameAnalytics.isSensorsDataAPI && "ANDROID_PLUGIN_VERSION" == fieldName && opcode == PUTSTATIC) {
-                    methodVisitor.visitLdcInsn(SensorsAnalyticsTransform.VERSION)
+                    methodVisitor.visitLdcInsn(DailyyogaMIITTransform.VERSION)
                 }
                 super.visitFieldInsn(opcode, owner, fieldName, fieldDesc)
             }
@@ -371,15 +371,15 @@ class SensorsAnalyticsClassVisitor extends ClassVisitor {
                  * android/support/v4/app/Fragment，android/support/v4/app/ListFragment，android/support/v4/app/DialogFragment，
                  * androidx/fragment/app/Fragment，androidx/fragment/app/ListFragment，androidx/fragment/app/DialogFragment
                  */
-                if (SensorsAnalyticsUtil.isInstanceOfFragment(mSuperName)) {
-                    SensorsAnalyticsMethodCell sensorsAnalyticsMethodCell = SensorsAnalyticsHookConfig.FRAGMENT_METHODS.get(nameDesc)
+                if (DailyyogaMIITUtil.isInstanceOfFragment(mSuperName)) {
+                    DailyyogaMIITMethodCell sensorsAnalyticsMethodCell = DailyyogaMIITHookConfig.FRAGMENT_METHODS.get(nameDesc)
                     if (sensorsAnalyticsMethodCell != null) {
                         visitedFragMethods.add(nameDesc)
                         methodVisitor.visitVarInsn(ALOAD, 0)
                         for (int i = 1; i < sensorsAnalyticsMethodCell.paramsCount; i++) {
                             methodVisitor.visitVarInsn(sensorsAnalyticsMethodCell.opcodes.get(i), localIds[i - 1])
                         }
-                        methodVisitor.visitMethodInsn(INVOKESTATIC, SensorsAnalyticsHookConfig.SENSORS_ANALYTICS_API, sensorsAnalyticsMethodCell.agentName, sensorsAnalyticsMethodCell.agentDesc, false)
+                        methodVisitor.visitMethodInsn(INVOKESTATIC, DailyyogaMIITHookConfig.SENSORS_ANALYTICS_API, sensorsAnalyticsMethodCell.agentName, sensorsAnalyticsMethodCell.agentDesc, false)
                         isHasTracked = true
                         return
                     }
@@ -393,7 +393,7 @@ class SensorsAnalyticsClassVisitor extends ClassVisitor {
                  * 在 android.gradle 的 3.2.1 版本中，针对 view 的 setOnClickListener 方法 的 lambda 表达式做特殊处理。
                  */
                 if (transformHelper.extension.lambdaEnabled) {
-                    SensorsAnalyticsMethodCell lambdaMethodCell = mLambdaMethodCells.get(nameDesc)
+                    DailyyogaMIITMethodCell lambdaMethodCell = mLambdaMethodCells.get(nameDesc)
                     if (lambdaMethodCell != null) {
                         Type[] types = Type.getArgumentTypes(lambdaMethodCell.desc)
                         int length = types.length
@@ -409,18 +409,18 @@ class SensorsAnalyticsClassVisitor extends ClassVisitor {
                                 }
                             }
                         }
-                        boolean isStaticMethod = SensorsAnalyticsUtil.isStatic(access)
+                        boolean isStaticMethod = DailyyogaMIITUtil.isStatic(access)
                         if (!isStaticMethod) {
                             if (lambdaMethodCell.desc == '(Landroid/view/MenuItem;)Z') {
                                 methodVisitor.visitVarInsn(Opcodes.ALOAD, 0)
                                 methodVisitor.visitVarInsn(Opcodes.ALOAD, getVisitPosition(lambdaTypes, paramStart, isStaticMethod))
-                                methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC, SensorsAnalyticsHookConfig.SENSORS_ANALYTICS_API, lambdaMethodCell.agentName, '(Ljava/lang/Object;Landroid/view/MenuItem;)V', false)
+                                methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC, DailyyogaMIITHookConfig.SENSORS_ANALYTICS_API, lambdaMethodCell.agentName, '(Ljava/lang/Object;Landroid/view/MenuItem;)V', false)
                                 isHasTracked = true
                                 return
                             }
                         }
                         //如果在采样中，就按照最新的处理流程来操作
-                        if (transformHelper.extension.lambdaParamOptimize || SensorsAnalyticsHookConfig.SAMPLING_LAMBDA_METHODS.contains(lambdaMethodCell)) {
+                        if (transformHelper.extension.lambdaParamOptimize || DailyyogaMIITHookConfig.SAMPLING_LAMBDA_METHODS.contains(lambdaMethodCell)) {
                             for (int i = paramStart; i < paramStart + lambdaMethodCell.paramsCount; i++) {
                                 methodVisitor.visitVarInsn(lambdaMethodCell.opcodes.get(i - paramStart), localIds[i - paramStart])
                             }
@@ -429,7 +429,7 @@ class SensorsAnalyticsClassVisitor extends ClassVisitor {
                                 methodVisitor.visitVarInsn(lambdaMethodCell.opcodes.get(i - paramStart), getVisitPosition(lambdaTypes, i, isStaticMethod))
                             }
                         }
-                        methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC, SensorsAnalyticsHookConfig.SENSORS_ANALYTICS_API, lambdaMethodCell.agentName, lambdaMethodCell.agentDesc, false)
+                        methodVisitor.visitMethodInsn(Opcodes.INVOKESTATIC, DailyyogaMIITHookConfig.SENSORS_ANALYTICS_API, lambdaMethodCell.agentName, lambdaMethodCell.agentDesc, false)
                         isHasTracked = true
                         return
                     }
@@ -448,22 +448,22 @@ class SensorsAnalyticsClassVisitor extends ClassVisitor {
                  * Menu
                  * 目前支持 onContextItemSelected(MenuItem item)、onOptionsItemSelected(MenuItem item)
                  */
-                if (SensorsAnalyticsUtil.isTargetMenuMethodDesc(nameDesc)) {
+                if (DailyyogaMIITUtil.isTargetMenuMethodDesc(nameDesc)) {
                     methodVisitor.visitVarInsn(ALOAD, localIds[0])
                     methodVisitor.visitVarInsn(ALOAD, localIds[1])
-                    methodVisitor.visitMethodInsn(INVOKESTATIC, SensorsAnalyticsHookConfig.SENSORS_ANALYTICS_API, "trackMenuItem", "(Ljava/lang/Object;Landroid/view/MenuItem;)V", false)
+                    methodVisitor.visitMethodInsn(INVOKESTATIC, DailyyogaMIITHookConfig.SENSORS_ANALYTICS_API, "trackMenuItem", "(Ljava/lang/Object;Landroid/view/MenuItem;)V", false)
                     isHasTracked = true
                     return
                 }
 
                 if (nameDesc == 'onDrawerOpened(Landroid/view/View;)V') {
                     methodVisitor.visitVarInsn(ALOAD, 1)
-                    methodVisitor.visitMethodInsn(INVOKESTATIC, SensorsAnalyticsHookConfig.SENSORS_ANALYTICS_API, "trackDrawerOpened", "(Landroid/view/View;)V", false)
+                    methodVisitor.visitMethodInsn(INVOKESTATIC, DailyyogaMIITHookConfig.SENSORS_ANALYTICS_API, "trackDrawerOpened", "(Landroid/view/View;)V", false)
                     isHasTracked = true
                     return
                 } else if (nameDesc == 'onDrawerClosed(Landroid/view/View;)V') {
                     methodVisitor.visitVarInsn(ALOAD, 1)
-                    methodVisitor.visitMethodInsn(INVOKESTATIC, SensorsAnalyticsHookConfig.SENSORS_ANALYTICS_API, "trackDrawerClosed", "(Landroid/view/View;)V", false)
+                    methodVisitor.visitMethodInsn(INVOKESTATIC, DailyyogaMIITHookConfig.SENSORS_ANALYTICS_API, "trackDrawerClosed", "(Landroid/view/View;)V", false)
                     isHasTracked = true
                     return
                 }
@@ -474,7 +474,7 @@ class SensorsAnalyticsClassVisitor extends ClassVisitor {
                     return
                 }
 
-                if (!SensorsAnalyticsUtil.isTargetClassInSpecial(mClassName)) {
+                if (!DailyyogaMIITUtil.isTargetClassInSpecial(mClassName)) {
                     if ((mClassName.startsWith('android/') || mClassName.startsWith('androidx/')) && !(mClassName.startsWith("android/support/v17/leanback") || mClassName.startsWith("androidx/leanback"))) {
                         return
                     }
@@ -484,7 +484,7 @@ class SensorsAnalyticsClassVisitor extends ClassVisitor {
                     methodVisitor.visitVarInsn(ALOAD, 1)
                     methodVisitor.visitVarInsn(ALOAD, 2)
                     methodVisitor.visitVarInsn(ILOAD, 3)
-                    methodVisitor.visitMethodInsn(INVOKESTATIC, SensorsAnalyticsHookConfig.SENSORS_ANALYTICS_API, "trackListView", "(Landroid/widget/AdapterView;Landroid/view/View;I)V", false)
+                    methodVisitor.visitMethodInsn(INVOKESTATIC, DailyyogaMIITHookConfig.SENSORS_ANALYTICS_API, "trackListView", "(Landroid/widget/AdapterView;Landroid/view/View;I)V", false)
                     isHasTracked = true
                     return
                 }
@@ -498,7 +498,7 @@ class SensorsAnalyticsClassVisitor extends ClassVisitor {
                 if (eventName != null && eventName.length() != 0) {
                     methodVisitor.visitLdcInsn(eventName)
                     methodVisitor.visitLdcInsn(eventProperties)
-                    methodVisitor.visitMethodInsn(INVOKESTATIC, SensorsAnalyticsHookConfig.SENSORS_ANALYTICS_API, "track", "(Ljava/lang/String;Ljava/lang/String;)V", false)
+                    methodVisitor.visitMethodInsn(INVOKESTATIC, DailyyogaMIITHookConfig.SENSORS_ANALYTICS_API, "track", "(Ljava/lang/String;Ljava/lang/String;)V", false)
                     isHasTracked = true
                     return
                 }
@@ -508,56 +508,56 @@ class SensorsAnalyticsClassVisitor extends ClassVisitor {
                         methodVisitor.visitVarInsn(ALOAD, localIds.get(0))
                         methodVisitor.visitVarInsn(ALOAD, localIds.get(1))
                         methodVisitor.visitVarInsn(ILOAD, localIds.get(2))
-                        methodVisitor.visitMethodInsn(INVOKESTATIC, SensorsAnalyticsHookConfig.SENSORS_ANALYTICS_API, "trackListView", "(Landroid/widget/AdapterView;Landroid/view/View;I)V", false)
+                        methodVisitor.visitMethodInsn(INVOKESTATIC, DailyyogaMIITHookConfig.SENSORS_ANALYTICS_API, "trackListView", "(Landroid/widget/AdapterView;Landroid/view/View;I)V", false)
                         isHasTracked = true
                         return
                     } else if (mInterfaces.contains('android/widget/RadioGroup$OnCheckedChangeListener')
                             && nameDesc == 'onCheckedChanged(Landroid/widget/RadioGroup;I)V') {
-                        SensorsAnalyticsMethodCell sensorsAnalyticsMethodCell = SensorsAnalyticsHookConfig.INTERFACE_METHODS
+                        DailyyogaMIITMethodCell sensorsAnalyticsMethodCell = DailyyogaMIITHookConfig.INTERFACE_METHODS
                                 .get('android/widget/RadioGroup$OnCheckedChangeListeneronCheckedChanged(Landroid/widget/RadioGroup;I)V')
                         if (sensorsAnalyticsMethodCell != null) {
                             methodVisitor.visitVarInsn(ALOAD, localIds.get(0))
                             methodVisitor.visitVarInsn(ILOAD, localIds.get(1))
-                            methodVisitor.visitMethodInsn(INVOKESTATIC, SensorsAnalyticsHookConfig.SENSORS_ANALYTICS_API, sensorsAnalyticsMethodCell.agentName, sensorsAnalyticsMethodCell.agentDesc, false)
+                            methodVisitor.visitMethodInsn(INVOKESTATIC, DailyyogaMIITHookConfig.SENSORS_ANALYTICS_API, sensorsAnalyticsMethodCell.agentName, sensorsAnalyticsMethodCell.agentDesc, false)
                             isHasTracked = true
                             return
                         }
                     } else if (mInterfaces.contains('android/widget/CompoundButton$OnCheckedChangeListener')
                             && nameDesc == 'onCheckedChanged(Landroid/widget/CompoundButton;Z)V') {
-                        SensorsAnalyticsMethodCell sensorsAnalyticsMethodCell = SensorsAnalyticsHookConfig.INTERFACE_METHODS
+                        DailyyogaMIITMethodCell sensorsAnalyticsMethodCell = DailyyogaMIITHookConfig.INTERFACE_METHODS
                                 .get('android/widget/CompoundButton$OnCheckedChangeListeneronCheckedChanged(Landroid/widget/CompoundButton;Z)V')
                         if (sensorsAnalyticsMethodCell != null) {
                             methodVisitor.visitVarInsn(ALOAD, localIds.get(0))
-                            methodVisitor.visitMethodInsn(INVOKESTATIC, SensorsAnalyticsHookConfig.SENSORS_ANALYTICS_API, sensorsAnalyticsMethodCell.agentName, sensorsAnalyticsMethodCell.agentDesc, false)
+                            methodVisitor.visitMethodInsn(INVOKESTATIC, DailyyogaMIITHookConfig.SENSORS_ANALYTICS_API, sensorsAnalyticsMethodCell.agentName, sensorsAnalyticsMethodCell.agentDesc, false)
                             isHasTracked = true
                             return
                         }
                     } else if (mInterfaces.contains('android/content/DialogInterface$OnClickListener')
                             && nameDesc == 'onClick(Landroid/content/DialogInterface;I)V') {
-                        SensorsAnalyticsMethodCell sensorsAnalyticsMethodCell = SensorsAnalyticsHookConfig.INTERFACE_METHODS
+                        DailyyogaMIITMethodCell sensorsAnalyticsMethodCell = DailyyogaMIITHookConfig.INTERFACE_METHODS
                                 .get('android/content/DialogInterface$OnClickListeneronClick(Landroid/content/DialogInterface;I)V')
                         if (sensorsAnalyticsMethodCell != null) {
                             methodVisitor.visitVarInsn(ALOAD, localIds.get(0))
                             methodVisitor.visitVarInsn(ILOAD, localIds.get(1))
-                            methodVisitor.visitMethodInsn(INVOKESTATIC, SensorsAnalyticsHookConfig.SENSORS_ANALYTICS_API, sensorsAnalyticsMethodCell.agentName, sensorsAnalyticsMethodCell.agentDesc, false)
+                            methodVisitor.visitMethodInsn(INVOKESTATIC, DailyyogaMIITHookConfig.SENSORS_ANALYTICS_API, sensorsAnalyticsMethodCell.agentName, sensorsAnalyticsMethodCell.agentDesc, false)
                             isHasTracked = true
                             return
                         }
                     } else if (nameDesc == 'onMenuItemClick(Landroid/view/MenuItem;)Z') {
                         for (interfaceName in mInterfaces) {
-                            SensorsAnalyticsMethodCell sensorsAnalyticsMethodCell = SensorsAnalyticsHookConfig.INTERFACE_METHODS.get(interfaceName + nameDesc)
+                            DailyyogaMIITMethodCell sensorsAnalyticsMethodCell = DailyyogaMIITHookConfig.INTERFACE_METHODS.get(interfaceName + nameDesc)
                             if (sensorsAnalyticsMethodCell != null) {
                                 methodVisitor.visitVarInsn(ALOAD, localIds.get(0))
-                                methodVisitor.visitMethodInsn(INVOKESTATIC, SensorsAnalyticsHookConfig.SENSORS_ANALYTICS_API, sensorsAnalyticsMethodCell.agentName, sensorsAnalyticsMethodCell.agentDesc, false)
+                                methodVisitor.visitMethodInsn(INVOKESTATIC, DailyyogaMIITHookConfig.SENSORS_ANALYTICS_API, sensorsAnalyticsMethodCell.agentName, sensorsAnalyticsMethodCell.agentDesc, false)
                                 isHasTracked = true
                                 return
                             }
                         }
                     } else {
                         for (interfaceName in mInterfaces) {
-                            SensorsAnalyticsMethodCell sensorsAnalyticsMethodCell = SensorsAnalyticsHookConfig.INTERFACE_METHODS.get(interfaceName + nameDesc)
+                            DailyyogaMIITMethodCell sensorsAnalyticsMethodCell = DailyyogaMIITHookConfig.INTERFACE_METHODS.get(interfaceName + nameDesc)
                             if (sensorsAnalyticsMethodCell != null) {
-                                visitMethodWithLoadedParams(methodVisitor, INVOKESTATIC, SensorsAnalyticsHookConfig.SENSORS_ANALYTICS_API, sensorsAnalyticsMethodCell.agentName, sensorsAnalyticsMethodCell.agentDesc, sensorsAnalyticsMethodCell.paramsStart, sensorsAnalyticsMethodCell.paramsCount, sensorsAnalyticsMethodCell.opcodes)
+                                visitMethodWithLoadedParams(methodVisitor, INVOKESTATIC, DailyyogaMIITHookConfig.SENSORS_ANALYTICS_API, sensorsAnalyticsMethodCell.agentName, sensorsAnalyticsMethodCell.agentDesc, sensorsAnalyticsMethodCell.paramsStart, sensorsAnalyticsMethodCell.paramsCount, sensorsAnalyticsMethodCell.opcodes)
                                 isHasTracked = true
                                 return
                             }
@@ -572,9 +572,9 @@ class SensorsAnalyticsClassVisitor extends ClassVisitor {
             }
 
             void handleClassMethod(String className, String nameDesc) {
-                SensorsAnalyticsMethodCell sensorsAnalyticsMethodCell = SensorsAnalyticsHookConfig.CLASS_METHODS.get(className + nameDesc)
+                DailyyogaMIITMethodCell sensorsAnalyticsMethodCell = DailyyogaMIITHookConfig.CLASS_METHODS.get(className + nameDesc)
                 if (sensorsAnalyticsMethodCell != null) {
-                    visitMethodWithLoadedParams(methodVisitor, INVOKESTATIC, SensorsAnalyticsHookConfig.SENSORS_ANALYTICS_API, sensorsAnalyticsMethodCell.agentName, sensorsAnalyticsMethodCell.agentDesc, sensorsAnalyticsMethodCell.paramsStart, sensorsAnalyticsMethodCell.paramsCount, sensorsAnalyticsMethodCell.opcodes)
+                    visitMethodWithLoadedParams(methodVisitor, INVOKESTATIC, DailyyogaMIITHookConfig.SENSORS_ANALYTICS_API, sensorsAnalyticsMethodCell.agentName, sensorsAnalyticsMethodCell.agentDesc, sensorsAnalyticsMethodCell.paramsStart, sensorsAnalyticsMethodCell.paramsCount, sensorsAnalyticsMethodCell.opcodes)
                     isHasTracked = true
                 }
             }
@@ -582,9 +582,9 @@ class SensorsAnalyticsClassVisitor extends ClassVisitor {
             boolean handleRN() {
                 boolean result = false
                 switch (transformHelper.rnState) {
-                    case SensorsAnalyticsTransformHelper.RN_STATE.NOT_FOUND:
+                    case DailyyogaMIITTransformHelper.RN_STATE.NOT_FOUND:
                         break
-                    case SensorsAnalyticsTransformHelper.RN_STATE.HAS_VERSION:
+                    case DailyyogaMIITTransformHelper.RN_STATE.HAS_VERSION:
                         if (transformHelper.rnVersion > '2.0.0' && mSuperName == "com/facebook/react/uimanager/ViewGroupManager"
                                 && nameDesc == "addView(Landroid/view/ViewGroup;Landroid/view/View;I)V") {
                             methodVisitor.visitVarInsn(ALOAD, 2)
@@ -601,13 +601,13 @@ class SensorsAnalyticsClassVisitor extends ClassVisitor {
                             result = true
                         }
                         break
-                    case SensorsAnalyticsTransformHelper.RN_STATE.NO_VERSION:
+                    case DailyyogaMIITTransformHelper.RN_STATE.NO_VERSION:
                         if (nameDesc == 'setJSResponder(IIZ)V' && mClassName == 'com/facebook/react/uimanager/NativeViewHierarchyManager') {
                             methodVisitor.visitVarInsn(ALOAD, 0)
                             methodVisitor.visitVarInsn(ILOAD, 1)
                             methodVisitor.visitVarInsn(ILOAD, 2)
                             methodVisitor.visitVarInsn(ILOAD, 3)
-                            methodVisitor.visitMethodInsn(INVOKESTATIC, SensorsAnalyticsHookConfig.SENSORS_ANALYTICS_API, "trackRN", "(Ljava/lang/Object;IIZ)V", false)
+                            methodVisitor.visitMethodInsn(INVOKESTATIC, DailyyogaMIITHookConfig.SENSORS_ANALYTICS_API, "trackRN", "(Ljava/lang/Object;IIZ)V", false)
                             result = true
                         }
                         break
@@ -617,7 +617,7 @@ class SensorsAnalyticsClassVisitor extends ClassVisitor {
 
             void trackViewOnClick(MethodVisitor mv, int index) {
                 mv.visitVarInsn(ALOAD, index)
-                mv.visitMethodInsn(INVOKESTATIC, SensorsAnalyticsHookConfig.SENSORS_ANALYTICS_API, "trackViewOnClick", "(Landroid/view/View;)V", false)
+                mv.visitMethodInsn(INVOKESTATIC, DailyyogaMIITHookConfig.SENSORS_ANALYTICS_API, "trackViewOnClick", "(Landroid/view/View;)V", false)
             }
 
             /**
@@ -641,7 +641,7 @@ class SensorsAnalyticsClassVisitor extends ClassVisitor {
                 } else if (s == 'Lcom/sensorsdata/analytics/android/sdk/SensorsDataInstrumented;') {
                     isHasInstrumented = true
                 } else if (s == 'Lcom/sensorsdata/analytics/android/sdk/SensorsDataTrackEvent;') {
-                    return new AnnotationVisitor(SensorsAnalyticsUtil.ASM_VERSION) {
+                    return new AnnotationVisitor(DailyyogaMIITUtil.ASM_VERSION) {
                         @Override
                         void visit(String key, Object value) {
                             super.visit(key, value)
@@ -661,7 +661,7 @@ class SensorsAnalyticsClassVisitor extends ClassVisitor {
         }
         //如果java version 为1.5以前的版本，则使用JSRInlinerAdapter来删除JSR,RET指令
         if (version <= Opcodes.V1_5) {
-            return new SensorsAnalyticsJSRAdapter(SensorsAnalyticsUtil.ASM_VERSION, sensorsAnalyticsDefaultMethodVisitor, access, name, desc, signature, exceptions)
+            return new DailyyogaMIITJSRAdapter(DailyyogaMIITUtil.ASM_VERSION, sensorsAnalyticsDefaultMethodVisitor, access, name, desc, signature, exceptions)
         }
         return sensorsAnalyticsDefaultMethodVisitor
     }

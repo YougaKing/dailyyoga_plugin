@@ -23,7 +23,7 @@ class ClassNameAnalytics {
     boolean isSensorsDataAPI = false
     boolean isSensorsDataUtils = false
     boolean isSALog = false
-    def methodCells = new ArrayList<SensorsAnalyticsMethodCell>()
+    def methodCells = new ArrayList<DailyyogaMIITMethodCell>()
     boolean isAppWebViewInterface = false
 
     ClassNameAnalytics(String className) {

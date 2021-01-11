@@ -16,7 +16,7 @@
  */
 package com.dailyyoga.plugin.miit
 
-class SensorsAnalyticsMethodCell {
+class DailyyogaMIITMethodCell {
     /**
      * 原方法名
      */
@@ -50,13 +50,13 @@ class SensorsAnalyticsMethodCell {
      */
     List<Integer> opcodes
 
-    SensorsAnalyticsMethodCell(String name, String desc, String agentName) {
+    DailyyogaMIITMethodCell(String name, String desc, String agentName) {
         this.name = name
         this.desc = desc
         this.agentName = agentName
     }
 
-    SensorsAnalyticsMethodCell(String name, String desc, String parent, String agentName, String agentDesc, int paramsStart, int paramsCount, List<Integer> opcodes) {
+    DailyyogaMIITMethodCell(String name, String desc, String parent, String agentName, String agentDesc, int paramsStart, int paramsCount, List<Integer> opcodes) {
         this.name = name
         this.desc = desc
         this.parent = parent

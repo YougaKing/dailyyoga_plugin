@@ -20,7 +20,7 @@ import org.gradle.api.Action
 import org.gradle.internal.reflect.Instantiator
 
 
-class SensorsAnalyticsExtension {
+class DailyyogaMIITExtension {
     public boolean debug = false
     public boolean disableJar = false
     public boolean useInclude = false
@@ -32,13 +32,13 @@ class SensorsAnalyticsExtension {
     public ArrayList<String> exclude = []
     public ArrayList<String> include = []
 
-    public SensorsAnalyticsSDKExtension sdk
+    public DailyyogaMIITSDKExtension sdk
 
-    SensorsAnalyticsExtension(Instantiator ins) {
-        sdk = ins.newInstance(SensorsAnalyticsSDKExtension)
+    DailyyogaMIITExtension(Instantiator ins) {
+        sdk = ins.newInstance(DailyyogaMIITSDKExtension)
     }
 
-    void sdk(Action<? super SensorsAnalyticsSDKExtension> action) {
+    void sdk(Action<? super DailyyogaMIITSDKExtension> action) {
         action.execute(sdk)
     }
 

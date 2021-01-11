@@ -22,12 +22,12 @@ import org.gradle.api.Project
 import org.gradle.internal.reflect.Instantiator
 import org.gradle.invocation.DefaultGradle
 
-class SensorsAnalyticsPlugin implements Plugin<Project> {
+class DailyyogaMIITPlugin implements Plugin<Project> {
     @Override
     void apply(Project project) {
         Instantiator ins = ((DefaultGradle) project.getGradle()).getServices().get(Instantiator)
         def args = [ins] as Object[]
-        SensorsAnalyticsExtension extension = project.extensions.create("sensorsAnalytics", SensorsAnalyticsExtension, args)
+        DailyyogaMIITExtension extension = project.extensions.create("sensorsAnalytics", DailyyogaMIITExtension, args)
 
         boolean disableSensorsAnalyticsPlugin = false
         boolean disableSensorsAnalyticsMultiThreadBuild = false
@@ -44,11 +44,11 @@ class SensorsAnalyticsPlugin implements Plugin<Project> {
         }
         if (!disableSensorsAnalyticsPlugin) {
             AppExtension appExtension = project.extensions.findByType(AppExtension.class)
-            SensorsAnalyticsTransformHelper transformHelper = new SensorsAnalyticsTransformHelper(extension, appExtension)
+            DailyyogaMIITTransformHelper transformHelper = new DailyyogaMIITTransformHelper(extension, appExtension)
             transformHelper.disableSensorsAnalyticsIncremental = disableSensorsAnalyticsIncrementalBuild
             transformHelper.disableSensorsAnalyticsMultiThread = disableSensorsAnalyticsMultiThreadBuild
             transformHelper.isHookOnMethodEnter = isHookOnMethodEnter
-            appExtension.registerTransform(new SensorsAnalyticsTransform(transformHelper))
+            appExtension.registerTransform(new DailyyogaMIITTransform(transformHelper))
         } else {
             Logger.error("------------您已关闭了神策插件--------------")
         }

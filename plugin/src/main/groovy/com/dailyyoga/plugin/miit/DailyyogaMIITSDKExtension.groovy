@@ -16,7 +16,7 @@
  */
 package com.dailyyoga.plugin.miit
 
-class SensorsAnalyticsSDKExtension {
+class DailyyogaMIITSDKExtension {
     // 同SensorsAnalyticsSDKHookConfig中方法对应, disableIMEI,disableLog,disableJsInterface，disableAndroidID
     boolean disableIMEI = false
     boolean disableLog = false

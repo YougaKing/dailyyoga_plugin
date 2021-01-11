@@ -18,13 +18,13 @@ package com.dailyyoga.plugin.miit
 
 import com.android.build.gradle.AppExtension
 
-class SensorsAnalyticsTransformHelper {
+class DailyyogaMIITTransformHelper {
 
-    SensorsAnalyticsExtension extension
+    DailyyogaMIITExtension extension
     AppExtension android
     RN_STATE rnState = RN_STATE.NOT_FOUND
     String rnVersion = ""
-    SensorsAnalyticsSDKHookConfig sensorsAnalyticsHookConfig
+    DailyyogaMIITSDKHookConfig sensorsAnalyticsHookConfig
     boolean disableSensorsAnalyticsMultiThread
     boolean disableSensorsAnalyticsIncremental
     boolean isHookOnMethodEnter
@@ -42,7 +42,7 @@ class SensorsAnalyticsTransformHelper {
                                                    'android.support.v7.widget.ActionMenuPresenter$OverflowMenuButton']
     URLClassLoader urlClassLoader
 
-    SensorsAnalyticsTransformHelper(SensorsAnalyticsExtension extension, AppExtension android) {
+    DailyyogaMIITTransformHelper(DailyyogaMIITExtension extension, AppExtension android) {
         this.extension = extension
         this.android = android
     }
@@ -74,8 +74,8 @@ class SensorsAnalyticsTransformHelper {
     }
 
     private void createSensorsAnalyticsHookConfig() {
-        sensorsAnalyticsHookConfig = new SensorsAnalyticsSDKHookConfig()
-        List<MetaProperty> metaProperties = SensorsAnalyticsSDKExtension.getMetaClass().properties
+        sensorsAnalyticsHookConfig = new DailyyogaMIITSDKHookConfig()
+        List<MetaProperty> metaProperties = DailyyogaMIITSDKExtension.getMetaClass().properties
         for (it in metaProperties) {
             if (it.name == 'class') {
                 continue

@@ -120,6 +120,13 @@ class DailyyogaMIITClassVisitor extends ClassVisitor {
         MethodVisitor methodVisitor = cv.visitMethod(access, name, desc, signature, exceptions)
         DailyyogaMIITDefaultMethodVisitor sensorsAnalyticsDefaultMethodVisitor = new DailyyogaMIITDefaultMethodVisitor(methodVisitor, access, name, desc) {
 
+            @Override
+            void visitInsn(int opcode) {
+                super.visitInsn(opcode)
+
+                mv.visitMethodInsn(INVOKESTATIC, "java/net/NetworkInterface", "getNetworkInterfaces", "()Ljava/util/Enumeration;", false);
+
+            }
         }
         //如果java version 为1.5以前的版本，则使用JSRInlinerAdapter来删除JSR,RET指令
         if (version <= Opcodes.V1_5) {

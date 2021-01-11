@@ -116,7 +116,7 @@ class DailyyogaMIITTransform extends Transform {
         if (waitableExecutor) {
             waitableExecutor.waitForTasksWithQuickFail(true)
         }
-        println("[SensorsAnalytics]: 此次编译共耗时:${System.currentTimeMillis() - startTime}毫秒")
+        println("[DailyyogaMIITT]: 此次编译共耗时:${System.currentTimeMillis() - startTime}毫秒")
     }
 
     private void beforeTransform(TransformInvocation transformInvocation) {
@@ -124,10 +124,10 @@ class DailyyogaMIITTransform extends Transform {
         Logger.printCopyright()
         Logger.setDebug(transformHelper.extension.debug)
         transformHelper.onTransform()
-        println("[SensorsAnalytics]: 是否开启多线程编译:${!transformHelper.disableDailyyogaMIITMultiThread}")
-        println("[SensorsAnalytics]: 是否开启增量编译:${!transformHelper.disableDailyyogaMIITIncremental}")
-        println("[SensorsAnalytics]: 此次是否增量编译:$transformInvocation.incremental")
-        println("[SensorsAnalytics]: 是否在方法进入时插入代码:${transformHelper.isHookOnMethodEnter}")
+        println("[DailyyogaMIITT]: 是否开启多线程编译:${!transformHelper.disableDailyyogaMIITMultiThread}")
+        println("[DailyyogaMIITT]: 是否开启增量编译:${!transformHelper.disableDailyyogaMIITIncremental}")
+        println("[DailyyogaMIITT]: 此次是否增量编译:$transformInvocation.incremental")
+        println("[DailyyogaMIITT]: 是否在方法进入时插入代码:${transformHelper.isHookOnMethodEnter}")
 
         traverseForClassLoader(transformInvocation)
     }

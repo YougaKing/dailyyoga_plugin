@@ -61,7 +61,7 @@ class DailyyogaMIITTransformHelper {
     }
 
     void onTransform() {
-        println("sensorsAnalytics {\n" + extension + "\n}")
+        println("dailyyogaMIIT {\n" + extension + "\n}")
         ArrayList<String> excludePackages = extension.exclude
         if (excludePackages != null) {
             exclude.addAll(excludePackages)

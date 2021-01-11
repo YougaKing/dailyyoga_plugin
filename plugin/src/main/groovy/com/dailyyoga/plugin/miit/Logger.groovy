@@ -59,7 +59,7 @@ class Logger {
 
     def static error(Object msg) {
         try {
-            println("${LogUI.C_ERROR.value}[SensorsAnalytics]: ${msg}${LogUI.E_NORMAL.value}")
+            println("${LogUI.C_ERROR.value}[DailyyogaMIITT]: ${msg}${LogUI.E_NORMAL.value}")
         } catch (Exception e) {
             e.printStackTrace()
         }
@@ -67,7 +67,7 @@ class Logger {
 
     def static warn(Object msg) {
         try {
-            println("${LogUI.C_WARN.value}[SensorsAnalytics]: ${msg}${LogUI.E_NORMAL.value}")
+            println("${LogUI.C_WARN.value}[DailyyogaMIITT]: ${msg}${LogUI.E_NORMAL.value}")
         } catch (Exception e) {
             e.printStackTrace()
         }
@@ -79,7 +79,7 @@ class Logger {
     def static info(Object msg) {
         if (debug)
             try {
-                println "[SensorsAnalytics]: ${msg}"
+                println "[DailyyogaMIITT]: ${msg}"
             } catch (Exception e) {
                 e.printStackTrace()
             }

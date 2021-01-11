@@ -24,7 +24,6 @@ class DailyyogaMIITExtension {
     public boolean debug = false
     public boolean useInclude = false
     public boolean lambdaEnabled = true
-    public boolean autoHandleWebView = true
     public boolean addUCJavaScriptInterface = false
     public boolean lambdaParamOptimize = false
 
@@ -62,7 +61,6 @@ class DailyyogaMIITExtension {
         }
         return "\tdebug=" + debug + "\n" +
                 "\tuseInclude=" + useInclude + "\n" +
-                "\tautoHandleWebView=" + autoHandleWebView + "\n" +
                 "\taddUCJavaScriptInterface=" + addUCJavaScriptInterface + "\n" +
                 "\tlambdaParamOptimize=" + lambdaParamOptimize + "\n" +
                 "\tlambdaEnabled=" + lambdaEnabled + "\n" +

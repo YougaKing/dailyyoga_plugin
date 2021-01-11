@@ -90,61 +90,12 @@ class DailyyogaMIITClassVisitor extends ClassVisitor {
     void visitEnd() {
         super.visitEnd()
 
-        if (DailyyogaMIITUtil.isInstanceOfFragment(mSuperName)) {
-            MethodVisitor mv
-            // 添加剩下的方法，确保super.onHiddenChanged(hidden);等先被调用
-            Iterator<Map.Entry<String, DailyyogaMIITMethodCell>> iterator = DailyyogaMIITHookConfig.FRAGMENT_METHODS.entrySet().iterator()
-            while (iterator.hasNext()) {
-                Map.Entry<String, DailyyogaMIITMethodCell> entry = iterator.next()
-                String key = entry.getKey()
-                DailyyogaMIITMethodCell methodCell = entry.getValue()
-                if (visitedFragMethods.contains(key)) {
-                    continue
-                }
-                mv = classVisitor.visitMethod(Opcodes.ACC_PUBLIC, methodCell.name, methodCell.desc, null, null)
-                mv.visitCode()
-                // call super
-                visitMethodWithLoadedParams(mv, Opcodes.INVOKESPECIAL, mSuperName, methodCell.name, methodCell.desc, methodCell.paramsStart, methodCell.paramsCount, methodCell.opcodes)
-                // call injected method
-                visitMethodWithLoadedParams(mv, Opcodes.INVOKESTATIC, DailyyogaMIITHookConfig.SENSORS_ANALYTICS_API, methodCell.agentName, methodCell.agentDesc, methodCell.paramsStart, methodCell.paramsCount, methodCell.opcodes)
-                mv.visitInsn(Opcodes.RETURN)
-                mv.visitMaxs(methodCell.paramsCount, methodCell.paramsCount)
-                mv.visitEnd()
-                mv.visitAnnotation("Lcom/sensorsdata/analytics/android/sdk/SensorsDataInstrumented;", false)
-            }
-        }
-
         for (cell in methodCells) {
             transformHelper.sensorsAnalyticsHookConfig."${cell.agentName}"(classVisitor, cell)
         }
         if (Logger.debug) {
             Logger.info("结束扫描类：${mClassName}\n")
         }
-    }
-
-
-    @Override
-    FieldVisitor visitField(int access, String name, String descriptor, String signature, Object value) {
-        if (classNameAnalytics.isSensorsDataAPI) {
-            if ('VERSION' == name) {
-                String version = (String) value
-                if (DailyyogaMIITUtil.compareVersion(DailyyogaMIITTransform.MIN_SDK_VERSION, version) > 0) {
-                    String errMessage = "你目前集成的神策埋点 SDK 版本号为 v${version}，请升级到 v${DailyyogaMIITTransform.MIN_SDK_VERSION} 及以上的版本。详情请参考：https://github.com/sensorsdata/sa-sdk-android"
-                    Logger.error(errMessage)
-                    throw new Error(errMessage)
-                }
-            } else if ('MIN_PLUGIN_VERSION' == name) {
-                String minPluginVersion = (String) value
-                if (minPluginVersion != "" && minPluginVersion != null) {
-                    if (DailyyogaMIITUtil.compareVersion(DailyyogaMIITTransform.VERSION, minPluginVersion) < 0) {
-                        String errMessage = "你目前集成的神策插件版本号为 v${DailyyogaMIITTransform.VERSION}，请升级到 v${minPluginVersion} 及以上的版本。详情请参考：https://github.com/sensorsdata/sa-sdk-android-plugin2"
-                        Logger.error(errMessage)
-                        throw new Error(errMessage)
-                    }
-                }
-            }
-        }
-        return super.visitField(access, name, descriptor, signature, value)
     }
 
     /**
@@ -167,9 +118,6 @@ class DailyyogaMIITClassVisitor extends ClassVisitor {
         }
 
         MethodVisitor methodVisitor = cv.visitMethod(access, name, desc, signature, exceptions)
-        if (transformHelper.extension != null && transformHelper.extension.autoHandleWebView && transformHelper.urlClassLoader != null) {
-            methodVisitor = new DailyyogaMIITWebViewMethodVisitor(methodVisitor, access, name, desc, transformHelper, mClassName, mSuperName)
-        }
         DailyyogaMIITDefaultMethodVisitor sensorsAnalyticsDefaultMethodVisitor = new DailyyogaMIITDefaultMethodVisitor(methodVisitor, access, name, desc) {
             boolean isSensorsDataTrackViewOnClickAnnotation = false
             boolean isSensorsDataIgnoreTrackOnClick = false

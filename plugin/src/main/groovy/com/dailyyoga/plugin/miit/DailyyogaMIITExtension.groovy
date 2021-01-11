@@ -22,7 +22,6 @@ import org.gradle.internal.reflect.Instantiator
 
 class DailyyogaMIITExtension {
     public boolean debug = false
-    public boolean disableJar = false
     public boolean useInclude = false
     public boolean lambdaEnabled = true
     public boolean autoHandleWebView = true
@@ -62,7 +61,6 @@ class DailyyogaMIITExtension {
             }
         }
         return "\tdebug=" + debug + "\n" +
-                "\tdisableJar=" + disableJar + "\n" +
                 "\tuseInclude=" + useInclude + "\n" +
                 "\tautoHandleWebView=" + autoHandleWebView + "\n" +
                 "\taddUCJavaScriptInterface=" + addUCJavaScriptInterface + "\n" +

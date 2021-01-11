@@ -22,7 +22,6 @@ class DailyyogaMIITTransformHelper {
 
     DailyyogaMIITExtension extension
     AppExtension android
-    RN_STATE rnState = RN_STATE.NOT_FOUND
     String rnVersion = ""
     DailyyogaMIITSDKHookConfig sensorsAnalyticsHookConfig
     boolean disableDailyyogaMIITMultiThread
@@ -88,19 +87,7 @@ class DailyyogaMIITTransformHelper {
 
     ClassNameAnalytics analytics(String className) {
         ClassNameAnalytics classNameAnalytics = new ClassNameAnalytics(className)
-        if (classNameAnalytics.isSDKFile()) {
-            def cellHashMap = sensorsAnalyticsHookConfig.methodCells
-            cellHashMap.each {
-                key, value ->
-                    def methodCellList = value.get(className.replace('.', '/'))
-                    if (methodCellList != null) {
-                        classNameAnalytics.methodCells.addAll(methodCellList)
-                    }
-            }
-            if (classNameAnalytics.methodCells.size() > 0 || classNameAnalytics.isSensorsDataAPI || (classNameAnalytics.isAppWebViewInterface && extension.addUCJavaScriptInterface)) {
-                classNameAnalytics.isShouldModify = true
-            }
-        } else if (!classNameAnalytics.isAndroidGenerated()) {
+        if (!classNameAnalytics.isAndroidGenerated()) {
             for (pkgName in special) {
                 if (className.startsWith(pkgName)) {
                     classNameAnalytics.isShouldModify = true
@@ -127,10 +114,6 @@ class DailyyogaMIITTransformHelper {
             }
         }
         return classNameAnalytics
-    }
-
-    enum RN_STATE{
-        NOT_FOUND, NO_VERSION, HAS_VERSION
     }
 }
 

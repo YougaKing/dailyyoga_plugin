@@ -27,7 +27,6 @@ import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.ClassWriter
 
-import java.lang.reflect.Field
 import java.util.concurrent.Callable
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
@@ -159,23 +158,6 @@ class DailyyogaMIITTransform extends Transform {
         def urlArray = urlList as URL[]
         urlClassLoader = new URLClassLoader(urlArray)
         transformHelper.urlClassLoader = urlClassLoader
-        checkRNState()
-    }
-
-    private void checkRNState() {
-        try {
-            Class rnClazz = urlClassLoader.loadClass("com.sensorsdata.analytics.RNSensorsAnalyticsPackage")
-            try {
-                Field versionField = rnClazz.getDeclaredField("VERSION")
-                versionField.setAccessible(true)
-                transformHelper.rnVersion = versionField.get(null) as String
-                transformHelper.rnState = DailyyogaMIITTransformHelper.RN_STATE.HAS_VERSION
-            } catch (Exception e) {
-                transformHelper.rnState = DailyyogaMIITTransformHelper.RN_STATE.NO_VERSION
-            }
-        } catch (Exception e) {
-            transformHelper.rnState = DailyyogaMIITTransformHelper.RN_STATE.NOT_FOUND
-        }
     }
 
     void forEachDirectory(boolean isIncremental, DirectoryInput directoryInput, TransformOutputProvider outputProvider, Context context) {
@@ -276,12 +258,10 @@ class DailyyogaMIITTransform extends Transform {
     }
 
     void transformJar(File dest, JarInput jarInput, Context context) {
-        def modifiedJar = null
-        if (!transformHelper.extension.disableJar || jarInput.file.absolutePath.contains('SensorsAnalyticsSDK')) {
-            Logger.info("开始遍历 jar：" + jarInput.file.absolutePath)
-            modifiedJar = modifyJarFile(jarInput.file, context.getTemporaryDir())
-            Logger.info("结束遍历 jar：" + jarInput.file.absolutePath)
-        }
+        Logger.info("开始遍历 jar：" + jarInput.file.absolutePath)
+        def modifiedJar = modifyJarFile(jarInput.file, context.getTemporaryDir())
+        Logger.info("结束遍历 jar：" + jarInput.file.absolutePath)
+
         if (modifiedJar == null) {
             modifiedJar = jarInput.file
         }

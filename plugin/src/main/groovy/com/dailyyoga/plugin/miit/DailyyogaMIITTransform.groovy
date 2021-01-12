@@ -150,7 +150,7 @@ class DailyyogaMIITTransform extends Transform {
         timingLogger.addSplit("configure context")
 
         def executor =
-                new DroidAssistExecutor(
+                new DailyyogaMIITExecutor(
                         context,
                         outputProvider,
                         isIncremental)

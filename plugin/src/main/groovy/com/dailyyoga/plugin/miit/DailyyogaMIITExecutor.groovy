@@ -1,0 +1,111 @@
+package com.dailyyoga.plugin.miit
+
+import com.android.build.api.transform.DirectoryInput
+import com.android.build.api.transform.JarInput
+import com.android.build.api.transform.QualifiedContent
+import com.android.build.api.transform.TransformInput
+import com.android.build.api.transform.TransformOutputProvider
+import com.dailyyoga.plugin.miit.tasks.DirInputTask
+import com.dailyyoga.plugin.miit.tasks.InputTask
+import com.dailyyoga.plugin.miit.tasks.JarInputTask
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+import org.apache.commons.io.FileUtils
+
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.stream.Stream
+
+class DailyyogaMIITExecutor {
+
+
+    static class BuildContext {
+        def totalCounter = new AtomicInteger(0)
+        def affectedCounter = new AtomicInteger(0)
+        File temporaryDir
+    }
+
+    TransformOutputProvider outputProvider
+    boolean incremental
+    DailyyogaMIITContext context
+    BuildContext buildContext
+    File destCacheFile
+    def destCacheMapping = new ConcurrentHashMap<String, String>()
+
+    DailyyogaMIITExecutor(
+            DailyyogaMIITContext context,
+            TransformOutputProvider outputProvider,
+            boolean incremental) {
+        this.outputProvider = outputProvider
+        this.incremental = incremental
+        this.context = context
+
+        def temporaryDir = context.context.temporaryDir
+        buildContext = new BuildContext(temporaryDir: temporaryDir)
+
+        def buildDir = context.project.buildDir
+        def variant = context.context.variantName
+        destCacheFile =
+                new File("$buildDir/intermediates/droidAssist/$variant/dest-cache.json")
+
+        if (destCacheFile.exists()) {
+            if (incremental) {
+                destCacheMapping.putAll(new JsonSlurper().parse(destCacheFile))
+            } else {
+                FileUtils.forceDelete(destCacheFile)
+            }
+        }
+    }
+
+
+    void execute(Collection<TransformInput> inputs) {
+        def dirStream = inputs.stream()
+                .flatMap { it.directoryInputs.stream() }
+
+        def jarStream = inputs.stream()
+                .flatMap { it.jarInputs.stream() }
+
+        Stream.concat(dirStream, jarStream)
+                .parallel()
+                .map { createTask(it) }
+                .filter { it != null }
+                .forEach { it.run() }
+
+        FileUtils.forceMkdir(destCacheFile.parentFile)
+        destCacheFile.write(JsonOutput.toJson(destCacheMapping))
+    }
+
+    InputTask createTask(QualifiedContent content) {
+        def taskInput =
+                new InputTask.TaskInput(
+                        input: content,
+                        dest: getDestFile(content),
+                        incremental: incremental)
+        if (content instanceof JarInput) {
+            return new JarInputTask(context, buildContext, taskInput)
+        }
+        if (content instanceof DirectoryInput) {
+            return new DirInputTask(context, buildContext, taskInput)
+        }
+        return null
+    }
+
+    File getDestFile(QualifiedContent content) {
+        def path = destCacheMapping.get(content.name)
+        def buildDir = context.project.buildDir
+        File dest = path == null ? null : new File(buildDir, path)
+        if (dest == null || !dest.exists()) {
+            dest = GradleUtils.getTransformOutputLocation(outputProvider, content)
+            destCacheMapping.put(content.name, buildDir.toPath().relativize(dest.toPath()).toString())
+        }
+        return dest
+    }
+
+    int getAffectedCount() {
+        return buildContext.affectedCounter.get()
+    }
+
+    int getClassCount() {
+        return buildContext.totalCounter.get()
+    }
+}

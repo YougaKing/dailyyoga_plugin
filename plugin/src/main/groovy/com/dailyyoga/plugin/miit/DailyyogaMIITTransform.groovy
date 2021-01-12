@@ -18,7 +18,6 @@ package com.dailyyoga.plugin.miit
 
 import com.android.build.api.transform.*
 import com.android.build.gradle.internal.pipeline.TransformManager
-import com.dailyyoga.plugin.DailyyogaMIITContext
 import com.dailyyoga.plugin.miit.util.GradleUtils
 import com.dailyyoga.plugin.miit.util.Logger
 import com.dailyyoga.plugin.miit.util.TimingLogger

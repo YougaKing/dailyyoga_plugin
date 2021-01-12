@@ -2,6 +2,7 @@ package com.dailyyoga.plugin
 
 import com.android.build.api.transform.Context
 import com.android.build.api.transform.TransformInput
+import com.dailyyoga.plugin.miit.DailyyogaMIITConfiguration
 import com.dailyyoga.plugin.miit.DailyyogaMIITExtension
 import com.dailyyoga.plugin.miit.ex.DailyyogaMIITException
 import javassist.ClassPool
@@ -66,17 +67,16 @@ class DailyyogaMIITContext {
                 .parallelStream()
                 .flatMap {
                     try {
-                        def list = new DroidAssistConfiguration(project).parse(it)
+                        def list = new DailyyogaMIITConfiguration(project).parse(it)
                         return list.stream().peek {
                             transformer ->
                                 transformer.classFilterSpec.addIncludes(extension.includes)
                                 transformer.classFilterSpec.addExcludes(extension.excludes)
                                 transformer.setClassPool(classPool)
-                                transformer.setAbortOnUndefinedClass(extension.abortOnUndefinedClass)
                                 transformer.check()
                         }
                     } catch (Throwable e) {
-                        throw new DroidAssistException("Unable to load configuration," +
+                        throw new DailyyogaMIITException("Unable to load configuration," +
                                 " unexpected exception occurs when parsing config file:$it, " +
                                 "What went wrong:\n${e.message}", e)
                     }

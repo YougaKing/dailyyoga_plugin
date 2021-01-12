@@ -19,31 +19,27 @@ package com.dailyyoga.plugin.miit
 import com.android.build.gradle.AppExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.internal.reflect.Instantiator
-import org.gradle.invocation.DefaultGradle
 
 class DailyyogaMIITPlugin implements Plugin<Project> {
     @Override
     void apply(Project project) {
-        Instantiator ins = ((DefaultGradle) project.getGradle()).getServices().get(Instantiator)
-        def args = [ins] as Object[]
-        DailyyogaMIITExtension extension = project.extensions.create("dailyyogaMIIT", DailyyogaMIITExtension, args)
+        DailyyogaMIITExtension extension = project.extensions.create("dailyyogaMIIT", DailyyogaMIITExtension)
 
-        boolean disableDailyyogaMIITPlugin = false
-        boolean disableDailyyogaMIITMultiThreadBuild = false
-        boolean disableDailyyogaMIITIncrementalBuild = false
+        boolean enable = false
+        boolean multiThread = false
+        boolean incremental = false
         Properties properties = new Properties()
         if (project.rootProject.file('gradle.properties').exists()) {
             properties.load(project.rootProject.file('gradle.properties').newDataInputStream())
-            disableDailyyogaMIITPlugin = Boolean.parseBoolean(properties.getProperty("dailyyogaMIIT.disablePlugin", "false"))
-            disableDailyyogaMIITMultiThreadBuild = Boolean.parseBoolean(properties.getProperty("dailyyogaMIIT.disableMultiThreadBuild", "false"))
-            disableDailyyogaMIITIncrementalBuild = Boolean.parseBoolean(properties.getProperty("dailyyogaMIIT.disableIncrementalBuild", "false"))
+            enable = Boolean.parseBoolean(properties.getProperty("dailyyogaMIIT.enable", "true"))
+            multiThread = Boolean.parseBoolean(properties.getProperty("dailyyogaMIIT.multiThread", "true"))
+            incremental = Boolean.parseBoolean(properties.getProperty("dailyyogaMIIT.incremental", "true"))
         }
-        if (!disableDailyyogaMIITPlugin) {
+        if (enable) {
             AppExtension appExtension = project.extensions.findByType(AppExtension.class)
             DailyyogaMIITTransformHelper transformHelper = new DailyyogaMIITTransformHelper(extension, appExtension)
-            transformHelper.disableDailyyogaMIITIncremental = disableDailyyogaMIITIncrementalBuild
-            transformHelper.disableDailyyogaMIITMultiThread = disableDailyyogaMIITMultiThreadBuild
+            transformHelper.disableDailyyogaMIITIncremental = incremental
+            transformHelper.disableDailyyogaMIITMultiThread = multiThread
             transformHelper.isHookOnMethodEnter = isHookOnMethodEnter
             appExtension.registerTransform(new DailyyogaMIITTransform(transformHelper))
         } else {

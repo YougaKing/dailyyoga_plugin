@@ -16,27 +16,34 @@
  */
 package com.dailyyoga.plugin.miit
 
-import org.gradle.api.Action
-import org.gradle.internal.reflect.Instantiator
-
+import com.google.common.collect.Lists
 
 class DailyyogaMIITExtension {
-    public boolean debug = false
-    public boolean useInclude = false
-    public boolean lambdaEnabled = true
-    public boolean lambdaParamOptimize = false
+    boolean enable = true
+    boolean debug
+    List<File> configFiles = Lists.newArrayList()
+    File logDir
+    boolean abortOnUndefinedClass = false
+    boolean incremental = true
+    boolean multiThread = true
 
-    public ArrayList<String> exclude = []
-    public ArrayList<String> include = []
+    List<String> includes = Lists.newArrayList()
+    List<String> excludes = Lists.newArrayList()
 
-    public DailyyogaMIITSDKExtension sdk
-
-    DailyyogaMIITExtension(Instantiator ins) {
-        sdk = ins.newInstance(DailyyogaMIITSDKExtension)
+    void exclude(String... filter) {
+        excludes.addAll(filter)
     }
 
-    void sdk(Action<? super DailyyogaMIITSDKExtension> action) {
-        action.execute(sdk)
+    void include(String... filter) {
+        includes.addAll(filter)
+    }
+
+    void config(File... file) {
+        configFiles.addAll(file)
+    }
+
+    List<File> getConfig() {
+        return configFiles
     }
 
     @Override
@@ -58,14 +65,15 @@ class DailyyogaMIITExtension {
                 includeBuilder.append(",")
             }
         }
-        return "\tdebug=" + debug + "\n" +
-                "\tuseInclude=" + useInclude + "\n" +
-                "\tlambdaParamOptimize=" + lambdaParamOptimize + "\n" +
-                "\tlambdaEnabled=" + lambdaEnabled + "\n" +
+        return "\n{" +
+                "\n    enable=" + enable +
+                "\n    debug=" + debug +
+                "\n    config=" + configFiles +
+                "\n    logDir=" + logDir +
                 "\texclude=[" + excludeBuilder.toString() + "]" + "\n" +
                 "\tinclude=[" + includeBuilder.toString() + "]" + "\n" +
-                "\tsdk {\n" + sdk + "\n" +
-                "\t}"
+                '\n}'
+
     }
 }
 

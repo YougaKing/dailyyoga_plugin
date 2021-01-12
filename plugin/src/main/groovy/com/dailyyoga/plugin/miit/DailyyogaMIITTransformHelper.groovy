@@ -24,21 +24,6 @@ class DailyyogaMIITTransformHelper {
     AppExtension android
     String rnVersion = ""
     DailyyogaMIITSDKHookConfig sensorsAnalyticsHookConfig
-    boolean disableDailyyogaMIITMultiThread
-    boolean disableDailyyogaMIITIncremental
-    boolean isHookOnMethodEnter
-    HashSet<String> exclude = new HashSet<>(['com.sensorsdata.analytics.android.sdk', 'android.support', 'androidx', 'com.qiyukf', 'android.arch', 'com.google.android', "com.tencent.smtt"])
-    HashSet<String> include = new HashSet<>(['butterknife.internal.DebouncingOnClickListener',
-                                             'com.jakewharton.rxbinding.view.ViewClickOnSubscribe',
-                                             'com.facebook.react.uimanager.NativeViewHierarchyManager'])
-    /** 将一些特例需要排除在外 */
-    public static final HashSet<String> special = ['android.support.design.widget.TabLayout$ViewPagerOnTabSelectedListener',
-                                                   'com.google.android.material.tabs.TabLayout$ViewPagerOnTabSelectedListener',
-                                                   'android.support.v7.app.ActionBarDrawerToggle',
-                                                   'androidx.appcompat.app.ActionBarDrawerToggle',
-                                                   'androidx.appcompat.widget.ActionMenuPresenter$OverflowMenuButton',
-                                                   'android.widget.ActionMenuPresenter$OverflowMenuButton',
-                                                   'android.support.v7.widget.ActionMenuPresenter$OverflowMenuButton']
     URLClassLoader urlClassLoader
 
     DailyyogaMIITTransformHelper(DailyyogaMIITExtension extension, AppExtension android) {
@@ -61,11 +46,11 @@ class DailyyogaMIITTransformHelper {
 
     void onTransform() {
         println("dailyyogaMIIT {\n" + extension + "\n}")
-        ArrayList<String> excludePackages = extension.exclude
+        ArrayList<String> excludePackages = extension.excludes
         if (excludePackages != null) {
             exclude.addAll(excludePackages)
         }
-        ArrayList<String> includePackages = extension.include
+        ArrayList<String> includePackages = extension.includes
         if (includePackages != null) {
             include.addAll(includePackages)
         }

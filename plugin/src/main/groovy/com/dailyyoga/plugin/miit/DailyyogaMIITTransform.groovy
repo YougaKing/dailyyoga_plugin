@@ -33,6 +33,7 @@ import java.util.jar.JarFile
 import java.util.jar.JarOutputStream
 
 class DailyyogaMIITTransform extends Transform {
+
     private DailyyogaMIITTransformHelper transformHelper
     public static final String VERSION = "3.3.1"
     public static final String MIN_SDK_VERSION = "4.3.2"
@@ -41,7 +42,7 @@ class DailyyogaMIITTransform extends Transform {
 
     DailyyogaMIITTransform(DailyyogaMIITTransformHelper transformHelper) {
         this.transformHelper = transformHelper
-        if (!transformHelper.disableDailyyogaMIITMultiThread) {
+        if (transformHelper.extension.multiThread) {
             waitableExecutor = WaitableExecutor.useGlobalSharedThreadPool()
         }
     }
@@ -63,7 +64,7 @@ class DailyyogaMIITTransform extends Transform {
 
     @Override
     boolean isIncremental() {
-        return !transformHelper.disableDailyyogaMIITIncremental
+        return transformHelper.extension.incremental
     }
 
     @Override
@@ -123,10 +124,9 @@ class DailyyogaMIITTransform extends Transform {
         Logger.printCopyright()
         Logger.setDebug(transformHelper.extension.debug)
         transformHelper.onTransform()
-        println("[DailyyogaMIITT]: 是否开启多线程编译:${!transformHelper.disableDailyyogaMIITMultiThread}")
-        println("[DailyyogaMIITT]: 是否开启增量编译:${!transformHelper.disableDailyyogaMIITIncremental}")
+        println("[DailyyogaMIITT]: 是否开启多线程编译:${transformHelper.extension.multiThread}")
+        println("[DailyyogaMIITT]: 是否开启增量编译:${transformHelper.extension.incremental}")
         println("[DailyyogaMIITT]: 此次是否增量编译:$transformInvocation.incremental")
-        println("[DailyyogaMIITT]: 是否在方法进入时插入代码:${transformHelper.isHookOnMethodEnter}")
 
         traverseForClassLoader(transformInvocation)
     }

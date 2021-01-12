@@ -18,33 +18,24 @@ package com.dailyyoga.plugin.miit
 
 import com.android.build.api.transform.*
 import com.android.build.gradle.internal.pipeline.TransformManager
-import com.android.ide.common.internal.WaitableExecutor
-import groovy.io.FileType
-import org.apache.commons.codec.digest.DigestUtils
+import com.dailyyoga.plugin.DailyyogaMIITContext
+import com.dailyyoga.plugin.miit.util.GradleUtils
+import com.dailyyoga.plugin.miit.util.Logger
+import com.dailyyoga.plugin.miit.util.TimingLogger
+import com.google.common.collect.Lists
 import org.apache.commons.io.FileUtils
-import org.apache.commons.io.IOUtils
-import org.objectweb.asm.ClassReader
-import org.objectweb.asm.ClassVisitor
-import org.objectweb.asm.ClassWriter
+import org.gradle.api.Project
 
-import java.util.concurrent.Callable
-import java.util.jar.JarEntry
-import java.util.jar.JarFile
-import java.util.jar.JarOutputStream
+import java.util.stream.Stream
 
 class DailyyogaMIITTransform extends Transform {
 
-    private DailyyogaMIITTransformHelper transformHelper
-    public static final String VERSION = "3.3.1"
-    public static final String MIN_SDK_VERSION = "4.3.2"
-    private WaitableExecutor waitableExecutor
-    private URLClassLoader urlClassLoader
+    Project project
+    DailyyogaMIITExtension gradleExtension
 
-    DailyyogaMIITTransform(DailyyogaMIITTransformHelper transformHelper) {
-        this.transformHelper = transformHelper
-        if (transformHelper.extension.multiThread) {
-            waitableExecutor = WaitableExecutor.useGlobalSharedThreadPool()
-        }
+    DailyyogaMIITTransform(Project project, DailyyogaMIITExtension extension) {
+        this.project = project
+        this.gradleExtension = extension
     }
 
     @Override
@@ -64,338 +55,116 @@ class DailyyogaMIITTransform extends Transform {
 
     @Override
     boolean isIncremental() {
-        return transformHelper.extension.incremental
+        return gradleExtension.incremental
     }
+
+    /**
+     * Magic here, Changes to the plugin config file will trigger a non incremental execution
+     */
+    @Override
+    Collection<SecondaryFile> getSecondaryFiles() {
+        Objects.requireNonNull(gradleExtension.config)
+        return Lists.newArrayList(
+                SecondaryFile.nonIncremental(project.files(gradleExtension.config)))
+    }
+
 
     @Override
     void transform(TransformInvocation transformInvocation) throws TransformException, InterruptedException, IOException {
-        beforeTransform(transformInvocation)
-        transformClass(transformInvocation.context, transformInvocation.inputs, transformInvocation.outputProvider, transformInvocation.incremental)
-        afterTransform()
+        try {
+            def logLevel = gradleExtension.logLevel
+            Logger.init(logLevel < 0 ? Logger.LEVEL_CONSOLE : logLevel,
+                    gradleExtension.logDir ?: project.file("${project.buildDir}/outputs/logs/"))
+
+            onTransform(
+                    invocation.getContext(),
+                    invocation.getInputs(),
+                    invocation.getReferencedInputs(),
+                    invocation.getOutputProvider(),
+                    invocation.isIncremental())
+        } catch (Throwable e) {
+            Logger.error("Build failed with an exception: ${e.cause?.message}", e)
+            e.fillInStackTrace()
+            throw e
+        } finally {
+            Logger.close()
+        }
     }
 
-    private void transformClass(Context context, Collection<TransformInput> inputs, TransformOutputProvider outputProvider, boolean isIncremental)
+    /**
+     * When droidAssist is enable, process files and write them to an output folder
+     *
+     * <p> {@link DroidAssistExecutor#execute} process files specifically
+     */
+    void onTransform(
+            Context gradleContext,
+            Collection<TransformInput> inputs,
+            Collection<TransformInput> referencedInputs,
+            TransformOutputProvider outputProvider,
+            boolean isIncremental)
             throws IOException, TransformException, InterruptedException {
-        long startTime = System.currentTimeMillis()
+
+        Logger.info("Transform start, " +
+                "enable:${gradleExtension.enable}, " +
+                "incremental:${isIncremental}")
+
+        // If droidAssist is disable, just copy the input folder to the output folder
+        if (!gradleExtension.enable) {
+            outputProvider.deleteAll()
+            def dirStream = inputs
+                    .parallelStream()
+                    .flatMap { it.directoryInputs.parallelStream() }
+                    .filter { it.file.exists() }
+
+            def jarStream = inputs
+                    .parallelStream()
+                    .flatMap { it.jarInputs.parallelStream() }
+                    .filter { it.file.exists() }
+
+            Stream.concat(dirStream, jarStream).forEach {
+                def copy = it.file.isFile() ? "copyFile" : "copyDirectory"
+                FileUtils."$copy"(
+                        it.file,
+                        GradleUtils.getTransformOutputLocation(outputProvider, it))
+            }
+            return
+        }
+
+
+        def start = System.currentTimeMillis()
+        Logger.info("DroidAssist options: ${gradleExtension}")
+        def timingLogger = new TimingLogger("Timing", "execute")
+
+        //Delete output folder and reprocess files, when it is not incremental
         if (!isIncremental) {
             outputProvider.deleteAll()
+            timingLogger.addSplit("delete output")
         }
 
-        //遍历输入文件
-        inputs.each { TransformInput input ->
-            //遍历 jar
-            input.jarInputs.each { JarInput jarInput ->
-                if (waitableExecutor) {
-                    waitableExecutor.execute(new Callable<Object>() {
-                        @Override
-                        Object call() throws Exception {
-                            forEachJar(isIncremental, jarInput, outputProvider, context)
-                            return null
-                        }
-                    })
-                } else {
-                    forEachJar(isIncremental, jarInput, outputProvider, context)
-                }
-            }
+        def context =
+                new DailyyogaMIITContext(
+                        gradleContext,
+                        project,
+                        gradleExtension,
+                        referencedInputs)
+        context.configure()
+        timingLogger.addSplit("configure context")
 
-            //遍历目录
-            input.directoryInputs.each { DirectoryInput directoryInput ->
-                if (waitableExecutor) {
-                    waitableExecutor.execute(new Callable<Object>() {
-                        @Override
-                        Object call() throws Exception {
-                            forEachDirectory(isIncremental, directoryInput, outputProvider, context)
-                            return null
-                        }
-                    })
-                } else {
-                    forEachDirectory(isIncremental, directoryInput, outputProvider, context)
-                }
-            }
-        }
-        if (waitableExecutor) {
-            waitableExecutor.waitForTasksWithQuickFail(true)
-        }
-        println("[DailyyogaMIITT]: 此次编译共耗时:${System.currentTimeMillis() - startTime}毫秒")
-    }
+        def executor =
+                new DroidAssistExecutor(
+                        context,
+                        outputProvider,
+                        isIncremental)
+        timingLogger.addSplit("create executor")
 
-    private void beforeTransform(TransformInvocation transformInvocation) {
-        //打印提示信息
-        Logger.printCopyright()
-        Logger.setDebug(transformHelper.extension.debug)
-        transformHelper.onTransform()
-        println("[DailyyogaMIITT]: 是否开启多线程编译:${transformHelper.extension.multiThread}")
-        println("[DailyyogaMIITT]: 是否开启增量编译:${transformHelper.extension.incremental}")
-        println("[DailyyogaMIITT]: 此次是否增量编译:$transformInvocation.incremental")
+        //Execute all input classed with byte code operation transformers
+        executor.execute(inputs)
+        timingLogger.addSplit("execute inputs")
 
-        traverseForClassLoader(transformInvocation)
-    }
-
-    private void afterTransform() {
-        try {
-            if (urlClassLoader != null) {
-                urlClassLoader.close()
-                urlClassLoader = null
-            }
-        } catch (Exception e) {
-            e.printStackTrace()
-        }
-    }
-
-    private void traverseForClassLoader(TransformInvocation transformInvocation) {
-        def urlList = []
-        def androidJar = transformHelper.androidJar()
-        urlList << androidJar.toURI().toURL()
-        transformInvocation.inputs.each { transformInput ->
-            transformInput.jarInputs.each { jarInput ->
-                urlList << jarInput.getFile().toURI().toURL()
-            }
-
-            transformInput.directoryInputs.each { directoryInput ->
-                urlList << directoryInput.getFile().toURI().toURL()
-            }
-        }
-        def urlArray = urlList as URL[]
-        urlClassLoader = new URLClassLoader(urlArray)
-        transformHelper.urlClassLoader = urlClassLoader
-    }
-
-    void forEachDirectory(boolean isIncremental, DirectoryInput directoryInput, TransformOutputProvider outputProvider, Context context) {
-        File dir = directoryInput.file
-        File dest = outputProvider.getContentLocation(directoryInput.getName(),
-                directoryInput.getContentTypes(), directoryInput.getScopes(),
-                Format.DIRECTORY)
-        FileUtils.forceMkdir(dest)
-        String srcDirPath = dir.absolutePath
-        String destDirPath = dest.absolutePath
-        if (isIncremental) {
-            Map<File, Status> fileStatusMap = directoryInput.getChangedFiles()
-            for (Map.Entry<File, Status> changedFile : fileStatusMap.entrySet()) {
-                Status status = changedFile.getValue()
-                File inputFile = changedFile.getKey()
-                String destFilePath = inputFile.absolutePath.replace(srcDirPath, destDirPath)
-                File destFile = new File(destFilePath)
-                switch (status) {
-                    case Status.NOTCHANGED:
-                        break
-                    case Status.REMOVED:
-                        Logger.info("目录 status = $status:$inputFile.absolutePath")
-                        if (destFile.exists()) {
-                            //noinspection ResultOfMethodCallIgnored
-                            destFile.delete()
-                        }
-                        break
-                    case Status.ADDED:
-                    case Status.CHANGED:
-                        Logger.info("目录 status = $status:$inputFile.absolutePath")
-                        File modified = modifyClassFile(dir, inputFile, context.getTemporaryDir())
-                        if (destFile.exists()) {
-                            destFile.delete()
-                        }
-                        if (modified != null) {
-                            FileUtils.copyFile(modified, destFile)
-                            modified.delete()
-                        } else {
-                            FileUtils.copyFile(inputFile, destFile)
-                        }
-                        break
-                    default:
-                        break
-                }
-            }
-        } else {
-            FileUtils.copyDirectory(dir, dest)
-            dir.traverse(type: FileType.FILES, nameFilter: ~/.*\.class/) {
-                File inputFile ->
-                    forEachDir(dir, inputFile, context, srcDirPath, destDirPath)
-            }
-        }
-    }
-
-    void forEachDir(File dir, File inputFile, Context context, String srcDirPath, String destDirPath) {
-        File modified = modifyClassFile(dir, inputFile, context.getTemporaryDir())
-        if (modified != null) {
-            File target = new File(inputFile.absolutePath.replace(srcDirPath, destDirPath))
-            if (target.exists()) {
-                target.delete()
-            }
-            FileUtils.copyFile(modified, target)
-            modified.delete()
-        }
-    }
-
-    void forEachJar(boolean isIncremental, JarInput jarInput, TransformOutputProvider outputProvider, Context context) {
-        String destName = jarInput.file.name
-        //截取文件路径的 md5 值重命名输出文件，因为可能同名，会覆盖
-        def hexName = DigestUtils.md5Hex(jarInput.file.absolutePath).substring(0, 8)
-        if (destName.endsWith(".jar")) {
-            destName = destName.substring(0, destName.length() - 4)
-        }
-        //获得输出文件
-        File destFile = outputProvider.getContentLocation(destName + "_" + hexName, jarInput.contentTypes, jarInput.scopes, Format.JAR)
-        if (isIncremental) {
-            Status status = jarInput.getStatus()
-            switch (status) {
-                case Status.NOTCHANGED:
-                    break
-                case Status.ADDED:
-                case Status.CHANGED:
-                    Logger.info("jar status = $status:$destFile.absolutePath")
-                    transformJar(destFile, jarInput, context)
-                    break
-                case Status.REMOVED:
-                    Logger.info("jar status = $status:$destFile.absolutePath")
-                    if (destFile.exists()) {
-                        FileUtils.forceDelete(destFile)
-                    }
-                    break
-                default:
-                    break
-            }
-        } else {
-            transformJar(destFile, jarInput, context)
-        }
-    }
-
-    void transformJar(File dest, JarInput jarInput, Context context) {
-        Logger.info("开始遍历 jar：" + jarInput.file.absolutePath)
-        def modifiedJar = modifyJarFile(jarInput.file, context.getTemporaryDir())
-        Logger.info("结束遍历 jar：" + jarInput.file.absolutePath)
-
-        if (modifiedJar == null) {
-            modifiedJar = jarInput.file
-        }
-        FileUtils.copyFile(modifiedJar, dest)
-    }
-
-    /**
-     * 修改 jar 文件中对应字节码
-     */
-    private File modifyJarFile(File jarFile, File tempDir) {
-        if (jarFile) {
-            return modifyJar(jarFile, tempDir, true)
-
-        }
-        return null
-    }
-
-    private File modifyJar(File jarFile, File tempDir, boolean isNameHex) {
-        //FIX: ZipException: zip file is empty
-        if (jarFile == null || jarFile.length() == 0) {
-            return null
-        }
-        //取原 jar, verify 参数传 false, 代表对 jar 包不进行签名校验
-        def file = new JarFile(jarFile, false)
-        //设置输出到的 jar
-        def tmpNameHex = ""
-        if (isNameHex) {
-            tmpNameHex = DigestUtils.md5Hex(jarFile.absolutePath).substring(0, 8)
-        }
-        def outputJar = new File(tempDir, tmpNameHex + jarFile.name)
-        JarOutputStream jarOutputStream = new JarOutputStream(new FileOutputStream(outputJar))
-        Enumeration enumeration = file.entries()
-
-        while (enumeration.hasMoreElements()) {
-            JarEntry jarEntry = (JarEntry) enumeration.nextElement()
-            InputStream inputStream
-            try {
-                inputStream = file.getInputStream(jarEntry)
-            } catch (Exception e) {
-                IOUtils.closeQuietly(inputStream)
-                e.printStackTrace()
-                return null
-            }
-            String entryName = jarEntry.getName()
-            if (entryName.endsWith(".DSA") || entryName.endsWith(".SF")) {
-                //ignore
-            } else {
-                String className
-                JarEntry entry = new JarEntry(entryName)
-                byte[] modifiedClassBytes = null
-                byte[] sourceClassBytes
-                try {
-                    jarOutputStream.putNextEntry(entry)
-                    sourceClassBytes = DailyyogaMIITUtil.toByteArrayAndAutoCloseStream(inputStream)
-                } catch (Exception e) {
-                    Logger.error("Exception encountered while processing jar: " + jarFile.getAbsolutePath())
-                    IOUtils.closeQuietly(file)
-                    IOUtils.closeQuietly(jarOutputStream)
-                    e.printStackTrace()
-                    return null
-                }
-                if (!jarEntry.isDirectory() && entryName.endsWith(".class")) {
-                    className = entryName.replace("/", ".").replace(".class", "")
-                    ClassNameAnalytics classNameAnalytics = transformHelper.analytics(className)
-                    if (classNameAnalytics.isShouldModify) {
-                        modifiedClassBytes = modifyClass(sourceClassBytes, classNameAnalytics)
-                    }
-                }
-                if (modifiedClassBytes == null) {
-                    jarOutputStream.write(sourceClassBytes)
-                } else {
-                    jarOutputStream.write(modifiedClassBytes)
-                }
-                jarOutputStream.closeEntry()
-            }
-        }
-        jarOutputStream.close()
-        file.close()
-        return outputJar
-    }
-
-    /**
-     * 真正修改类中方法字节码
-     */
-    private byte[] modifyClass(byte[] srcClass, ClassNameAnalytics classNameAnalytics) {
-        try {
-            ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS)
-            ClassVisitor classVisitor = new DailyyogaMIITClassVisitor(classWriter, classNameAnalytics, transformHelper)
-            ClassReader cr = new ClassReader(srcClass)
-            cr.accept(classVisitor, ClassReader.EXPAND_FRAMES + ClassReader.SKIP_FRAMES)
-            return classWriter.toByteArray()
-        } catch (Exception ex) {
-            Logger.error("$classNameAnalytics.className 类执行 modifyClass 方法出现异常")
-            ex.printStackTrace()
-            if (transformHelper.extension.debug) {
-                throw new Error()
-            }
-            return srcClass
-        }
-    }
-
-    /**
-     * 目录文件中修改对应字节码
-     */
-    private File modifyClassFile(File dir, File classFile, File tempDir) {
-        File modified = null
-        FileOutputStream outputStream = null
-        try {
-            String className = path2ClassName(classFile.absolutePath.replace(dir.absolutePath + File.separator, ""))
-            ClassNameAnalytics classNameAnalytics = transformHelper.analytics(className)
-            if (classNameAnalytics.isShouldModify) {
-                byte[] sourceClassBytes = DailyyogaMIITUtil.toByteArrayAndAutoCloseStream(new FileInputStream(classFile))
-                byte[] modifiedClassBytes = modifyClass(sourceClassBytes, classNameAnalytics)
-                if (modifiedClassBytes) {
-                    modified = new File(tempDir, className.replace('.', '') + '.class')
-                    if (modified.exists()) {
-                        modified.delete()
-                    }
-                    modified.createNewFile()
-                    outputStream = new FileOutputStream(modified)
-                    outputStream.write(modifiedClassBytes)
-                }
-            } else {
-                return classFile
-            }
-        } catch (Exception e) {
-            e.printStackTrace()
-        } finally {
-            IOUtils.closeQuietly(outputStream)
-        }
-        return modified
-    }
-
-    private static String path2ClassName(String pathName) {
-        pathName.replace(File.separator, ".").replace(".class", "")
+        timingLogger.dumpToLog()
+        Logger.info("Transform end, " +
+                "input classes count:${executor.classCount}, " +
+                "affected classes:${executor.affectedCount}, " +
+                "time use:${System.currentTimeMillis() - start} ms")
     }
 }

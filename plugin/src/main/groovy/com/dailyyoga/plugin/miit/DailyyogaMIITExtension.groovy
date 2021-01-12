@@ -20,12 +20,10 @@ import com.google.common.collect.Lists
 
 class DailyyogaMIITExtension {
     boolean enable = true
-    boolean debug
+    int logLevel
     List<File> configFiles = Lists.newArrayList()
     File logDir
-    boolean abortOnUndefinedClass = false
     boolean incremental = true
-    boolean multiThread = true
 
     List<String> includes = Lists.newArrayList()
     List<String> excludes = Lists.newArrayList()
@@ -67,7 +65,7 @@ class DailyyogaMIITExtension {
         }
         return "\n{" +
                 "\n    enable=" + enable +
-                "\n    debug=" + debug +
+                "\n    logLevel=" + logLevel +
                 "\n    config=" + configFiles +
                 "\n    logDir=" + logDir +
                 "\texclude=[" + excludeBuilder.toString() + "]" + "\n" +

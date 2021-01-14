@@ -4,6 +4,9 @@ import com.android.build.api.transform.QualifiedContent
 import com.android.utils.FileUtils
 import com.dailyyoga.plugin.miit.DailyyogaMIITContext
 import com.dailyyoga.plugin.miit.DailyyogaMIITExecutor.BuildContext
+import com.dailyyoga.plugin.miit.ex.DailyyogaMIITBadStatementException
+import com.dailyyoga.plugin.miit.ex.DailyyogaMIITException
+import com.dailyyoga.plugin.miit.ex.DailyyogaMIITNotFoundException
 import javassist.CannotCompileException
 import javassist.NotFoundException
 
@@ -43,10 +46,10 @@ abstract class InputTask<T extends QualifiedContent> implements Runnable {
         try {
             Logger.info("execute ${inputType}: ${IOUtils.getPath(taskInput.input.file)}")
             execute()
-        } catch (DroidAssistException e) {
+        } catch (DailyyogaMIITException e) {
             throw e
         } catch (Throwable e) {
-            throw new DroidAssistException("Execution failed for " +
+            throw new DailyyogaMIITException("Execution failed for " +
                     "input:${IOUtils.getPath(taskInput.input.file)}", e)
         }
     }
@@ -84,15 +87,15 @@ abstract class InputTask<T extends QualifiedContent> implements Runnable {
             try {
                 it.performTransform(inputClass, className)
             } catch (NotFoundException e) {
-                throw new DroidAssistNotFoundException(
+                throw new DailyyogaMIITNotFoundException(
                         "Transform failed for class: ${className}" +
                                 " with not found exception: ${e.cause?.message}", e)
             } catch (CannotCompileException e) {
-                throw new DroidAssistBadStatementException(
+                throw new DailyyogaMIITBadStatementException(
                         "Transform failed for class: ${className} " +
                                 "with compile error: ${e.cause?.message}", e)
             } catch (Throwable e) {
-                throw new DroidAssistException(
+                throw new DailyyogaMIITException(
                         "Transform failed for class: ${className} " +
                                 "with error: ${e.cause?.message}", e)
             }

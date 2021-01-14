@@ -16,18 +16,7 @@ public abstract class Transformer {
     public ClassFilterSpec classFilterSpec = new ClassFilterSpec();
 
     //Transformer name
-    public String getName() {
-        return "Transformer";
-    }
-
-    //Category name that transformer belongs to
-    public String getCategoryName() {
-        return "Transformer";
-    }
-
-    public String getPrettyName() {
-        return "Transformer";
-    }
+    public abstract String getName();
 
     protected abstract boolean onTransform(
             CtClass inputClass,
@@ -64,6 +53,17 @@ public abstract class Transformer {
     }
 
     public void check() {
+    }
+
+    //Get class in the class pool
+    protected CtClass tryGetClass(String className, String loc) {
+        CtClass ctClass = classPool.getOrNull(className);
+        if (ctClass == null) {
+            String msg = "cannot find " + className + " in " + loc;
+            throw new DailyyogaMIITNotFoundException(msg);
+        } else {
+            return ctClass;
+        }
     }
 
     protected Boolean isInterface(CtClass inputClass) {

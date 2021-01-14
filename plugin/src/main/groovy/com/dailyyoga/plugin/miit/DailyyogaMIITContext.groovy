@@ -3,12 +3,12 @@ package com.dailyyoga.plugin.miit
 import com.android.build.api.transform.Context
 import com.android.build.api.transform.TransformInput
 import com.dailyyoga.plugin.miit.ex.DailyyogaMIITException
+import com.dailyyoga.plugin.miit.transform.Transformer
 import javassist.ClassPool
 import org.gradle.api.Project
-import org.gradle.api.Transformer
 
 import java.util.stream.Collectors
-import java.util.stream.Stream;
+import java.util.stream.Stream
 
 class DailyyogaMIITContext {
 

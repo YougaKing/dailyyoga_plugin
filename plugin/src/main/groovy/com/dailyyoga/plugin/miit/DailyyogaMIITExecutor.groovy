@@ -1,10 +1,6 @@
 package com.dailyyoga.plugin.miit
 
-import com.android.build.api.transform.DirectoryInput
-import com.android.build.api.transform.JarInput
-import com.android.build.api.transform.QualifiedContent
-import com.android.build.api.transform.TransformInput
-import com.android.build.api.transform.TransformOutputProvider
+import com.android.build.api.transform.*
 import com.dailyyoga.plugin.miit.tasks.DirInputTask
 import com.dailyyoga.plugin.miit.tasks.InputTask
 import com.dailyyoga.plugin.miit.tasks.JarInputTask
@@ -45,8 +41,7 @@ class DailyyogaMIITExecutor {
 
         def buildDir = context.project.buildDir
         def variant = context.context.variantName
-        destCacheFile =
-                new File("$buildDir/intermediates/dailyyogaMIIT/$variant/dest-cache.json")
+        destCacheFile = new File("$buildDir/intermediates/dailyyogaMIIT/$variant/dest-cache.json")
 
         if (destCacheFile.exists()) {
             if (incremental) {

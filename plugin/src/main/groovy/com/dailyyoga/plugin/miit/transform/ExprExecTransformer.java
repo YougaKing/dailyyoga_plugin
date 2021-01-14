@@ -9,7 +9,6 @@ import javassist.CannotCompileException;
 import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.CtMethod;
-import javassist.Modifier;
 import javassist.NotFoundException;
 import javassist.expr.ExprEditor;
 import javassist.expr.MethodCall;
@@ -23,11 +22,6 @@ public abstract class ExprExecTransformer extends SourceTargetTransformer {
 
     protected static final String METHOD_CALL = "MethodCall";
 
-    protected static final String METHOD = "method";
-
-    public static final String TRANSFORM_EXEC = "exec";
-    public static final String TRANSFORM_EXPR = "expr";
-
     class Editor extends ExprEditor {
         CtBehavior behavior;
         AtomicBoolean modified;
@@ -39,49 +33,13 @@ public abstract class ExprExecTransformer extends SourceTargetTransformer {
         return Sets.newHashSet();
     }
 
-    protected abstract String getTransformType();
-
-    @Override
-    public String getPrettyName() {
-        StringBuilder name = new StringBuilder(getCategoryName() + " [");
-
-        String disposeType = getExecuteType();
-
-        if (METHOD_CALL.equals(disposeType)) {
-            name.append("method");
-        }
-
-        if (METHOD.equals(disposeType)) {
-            name.append("method");
-        }
-
-        //expr
-        String transformType = getTransformType();
-        if (TRANSFORM_EXPR.equals(transformType)) {
-            name.append(" call");
-        }
-        //exec
-        if (TRANSFORM_EXEC.equals(getTransformType())) {
-            name.append(" exec");
-        }
-        name.append("]");
-        return name.toString();
-    }
-
     @Override
     protected final boolean onTransform(
             CtClass inputClass,
             String inputClassName)
             throws NotFoundException, CannotCompileException {
-        //expr
-        if (TRANSFORM_EXPR.equals(getTransformType())) {
-            return onTransformExpr(inputClass, inputClassName);
-        }
-        //exec
-        if (TRANSFORM_EXEC.equals(getTransformType())) {
-            return onTransformExec(inputClass, inputClassName);
-        }
-        return false;
+
+        return onTransformExpr(inputClass, inputClassName);
     }
 
     private boolean onTransformExpr(
@@ -125,39 +83,6 @@ public abstract class ExprExecTransformer extends SourceTargetTransformer {
         return modified.get();
     }
 
-    private boolean onTransformExec(
-            CtClass inputClass,
-            String inputClassName)
-            throws NotFoundException, CannotCompileException {
-
-        if (!filterClass(inputClass, inputClassName)) {
-            return false;
-        }
-        if (!isMatchSourceClass(inputClass)) {
-            return false;
-        }
-        if (!execute(inputClass, inputClassName)) {
-            return false;
-        }
-
-        boolean modified = false;
-        Set<String> executeTypes = getExtraExecuteTypes();
-        executeTypes.add(getExecuteType());
-        if (executeTypes.contains(METHOD)) {
-            CtMethod[] declaredMethods = tryGetDeclaredMethods(inputClass);
-            for (CtMethod method : declaredMethods) {
-                if (Modifier.isAbstract(method.getModifiers())) {
-                    continue;
-                }
-                if (execute(inputClass, inputClassName, method)) {
-                    modified = true;
-                }
-            }
-        }
-
-        return modified;
-    }
-
     private boolean instrument(CtBehavior behavior, Editor editor) throws CannotCompileException {
         editor.modified = new AtomicBoolean(false);
         editor.behavior = behavior;
@@ -177,14 +102,6 @@ public abstract class ExprExecTransformer extends SourceTargetTransformer {
             String inputClassName)
             throws CannotCompileException, NotFoundException {
         return true;
-    }
-
-    protected boolean execute(
-            CtClass inputClass,
-            String inputClassName,
-            CtMethod method)
-            throws CannotCompileException, NotFoundException {
-        return false;
     }
 
     protected boolean execute(

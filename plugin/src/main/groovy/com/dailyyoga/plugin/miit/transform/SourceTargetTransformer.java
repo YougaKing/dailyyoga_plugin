@@ -4,25 +4,17 @@ package com.dailyyoga.plugin.miit.transform;
 import com.dailyyoga.plugin.miit.ex.DailyyogaMIITBadTypeException;
 import com.dailyyoga.plugin.miit.spec.MethodSpec;
 
-import java.lang.reflect.Method;
-import java.util.Set;
-
+import javassist.CannotCompileException;
 import javassist.CtClass;
 import javassist.CtMember;
+import javassist.CtMethod;
 import javassist.NotFoundException;
+import javassist.expr.MethodCall;
 
 public abstract class SourceTargetTransformer extends Transformer {
 
     private MethodSpec sourceSpec;
     private MethodSpec targetSpec;
-
-    private CtClass sourceClass;
-    private String sourceDeclaringClassName;
-    private CtMember sourceMember;
-    private CtClass sourceReturnType;
-
-    private Class annotationClass;
-    private Set<Method> annotationTargetMembers;
 
     public SourceTargetTransformer setMethod(String type,
                                              String declaring,
@@ -40,51 +32,93 @@ public abstract class SourceTargetTransformer extends Transformer {
         return this;
     }
 
-    public MethodSpec getSourceSpec() {
-        return sourceSpec;
+    protected boolean isMatchSourceMethod(
+            CtClass insnClass,
+            String name,
+            String signature,
+            boolean declared)
+            throws NotFoundException {
+        return isMatchSourceMethod(insnClass, true, name, signature, declared);
     }
 
-    public MethodSpec getTargetSpec() {
-        return targetSpec;
+    protected boolean isMatchSourceMethod(
+            CtClass insnClass,
+            boolean checkClass,
+            String name,
+            String signature,
+            boolean declared)
+            throws NotFoundException {
+        return isMatchSourceMethod(insnClass, checkClass, name, signature, null, declared);
     }
 
-    protected String getSourceDeclaringClassName() {
-        if (sourceDeclaringClassName == null) {
-            sourceDeclaringClassName = sourceSpec.getDeclaringClassName();
+    protected boolean isMatchSourceMethod(
+            CtClass insnClass,
+            boolean checkClass,
+            String name,
+            String signature,
+            CtMethod method,
+            boolean declared)
+            throws NotFoundException {
+        if (method != null && sourceSpec.isAnnotation()) {
+            return method.hasAnnotation(getSourceDeclaringClassName());
         }
-        return sourceDeclaringClassName;
-    }
+        boolean match = true;
+        do {
+            if (!name.equals(sourceSpec.getName())
+                    || !signature.equals(sourceSpec.getSignature())) {
+                match = false;
+                break;
+            }
 
-    protected CtClass getSourceClass() throws NotFoundException {
-        if (sourceClass == null) {
-            sourceClass = classPool.getCtClass(getSourceDeclaringClassName());
-        }
-        return sourceClass;
-    }
-
-    boolean isMatchSourceClass(CtClass insnClass) throws NotFoundException {
-        if (sourceSpec.isAnnotation()) {
-            return true;
-        }
-        boolean match = false;
-        Boolean anInterface = isInterface(insnClass);
-        if (anInterface == null || anInterface) {
-            return false;
-        }
-        if (sourceSpec.isExtend()) {
-            CtClass sourceClass = getSourceClass();
-            for (CtClass itf : tryGetInterfaces(insnClass)) {
-                if (itf == sourceClass) {
-                    match = true;
+            if (checkClass) {
+                boolean matchClass = false;
+                if (sourceSpec.isExtend()) {
+                    CtClass sourceClass = getSourceClass();
+                    for (CtClass itf : tryGetInterfaces(insnClass)) {
+                        if (itf == sourceClass) {
+                            matchClass = true;
+                            break;
+                        }
+                    }
+                    if (!matchClass) {
+                        matchClass = insnClass.subclassOf(sourceClass);
+                    }
+                } else {
+                    matchClass = insnClass.getName().equals(getSourceDeclaringClassName());
+                }
+                if (!matchClass) {
+                    match = false;
                     break;
                 }
             }
-            if (!match) {
-                match = insnClass.subclassOf(sourceClass);
+
+            if (sourceSpec.getKind() == SourceSpec.Kind.METHOD) {
+                CtMember member = getSourceMember(declared);
+                boolean visible = member.visibleFrom(insnClass);
+                if (!visible) {
+                    match = false;
+                    break;
+                }
             }
-        } else {
-            match = insnClass.getName().equals(getSourceDeclaringClassName());
-        }
+
+        } while (false);
         return match;
+    }
+
+    protected String replaceInstrument(
+            String sourceClassName,
+            MethodCall methodCall,
+            String statement)
+            throws CannotCompileException {
+        String replacement = getReplaceStatement(sourceClassName, methodCall, statement);
+        try {
+            String s = replacement.replaceAll("\n", "");
+            methodCall.replace(s);
+        } catch (CannotCompileException e) {
+            Logger.error("Replace method call instrument error with statement: "
+                    + statement + "\n", e);
+            throw new DroidAssistBadStatementException(e);
+        }
+        return replacement;
     }
 }

@@ -3,6 +3,7 @@ package com.dailyyoga.plugin.miit
 import com.dailyyoga.plugin.miit.transform.SourceTargetTransformer
 import com.dailyyoga.plugin.miit.transform.Transformer
 import com.dailyyoga.plugin.miit.transform.replace.MethodCallReplaceTransformer
+import com.dailyyoga.plugin.miit.util.Logger
 import org.gradle.api.Project
 
 
@@ -45,13 +46,26 @@ class DailyyogaMIITConfiguration {
 
             node.Method.each {
                 method ->
-                    def isStatic = method.@isStatic[0] ?: "true"
-                    def type = method.@type[0]
+                    def isStatic = method.@isStatic ?: "true"
+                    def type = method.@type
+
+                    String declaring = method.Declaring.text().trim()
+                    String returnType = method.ReturnType.text().trim()
+                    String name = method.Name.text().trim()
+                    String parameters = method.Parameters ? method.Parameters.text().trim() : ""
+
+                    Logger.info "method:{isStatic:" + isStatic +
+                            ",  type:" + type +
+                            ",  declaring:" + declaring +
+                            ",  returnType:" + returnType +
+                            ",  name:" + name +
+                            ",  parameters:" + parameters + "}"
+
                     transformer.setMethod(type,
-                            method.Declaring.text().trim(),
-                            method.ReturnType.text().trim(),
-                            method.Name.text().trim(),
-                            method.Parameters ? method.Parameters.text().trim() : "",
+                            declaring,
+                            returnType,
+                            name,
+                            parameters,
                             isStatic)
             }
 

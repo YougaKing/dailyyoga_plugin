@@ -39,7 +39,7 @@ class DailyyogaMIITConfiguration {
     def sourceTargetTransformerNodeHandler = {
         kind, node, transformerFeather ->
             SourceTargetTransformer transformer = transformerFeather.call()
-            if (node.Method.length() != 2) {
+            if (node.Method.size() != 2) {
                 throw new IllegalArgumentException("source and target must not null in node ${node}")
             }
 
@@ -51,7 +51,7 @@ class DailyyogaMIITConfiguration {
                             method.Declaring.text().trim(),
                             method.ReturnType.text().trim(),
                             method.Name.text().trim(),
-                            method.Parameters.text().trim(),
+                            method.Parameters ? method.Parameters.text().trim() : "",
                             isStatic)
             }
 

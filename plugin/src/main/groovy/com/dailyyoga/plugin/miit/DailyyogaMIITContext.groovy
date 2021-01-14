@@ -4,6 +4,8 @@ import com.android.build.api.transform.Context
 import com.android.build.api.transform.TransformInput
 import com.dailyyoga.plugin.miit.ex.DailyyogaMIITException
 import com.dailyyoga.plugin.miit.transform.Transformer
+import com.dailyyoga.plugin.miit.util.Logger
+import com.dailyyoga.plugin.miit.util.IOUtils
 import javassist.ClassPool
 import org.gradle.api.Project
 

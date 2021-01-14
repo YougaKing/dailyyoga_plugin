@@ -46,7 +46,7 @@ abstract class InputTask<T extends QualifiedContent> implements Runnable {
     @Override
     final void run() {
         try {
-            Logger.info("execute ${inputType}: ${IOUtils.getPath(taskInput.input.file)}")
+            Logger.debug("execute ${inputType}: ${IOUtils.getPath(taskInput.input.file)}")
             execute()
         } catch (DailyyogaMIITException e) {
             throw e

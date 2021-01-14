@@ -1,6 +1,5 @@
 package com.dailyyoga.plugin.miit.transform;
 
-import com.dailyyoga.plugin.miit.util.Logger;
 import com.google.common.collect.Sets;
 
 import java.util.Set;
@@ -65,8 +64,6 @@ public abstract class ExprExecTransformer extends SourceTargetTransformer {
                 if (executeTypes.contains(METHOD_CALL)) {
                     boolean disposed;
                     try {
-                        Logger.info("call: { inputClass:" + inputClass + ",inputClassName:" + inputClassName + "}");
-
                         disposed = execute(inputClass, inputClassName, call);
                     } catch (NotFoundException e) {
                         String msg = e.getMessage() + " for input class " + inputClassName;
@@ -76,8 +73,6 @@ public abstract class ExprExecTransformer extends SourceTargetTransformer {
                 }
             }
         };
-
-        Logger.info("onTransformExpr: { inputClass:" + inputClass + ",inputClassName:" + inputClassName + "}");
 
         CtMethod[] declaredMethods = tryGetDeclaredMethods(inputClass);
         for (CtMethod method : declaredMethods) {

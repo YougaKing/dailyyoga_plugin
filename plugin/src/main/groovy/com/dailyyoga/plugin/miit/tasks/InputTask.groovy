@@ -70,6 +70,8 @@ abstract class InputTask<T extends QualifiedContent> implements Runnable {
     }
 
     boolean executeClass(String className, File directory) {
+
+
         buildContext.totalCounter.incrementAndGet()
         def inputClass = null
         def transformers = context.transformers.findAll {
@@ -80,12 +82,14 @@ abstract class InputTask<T extends QualifiedContent> implements Runnable {
             return false
         }
 
+//        Logger.info("executeClass: { className:" + className + ",directory:" + directory.getAbsolutePath() + "}")
+
         inputClass = context.classPool.getOrNull(className)
         if (inputClass == null) {
             return false
         }
 
-        Logger.info("executeClass: { className:" + className + "}");
+        Logger.debug("executeClass: { className:" + className + ",inputClass:" + inputClass + "}")
 
         transformers.each {
             try {

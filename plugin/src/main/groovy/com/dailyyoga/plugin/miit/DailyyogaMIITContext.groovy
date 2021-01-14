@@ -16,7 +16,7 @@ class DailyyogaMIITContext {
 
     Context context
     Project project
-    ClassPool classPool
+    DailyyogaMIITClassPool classPool
     DailyyogaMIITExtension extension
     Collection<TransformInput> referencedInputs
     Collection<Transformer> transformers

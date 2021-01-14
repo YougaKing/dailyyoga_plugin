@@ -33,6 +33,8 @@ public class MethodCallReplaceTransformer extends ExprExecTransformer {
         String insnClassName = methodCall.getClassName();
         String insnName = methodCall.getMethodName();
 
+        Logger.info("execute: { insnClassName:" + insnClassName + ",insnName:" + insnName + "}");
+
         CtClass insnClass = tryGetClass(insnClassName, inputClassName);
         if (insnClass == null) {
             return false;

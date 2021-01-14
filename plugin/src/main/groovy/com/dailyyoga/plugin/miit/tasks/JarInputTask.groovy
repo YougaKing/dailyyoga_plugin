@@ -4,8 +4,9 @@ import com.android.build.api.transform.JarInput
 import com.android.build.api.transform.Status
 import com.dailyyoga.plugin.miit.DailyyogaMIITContext
 import com.dailyyoga.plugin.miit.DailyyogaMIITExecutor.BuildContext
-import org.apache.commons.io.FileUtils
+import com.dailyyoga.plugin.miit.util.Logger
 import com.dailyyoga.plugin.miit.util.ZipUtils
+import org.apache.commons.io.FileUtils
 
 class JarInputTask extends InputTask<JarInput> {
 

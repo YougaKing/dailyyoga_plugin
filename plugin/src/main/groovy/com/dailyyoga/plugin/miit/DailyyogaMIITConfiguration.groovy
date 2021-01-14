@@ -5,8 +5,8 @@ import com.dailyyoga.plugin.miit.transform.SourceTargetTransformer
 import com.dailyyoga.plugin.miit.transform.Transformer
 import com.dailyyoga.plugin.miit.transform.replace.MethodCallReplaceTransformer
 import com.dailyyoga.plugin.miit.util.Logger
+import com.dailyyoga.plugin.miit.util.XmlErrorHandler
 import org.gradle.api.Project
-
 
 class DailyyogaMIITConfiguration {
 
@@ -23,7 +23,9 @@ class DailyyogaMIITConfiguration {
     }
 
     List<Transformer> parse(File file) {
-        Node configs = new XmlParser(true, true, true).parse(file)
+        XmlParser xmlParser = new XmlParser(true, true, true)
+        xmlParser.setErrorHandler(new XmlErrorHandler())
+        Node configs = xmlParser.parse(file)
 
         configs.Global.Filter.Include.each { globalIncludes.add(it.text()) }
         configs.Global.Filter.Exclude.each { globalExcludes.add(it.text()) }

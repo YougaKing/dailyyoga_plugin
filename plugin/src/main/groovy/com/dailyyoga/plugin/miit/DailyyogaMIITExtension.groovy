@@ -47,18 +47,18 @@ class DailyyogaMIITExtension {
     @Override
     String toString() {
         StringBuilder excludeBuilder = new StringBuilder()
-        int length = exclude.size()
+        int length = excludes.size()
         for (int i = 0; i < length; i++) {
-            excludeBuilder.append("'").append(exclude.get(i)).append("'")
+            excludeBuilder.append("'").append(excludes.get(i)).append("'")
             if (i != length - 1) {
                 excludeBuilder.append(",")
             }
         }
 
         StringBuilder includeBuilder = new StringBuilder()
-        length = include.size()
+        length = includes.size()
         for (int i = 0; i < length; i++) {
-            includeBuilder.append("'").append(include.get(i)).append("'")
+            includeBuilder.append("'").append(includes.get(i)).append("'")
             if (i != length - 1) {
                 includeBuilder.append(",")
             }

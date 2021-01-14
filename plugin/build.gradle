@@ -34,9 +34,9 @@ uploadArchives {
     repositories {
         mavenDeployer {
             //设置插件的GAV参数
-            pom.groupId = 'com.dailyyoga'
-            pom.artifactId = 'plugin'
-            pom.version = '1.1.5'
+            pom.groupId = 'com.dailyyoga.plugin'
+            pom.artifactId = 'miit'
+            pom.version = '1.0.0'
             //文件发布到下面目录
             repository(url: uri('../youga'))
         }

@@ -2,8 +2,8 @@
 
 buildscript {
     repositories {
-        maven { url "http://mvn.mob.com/android" }
         maven { url uri("./youga") }
+        maven { url "http://mvn.mob.com/android" }
         maven { url 'https://www.jitpack.io' }
         google()
         jcenter()
@@ -11,7 +11,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:4.0.2'
-        classpath 'com.dailyyoga:plugin:1.1.5'
+        classpath 'com.dailyyoga.plugin:miit:1.0.0'
 //        classpath 'com.github.YougaKing:dailyyoga_plugin:1.0.3'
 //        classpath 'com.mob.sdk:MobSDK:2018.0319.1724'
         // NOTE: Do not place your application dependencies here; they belong

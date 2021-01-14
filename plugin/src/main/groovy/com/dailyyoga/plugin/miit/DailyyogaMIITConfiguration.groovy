@@ -1,5 +1,6 @@
 package com.dailyyoga.plugin.miit
 
+import com.dailyyoga.plugin.miit.spec.MethodSpec
 import com.dailyyoga.plugin.miit.transform.SourceTargetTransformer
 import com.dailyyoga.plugin.miit.transform.Transformer
 import com.dailyyoga.plugin.miit.transform.replace.MethodCallReplaceTransformer
@@ -46,8 +47,8 @@ class DailyyogaMIITConfiguration {
 
             node.Method.each {
                 method ->
-                    def isStatic = method.@isStatic ?: "true"
-                    def type = method.@type
+                    boolean isStatic = method.@isStatic ?: "true"
+                    String type = method.@type
 
                     String declaring = method.Declaring.text().trim()
                     String returnType = method.ReturnType.text().trim()
@@ -61,12 +62,13 @@ class DailyyogaMIITConfiguration {
                             ",  name:" + name +
                             ",  parameters:" + parameters + "}"
 
-                    transformer.setMethod(type,
-                            declaring,
-                            returnType,
-                            name,
-                            parameters,
-                            isStatic)
+                    MethodSpec methodSpec
+                    if (parameters) {
+                        methodSpec = MethodSpec.create(declaring, returnType, name, parameters, isStatic);
+                    } else {
+                        methodSpec = MethodSpec.create(declaring, returnType, name, isStatic);
+                    }
+                    transformer.setMethod(type, methodSpec)
             }
 
             if (!transformer.getSource()) {

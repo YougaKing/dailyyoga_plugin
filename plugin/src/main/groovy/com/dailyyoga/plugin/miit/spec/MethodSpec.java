@@ -55,6 +55,18 @@ public class MethodSpec {
     public static MethodSpec create(String declaring,
                                     String returnType,
                                     String name,
+                                    boolean isStatic) {
+        return create(
+                declaring,
+                returnType,
+                name,
+                null,
+                isStatic);
+    }
+
+    public static MethodSpec create(String declaring,
+                                    String returnType,
+                                    String name,
                                     String parameters,
                                     boolean isStatic) {
 
@@ -69,7 +81,7 @@ public class MethodSpec {
     }
 
     private static String[] parseParamTypeNames(String str) {
-        if (str.length() == 0) {
+        if (str == null || str.length() == 0) {
             return new String[0];
         }
         List<String> l = new ArrayList<>();

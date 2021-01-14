@@ -17,15 +17,11 @@ public abstract class SourceTargetTransformer extends Transformer {
     private MethodSpec targetSpec;
 
     public SourceTargetTransformer setMethod(String type,
-                                             String declaring,
-                                             String returnType,
-                                             String name,
-                                             String parameters,
-                                             boolean isStatic) {
+                                             MethodSpec methodSpec) {
         if (MethodSpec.SOURCE.equals(type)) {
-            sourceSpec = MethodSpec.create(declaring, returnType, name, parameters, isStatic);
+            sourceSpec = methodSpec;
         } else if (MethodSpec.TARGET.equals(type)) {
-            targetSpec = MethodSpec.create(declaring, returnType, name, parameters, isStatic);
+            targetSpec = methodSpec;
         } else {
             throw new DailyyogaMIITBadTypeException("Bad type :" + type);
         }

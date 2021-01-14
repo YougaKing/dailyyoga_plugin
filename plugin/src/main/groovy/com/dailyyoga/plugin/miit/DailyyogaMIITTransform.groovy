@@ -131,7 +131,7 @@ class DailyyogaMIITTransform extends Transform {
 
 
         def start = System.currentTimeMillis()
-        Logger.info("DroidAssist options: ${gradleExtension}")
+        Logger.info("extension: ${gradleExtension}")
         def timingLogger = new TimingLogger("Timing", "execute")
 
         //Delete output folder and reprocess files, when it is not incremental

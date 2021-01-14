@@ -68,8 +68,8 @@ class DailyyogaMIITExtension {
                 "\n    logLevel=" + logLevel +
                 "\n    configFiles=" + configFiles +
                 "\n    logDir=" + logDir +
-                "\n    includes=[" + includeBuilder.toString() + "]" + "\n" +
-                "\n    excludes=[" + excludeBuilder.toString() + "]" + "\n" +
+                "\n    includes=[" + includeBuilder.toString() + "]" +
+                "\n    excludes=[" + excludeBuilder.toString() + "]" +
                 '\n}'
 
     }

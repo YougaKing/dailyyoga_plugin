@@ -32,19 +32,17 @@ public class MethodCallReplaceTransformer extends ExprExecTransformer {
 
         String insnClassName = methodCall.getClassName();
         String insnName = methodCall.getMethodName();
-        String insnSignature = methodCall.getSignature();
 
         CtClass insnClass = tryGetClass(insnClassName, inputClassName);
         if (insnClass == null) {
             return false;
         }
 
-        if (!isMatchSourceMethod(insnClass, insnName, insnSignature, false)) {
+        if (!isMatchSourceMethod(insnClass, insnName)) {
             return false;
         }
 
-        String target = getTarget();
-        String replacement = replaceInstrument(inputClassName, methodCall, target);
+        String replacement = replaceInstrument(inputClassName, methodCall);
         Logger.warning(getName() + " by: " + replacement
                 + " at " + inputClassName + ".java" + ":" + methodCall.getLineNumber());
         return true;

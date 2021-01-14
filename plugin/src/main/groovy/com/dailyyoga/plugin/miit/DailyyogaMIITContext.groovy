@@ -90,7 +90,7 @@ class DailyyogaMIITContext {
 
     class DailyyogaMIITClassPool extends ClassPool {
 
-        DroidAssistClassPool() {
+        DailyyogaMIITClassPool() {
             super(true)
             childFirstLookup = true
         }

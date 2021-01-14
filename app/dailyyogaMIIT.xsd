@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+
+    <xs:element name="DailyyogaMIIT">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Global" />
+                <xs:element ref="Replace" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Global">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Filter" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Replace">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="MethodCall" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="MethodCall">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="2" minOccurs="2" ref="Method" />
+                <xs:element ref="Filter" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Method">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Declaring" />
+                <xs:element ref="ReturnType" />
+                <xs:element ref="Name" />
+                <xs:element minOccurs="0" ref="Parameters" />
+            </xs:sequence>
+            <xs:attribute name="isStatic" type="xs:boolean" />
+            <xs:attribute name="type" type="MethodType" use="required" />
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Declaring" type="xs:NCName" />
+    <xs:element name="ReturnType" type="xs:NCName" />
+    <xs:element name="Name" type="xs:NCName" />
+    <xs:element name="Parameters" type="xs:NCName" />
+
+    <xs:simpleType name="MethodType" id="MethodType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Target" />
+            <xs:enumeration value="Source" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:element name="Filter">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" ref="Include" />
+                <xs:element minOccurs="0" ref="Exclude" />
+            </xs:sequence>
+            <xs:attribute name="ignoreGlobalIncludes" type="xs:boolean" />
+            <xs:attribute name="ignoreGlobalExclude" type="xs:boolean" />
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="Include" type="xs:string" />
+    <xs:element name="Exclude" type="xs:string" />
+
+
+</xs:schema>

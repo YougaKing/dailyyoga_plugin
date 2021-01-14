@@ -37,11 +37,7 @@ public class SourceSpec {
         this.parameters = parameters;
         this.annotation = annotation;
         if (type != null) {
-            if (kind == Kind.FIELD) {
-                this.signature = type.getErasureSignature();
-            } else {
-                this.signature = typesToSignature(type, parameters, true);
-            }
+            this.signature = typesToSignature(type, parameters, true);
         }
     }
 
@@ -130,64 +126,14 @@ public class SourceSpec {
     public static SourceSpec fromString(String source, String kind, boolean extend) {
         SourceSpec sourceSpec;
         if (source.contains("/") || source.contains(";")) {
-            sourceSpec = fromDescriptorPattern(source, kind);
+            throw new DailyyogaMIITBadTypeException("Bad type :" + source);
         } else if (source.startsWith("@")) {
-            sourceSpec = fromAnnotation(source, kind);
+            throw new DailyyogaMIITBadTypeException("Bad type :" + source);
         } else {
             sourceSpec = fromJavaPattern(source, kind);
         }
         sourceSpec.setExtend(extend);
         return sourceSpec;
-    }
-
-
-    private static SourceSpec fromDescriptorPattern(String source, String kind) {
-        String declaring = null;
-        String name = null;
-        String signature;
-        int start = -1;
-        int end;
-        //
-        end = source.indexOf("#");
-        if (end >= 0) {
-            start = end;
-        }
-        //
-        end = source.indexOf(".");
-        if (end >= 0) {
-            declaring = source.substring(start < 0 ? 0 : (start + 1), end);
-            start = end;
-        }
-        //
-        end = source.indexOf(":");
-        if (end >= 0) {
-            name = source.substring(start < 0 ? 0 : (start + 1), end);
-            start = end;
-        }
-        //
-        signature = source.substring(start < 0 ? 0 : (start + 1));
-        Object[] ts = Type.signatureToTypes(signature);
-
-        String signatureSig = "L" + declaring + ";";
-        return new SourceSpec(
-                Kind.valueOf(kind),
-                (Type) ts[0],
-                Type.forSignature(signatureSig),
-                name,
-                (Type[]) ts[1]);
-    }
-
-    private static SourceSpec fromAnnotation(String source, String kind) {
-        source = source.substring(1);
-        int start = source.indexOf(".");
-        String name = source.substring(start < 0 ? 0 : (start + 1));
-        return new SourceSpec(
-                Kind.valueOf(kind),
-                Type.VOID,
-                Type.forName(source),
-                name,
-                Type.NONE
-                , true);
     }
 
     private static SourceSpec fromJavaPattern(String source, String kind) {
@@ -196,123 +142,7 @@ public class SourceSpec {
             checkMethodSource(source);
             return methodFromString(source);
         }
-        if (kd == Kind.CONSTRUCTOR) {
-            checkConstructorSource(source);
-            return constructorFromString(source);
-        }
-        if (kd == Kind.FIELD) {
-            checkFieldSource(source);
-            return fieldFromString(source);
-        }
-        if (kd == Kind.INITIALIZER) {
-            checkInitializerSource(source);
-            return initializerFromString(source);
-        }
         throw new DailyyogaMIITBadTypeException("Bad type :" + source);
-    }
-
-    private static SourceSpec initializerFromString(String str) {
-        str = str.trim();
-        Type declaringTy;
-        if (str.endsWith(".<clinit>")) {
-            declaringTy = Type.forName(str.replace(".<clinit>", ""));
-        } else {
-            declaringTy = Type.forName(str);
-        }
-        return new SourceSpec(Kind.INITIALIZER, null, declaringTy, null, null);
-    }
-
-    private static SourceSpec fieldFromString(String str) {
-        str = str.trim();
-        final int len = str.length();
-        int i = 0;
-        int start = i;
-        while (!Character.isWhitespace(str.charAt(i)))
-            i++;
-        Type retTy = Type.forName(str.substring(start, i));
-
-        start = i;
-        i = str.lastIndexOf('.');
-        Type declaringTy = Type.forName(str.substring(start, i).trim());
-        start = ++i;
-        String name = str.substring(start, len).trim();
-        return new SourceSpec(Kind.FIELD, retTy, declaringTy, name, null);
-    }
-
-    private static SourceSpec constructorFromString(String str) {
-        str = str.trim();
-        int len = str.length();
-        int i = 0;
-        while (Character.isWhitespace(str.charAt(i))) i++;
-
-        int start = i;
-        while (i < len && !Character.isWhitespace(str.charAt(i))) i++;
-
-        String returnStatement;
-        if (i == len) {
-            i = 0;
-            returnStatement = "";
-        } else {
-            returnStatement = str.substring(start, i);
-        }
-        Type returnTy;
-        Type declaringTy;
-        String[] paramTypeNames;
-        String name;
-        switch (returnStatement) {
-            case "new":
-                returnTy = Type.forName("void");
-                start = i;
-                i = str.indexOf('(', i);
-                declaringTy = Type.forName(str.substring(start, i).trim());
-                name = "<init>";
-                i = str.indexOf('(', i);
-                start = ++i;
-                i = str.indexOf(')', i);
-                paramTypeNames = parseParamTypeNames(str.substring(start, i).trim());
-                break;
-            case "":
-                returnTy = Type.forName("void");
-                start = i;
-                i = str.indexOf('(', i);
-                i = str.lastIndexOf('.', i);
-                String declaringStr = str.substring(start, i).trim();
-                start = ++i;
-                i = str.indexOf('(', i);
-                name = str.substring(start, i).trim();
-                if (!name.equals("new")) {
-                    declaringStr = declaringStr + "." + name;
-                }
-                declaringTy = Type.forName(declaringStr);
-                name = "<init>";
-                start = ++i;
-                i = str.indexOf(')', i);
-                paramTypeNames = parseParamTypeNames(str.substring(start, i).trim());
-                break;
-            default:
-                returnTy = Type.forName(returnStatement);
-                start = i;
-                i = str.indexOf('(', i);
-                i = str.lastIndexOf('.', i);
-                declaringTy = Type.forName(str.substring(start, i).trim());
-
-                start = ++i;
-                i = str.indexOf('(', i);
-                name = str.substring(start, i).trim();
-                start = ++i;
-                i = str.indexOf(')', i);
-
-                paramTypeNames = parseParamTypeNames(str.substring(start, i).trim());
-                break;
-        }
-
-        Type[] paramTys = Type.forNames(paramTypeNames);
-        return new SourceSpec(
-                name.equals("<init>") ? Kind.CONSTRUCTOR : Kind.METHOD,
-                returnTy,
-                declaringTy,
-                name,
-                paramTys);
     }
 
     private static SourceSpec methodFromString(String str) {
@@ -348,11 +178,14 @@ public class SourceSpec {
         start = ++i;
         i = str.indexOf(')', i);
 
+        if (name.equals("<init>")) {
+            throw new DailyyogaMIITBadTypeException("Bad type :" + str);
+        }
         paramTypeNames = parseParamTypeNames(str.substring(start, i).trim());
 
         Type[] paramTys = Type.forNames(paramTypeNames);
         return new SourceSpec(
-                name.equals("<init>") ? Kind.CONSTRUCTOR : Kind.METHOD,
+                Kind.METHOD,
                 returnTy,
                 declaringTy,
                 name,
@@ -391,58 +224,12 @@ public class SourceSpec {
         }
     }
 
-    private static void checkInitializerSource(String source) {
-        String ex = "\\s*([A-Za-z0-9_$]+\\.)*[A-Za-z0-9_$]+.[A-Za-z0-9_$]+\\s*";
-        if (!source.matches(ex)) {
-            throwBadStatementException("Invalid java initializer expression: [" + source + "], " +
-                    "A valid constructor initializer should be [ packageName.className ]");
-        }
-    }
-
-    private static void checkConstructorSource(String source) {
-        String ex1 = "new" +
-                "\\s+([A-Za-z0-9_$]+\\.)*[A-Za-z0-9_$]+.[A-Za-z0-9_$]+" +
-                "\\(\\s*((boolean|byte|char|double|float|int|long|short|void|([A-Za-z0-9_$]+\\.)*[A-Za-z0-9_$]+)(\\[\\])?\\s*,?)*\\)\\s*";
-
-        String ex2 = "\\s*([A-Za-z0-9_$]+\\.)*[A-Za-z0-9_$]+" +
-                "\\.new" +
-                "\\(\\s*((boolean|byte|char|double|float|int|long|short|void|([A-Za-z0-9_$]+\\.)*[A-Za-z0-9_$]+)(\\[\\])?\\s*,?)*\\)\\s*";
-
-        if (!source.matches(ex1) && !source.matches(ex2)) {
-            throwBadStatementException("Invalid java constructor expression: [" + source + "], " +
-                    "A valid constructor expression should be [new packageName.className(paramType,paramType)" +
-                    " or packageName.className.new(paramType,paramType)]");
-        }
-    }
-
-
-    private static void checkFieldSource(String source) {
-        String returnTypeEx = "\\s*(boolean|byte|char|double|float|int|long|short|void|([A-Za-z0-9_$]+\\.)*[A-Za-z0-9_$]+)(\\[\\])?";
-        String declaringEx = "([A-Za-z0-9_$]+\\.)*[A-Za-z0-9_$]+\\.[A-Za-z0-9_$]+";
-
-        String validField = "A valid field expression should be [fieldType packageName.className.fieldName]";
-        if (!source.matches(returnTypeEx + "\\s+" + declaringEx)) {
-            String reason;
-            {
-                Pattern pattern = Pattern.compile(returnTypeEx + "\\s+");
-                Matcher matcher = pattern.matcher(source);
-                boolean hasReturnTypeEx = matcher.find();
-                if (!hasReturnTypeEx) {
-                    reason = "Type for the filed is missing";
-                    throwBadStatementException("Invalid java field expression: [" + source + "], " +
-                            "reason: " + reason + ", " + validField);
-                }
-            }
-            throwBadStatementException("Invalid java field expression: [" + source + "]" + ", " + validField);
-        }
-    }
-
     private static void throwBadStatementException(String msg) {
         throw new DailyyogaMIITBadStatementException(msg);
     }
 
     public enum Kind {
-        METHOD, CONSTRUCTOR, FIELD, INITIALIZER
+        METHOD
     }
 
     @SuppressWarnings("WeakerAccess")

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<DailyyogaMIIT xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="dailyyogaMIIT.xsd">
+    <Global>
+        <Filter>
+            <Include>*</Include>
+            <!--<Exclude>android.*</Exclude>-->
+            <!--<Exclude>com.android.*</Exclude>-->
+        </Filter>
+    </Global>
+
+    <Replace>
+        <MethodCall>
+            <Method isStatic="true" type="Source">
+                <Declaring>java.net.NetworkInterface</Declaring>
+                <ReturnType>java.util.Enumeration</ReturnType>
+                <Name>getNetworkInterfaces</Name>
+            </Method>
+            <Method isStatic="true" type="Target">
+                <Declaring>com.dailyyoga.plugin.net.NetworkInterfaceTransform</Declaring>
+                <ReturnType>java.util.Enumeration</ReturnType>
+                <Name>getNetworkInterfaces</Name>
+                <Parameters>java.lang.String</Parameters>
+            </Method>
+            <Filter ignoreGlobalIncludes="true">
+                <Include>com.dailyyoga.plugin.net.NetworkInterfaceTransform</Include>
+            </Filter>
+        </MethodCall>
+    </Replace>
+
+</DailyyogaMIIT>

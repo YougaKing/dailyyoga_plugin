@@ -3,7 +3,7 @@ package com.dailyyoga.plugin.miit
 import com.dailyyoga.plugin.miit.transform.SourceTargetTransformer
 import com.dailyyoga.plugin.miit.transform.Transformer
 import com.dailyyoga.plugin.miit.transform.replace.MethodCallReplaceTransformer
-import org.gradle.api.Project;
+import org.gradle.api.Project
 
 
 class DailyyogaMIITConfiguration {
@@ -15,9 +15,6 @@ class DailyyogaMIITConfiguration {
     def transformers = new ArrayList<Transformer>()
 
     def METHOD = "METHOD"
-    def CONSTRUCTOR = "CONSTRUCTOR"
-    def FIELD = "FIELD"
-    def INITIALIZER = "INITIALIZER"
 
     DailyyogaMIITConfiguration(Project project) {
         this.project = project

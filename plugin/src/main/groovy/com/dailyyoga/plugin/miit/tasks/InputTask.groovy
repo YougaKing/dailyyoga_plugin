@@ -85,6 +85,8 @@ abstract class InputTask<T extends QualifiedContent> implements Runnable {
             return false
         }
 
+        Logger.info("executeClass: { className:" + className + "}");
+
         transformers.each {
             try {
                 it.performTransform(inputClass, className)

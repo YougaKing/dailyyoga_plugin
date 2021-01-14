@@ -3,7 +3,6 @@
     xsi:noNamespaceSchemaLocation="dailyyogaMIIT.xsd">
     <Global>
         <Filter>
-            <Include>*</Include>
             <!--<Exclude>android.*</Exclude>-->
             <!--<Exclude>com.android.*</Exclude>-->
         </Filter>
@@ -22,8 +21,8 @@
                 <Name>getNetworkInterfaces</Name>
                 <Parameters>java.lang.String</Parameters>
             </Method>
-            <Filter ignoreGlobalIncludes="true">
-                <Include>com.dailyyoga.plugin.net.NetworkInterfaceTransform</Include>
+            <Filter>
+                <Exclude>com.dailyyoga.plugin.net.NetworkInterfaceTransform</Exclude>
             </Filter>
         </MethodCall>
     </Replace>

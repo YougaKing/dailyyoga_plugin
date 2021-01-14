@@ -63,15 +63,12 @@
     <xs:element name="Filter">
         <xs:complexType>
             <xs:sequence>
-                <xs:element minOccurs="0" ref="Include" />
                 <xs:element minOccurs="0" ref="Exclude" />
             </xs:sequence>
-            <xs:attribute name="ignoreGlobalIncludes" type="xs:boolean" />
             <xs:attribute name="ignoreGlobalExcludes" type="xs:boolean" />
         </xs:complexType>
     </xs:element>
 
-    <xs:element name="Include" type="xs:string" />
     <xs:element name="Exclude" type="xs:string" />
 
 

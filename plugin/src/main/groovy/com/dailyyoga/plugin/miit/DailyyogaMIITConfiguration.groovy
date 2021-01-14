@@ -12,7 +12,6 @@ class DailyyogaMIITConfiguration {
 
     Project project
 
-    def globalIncludes = []
     def globalExcludes = []
     def transformers = new ArrayList<Transformer>()
 
@@ -27,7 +26,6 @@ class DailyyogaMIITConfiguration {
         xmlParser.setErrorHandler(new XmlErrorHandler())
         Node configs = xmlParser.parse(file)
 
-        configs.Global.Filter.Include.each { globalIncludes.add(it.text()) }
         configs.Global.Filter.Exclude.each { globalExcludes.add(it.text()) }
 
         configs.Replace.MethodCall.each {
@@ -80,19 +78,14 @@ class DailyyogaMIITConfiguration {
                 throw new IllegalArgumentException("Empty target in node ${node}")
             }
 
-            def includes = [], excludes = []
+            def excludes = []
 
-            node.Filter.Include.each { includes.add(it.text()) }
             node.Filter.Exclude.each { excludes.add(it.text()) }
 
-            if (!Boolean.valueOf(node.Filter.@ignoreGlobalIncludes[0])) {
-                includes.addAll(globalIncludes)
-            }
             if (!Boolean.valueOf(node.Filter.@ignoreGlobalExcludes[0])) {
                 excludes.addAll(globalExcludes)
             }
 
-            transformer.classFilterSpec.addIncludes(includes)
             transformer.classFilterSpec.addExcludes(excludes)
             transformers.add(transformer)
     }

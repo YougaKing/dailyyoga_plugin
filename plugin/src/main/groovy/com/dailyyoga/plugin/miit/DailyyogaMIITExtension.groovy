@@ -25,17 +25,6 @@ class DailyyogaMIITExtension {
     File logDir
     boolean incremental = true
 
-    List<String> includes = Lists.newArrayList()
-    List<String> excludes = Lists.newArrayList()
-
-    void exclude(String... filter) {
-        excludes.addAll(filter)
-    }
-
-    void include(String... filter) {
-        includes.addAll(filter)
-    }
-
     void config(File... file) {
         configFiles.addAll(file)
     }
@@ -46,30 +35,11 @@ class DailyyogaMIITExtension {
 
     @Override
     String toString() {
-        StringBuilder excludeBuilder = new StringBuilder()
-        int length = excludes.size()
-        for (int i = 0; i < length; i++) {
-            excludeBuilder.append("'").append(excludes.get(i)).append("'")
-            if (i != length - 1) {
-                excludeBuilder.append(",")
-            }
-        }
-
-        StringBuilder includeBuilder = new StringBuilder()
-        length = includes.size()
-        for (int i = 0; i < length; i++) {
-            includeBuilder.append("'").append(includes.get(i)).append("'")
-            if (i != length - 1) {
-                includeBuilder.append(",")
-            }
-        }
         return "\n{" +
                 "\n    enable=" + enable +
                 "\n    logLevel=" + logLevel +
                 "\n    configFiles=" + configFiles +
                 "\n    logDir=" + logDir +
-                "\n    includes=[" + includeBuilder.toString() + "]" +
-                "\n    excludes=[" + excludeBuilder.toString() + "]" +
                 '\n}'
 
     }

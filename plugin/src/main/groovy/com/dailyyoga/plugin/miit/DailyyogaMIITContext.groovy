@@ -70,8 +70,6 @@ class DailyyogaMIITContext {
                         def list = new DailyyogaMIITConfiguration(project).parse(it)
                         return list.stream().peek {
                             transformer ->
-                                transformer.classFilterSpec.addIncludes(extension.includes)
-                                transformer.classFilterSpec.addExcludes(extension.excludes)
                                 transformer.setClassPool(classPool)
                                 transformer.check()
                         }

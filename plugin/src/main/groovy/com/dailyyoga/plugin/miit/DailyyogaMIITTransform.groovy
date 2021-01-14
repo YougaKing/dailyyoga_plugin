@@ -93,7 +93,7 @@ class DailyyogaMIITTransform extends Transform {
     /**
      * When droidAssist is enable, process files and write them to an output folder
      *
-     * <p> {@link DroidAssistExecutor#execute} process files specifically
+     * <p> {@link DailyyogaMIITExecutor#execute} process files specifically
      */
     void onTransform(
             Context gradleContext,

@@ -66,10 +66,10 @@ class DailyyogaMIITExtension {
         return "\n{" +
                 "\n    enable=" + enable +
                 "\n    logLevel=" + logLevel +
-                "\n    config=" + configFiles +
+                "\n    configFiles=" + configFiles +
                 "\n    logDir=" + logDir +
-                "\texclude=[" + excludeBuilder.toString() + "]" + "\n" +
-                "\tinclude=[" + includeBuilder.toString() + "]" + "\n" +
+                "\n    includes=[" + includeBuilder.toString() + "]" + "\n" +
+                "\n    excludes=[" + excludeBuilder.toString() + "]" + "\n" +
                 '\n}'
 
     }

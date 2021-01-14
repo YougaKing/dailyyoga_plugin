@@ -91,7 +91,7 @@ class DailyyogaMIITTransform extends Transform {
     }
 
     /**
-     * When droidAssist is enable, process files and write them to an output folder
+     * When dailyyogaMIIT is enable, process files and write them to an output folder
      *
      * <p> {@link DailyyogaMIITExecutor#execute} process files specifically
      */
@@ -107,7 +107,7 @@ class DailyyogaMIITTransform extends Transform {
                 "enable:${gradleExtension.enable}, " +
                 "incremental:${isIncremental}")
 
-        // If droidAssist is disable, just copy the input folder to the output folder
+        // If dailyyogaMIIT is disable, just copy the input folder to the output folder
         if (!gradleExtension.enable) {
             outputProvider.deleteAll()
             def dirStream = inputs

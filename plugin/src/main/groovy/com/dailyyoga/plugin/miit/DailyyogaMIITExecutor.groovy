@@ -46,7 +46,7 @@ class DailyyogaMIITExecutor {
         def buildDir = context.project.buildDir
         def variant = context.context.variantName
         destCacheFile =
-                new File("$buildDir/intermediates/droidAssist/$variant/dest-cache.json")
+                new File("$buildDir/intermediates/dailyyogaMIIT/$variant/dest-cache.json")
 
         if (destCacheFile.exists()) {
             if (incremental) {

@@ -67,7 +67,7 @@
                 <xs:element minOccurs="0" ref="Exclude" />
             </xs:sequence>
             <xs:attribute name="ignoreGlobalIncludes" type="xs:boolean" />
-            <xs:attribute name="ignoreGlobalExclude" type="xs:boolean" />
+            <xs:attribute name="ignoreGlobalExcludes" type="xs:boolean" />
         </xs:complexType>
     </xs:element>
 

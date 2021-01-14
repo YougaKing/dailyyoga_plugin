@@ -39,14 +39,26 @@ class DailyyogaMIITConfiguration {
     def sourceTargetTransformerNodeHandler = {
         kind, node, transformerFeather ->
             SourceTargetTransformer transformer = transformerFeather.call()
-            def extend = node.Source.@extend[0] ?: "true"
-            transformer.setSource(node.Source.text().trim(), kind, Boolean.valueOf(extend))
-            transformer.setTarget(node.Target.text().trim())
+            if (node.Method.length() != 2) {
+                throw new IllegalArgumentException("source and target must not null in node ${node}")
+            }
 
-            if (transformer.getSource() == '') {
+            node.Method.each {
+                method ->
+                    def isStatic = method.@isStatic[0] ?: "true"
+                    def type = method.@type[0]
+                    transformer.setMethod(type,
+                            method.Declaring.text().trim(),
+                            method.ReturnType.text().trim(),
+                            method.Name.text().trim(),
+                            method.Parameters.text().trim(),
+                            isStatic)
+            }
+
+            if (!transformer.getSource()) {
                 throw new IllegalArgumentException("Empty source in node ${node}")
             }
-            if (transformer.getTarget() == '') {
+            if (!transformer.getTarget()) {
                 throw new IllegalArgumentException("Empty target in node ${node}")
             }
 

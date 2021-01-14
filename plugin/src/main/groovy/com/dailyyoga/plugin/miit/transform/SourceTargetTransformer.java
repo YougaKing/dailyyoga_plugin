@@ -1,7 +1,8 @@
 package com.dailyyoga.plugin.miit.transform;
 
 
-import com.dailyyoga.plugin.miit.spec.SourceSpec;
+import com.dailyyoga.plugin.miit.ex.DailyyogaMIITBadTypeException;
+import com.dailyyoga.plugin.miit.spec.MethodSpec;
 
 import java.lang.reflect.Method;
 import java.util.Set;
@@ -12,9 +13,8 @@ import javassist.NotFoundException;
 
 public abstract class SourceTargetTransformer extends Transformer {
 
-    private String target;
-    private String source;
-    private SourceSpec sourceSpec;
+    private MethodSpec sourceSpec;
+    private MethodSpec targetSpec;
 
     private CtClass sourceClass;
     private String sourceDeclaringClassName;
@@ -24,20 +24,28 @@ public abstract class SourceTargetTransformer extends Transformer {
     private Class annotationClass;
     private Set<Method> annotationTargetMembers;
 
-    public SourceTargetTransformer setSource(String source, String kind, boolean extend) {
-        this.source = source;
-        sourceSpec = SourceSpec.fromString(source, kind, extend);
+    public SourceTargetTransformer setMethod(String type,
+                                             String declaring,
+                                             String returnType,
+                                             String name,
+                                             String parameters,
+                                             boolean isStatic) {
+        if (MethodSpec.SOURCE.equals(type)) {
+            sourceSpec = MethodSpec.create(declaring, returnType, name, parameters, isStatic);
+        } else if (MethodSpec.TARGET.equals(type)) {
+            targetSpec = MethodSpec.create(declaring, returnType, name, parameters, isStatic);
+        } else {
+            throw new DailyyogaMIITBadTypeException("Bad type :" + type);
+        }
         return this;
     }
 
-    public SourceTargetTransformer setTarget(String target) {
-        target = target.trim();
-        this.target = target;
-        return this;
+    public MethodSpec getSourceSpec() {
+        return sourceSpec;
     }
 
-    public String getSource() {
-        return source;
+    public MethodSpec getTargetSpec() {
+        return targetSpec;
     }
 
     protected String getSourceDeclaringClassName() {

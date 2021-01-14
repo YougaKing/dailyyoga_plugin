@@ -76,11 +76,11 @@ class DailyyogaMIITTransform extends Transform {
                     gradleExtension.logDir ?: project.file("${project.buildDir}/outputs/logs/"))
 
             onTransform(
-                    invocation.getContext(),
-                    invocation.getInputs(),
-                    invocation.getReferencedInputs(),
-                    invocation.getOutputProvider(),
-                    invocation.isIncremental())
+                    transformInvocation.getContext(),
+                    transformInvocation.getInputs(),
+                    transformInvocation.getReferencedInputs(),
+                    transformInvocation.getOutputProvider(),
+                    transformInvocation.isIncremental())
         } catch (Throwable e) {
             Logger.error("Build failed with an exception: ${e.cause?.message}", e)
             e.fillInStackTrace()

@@ -4,6 +4,7 @@ import com.android.build.api.transform.*
 import com.dailyyoga.plugin.miit.tasks.DirInputTask
 import com.dailyyoga.plugin.miit.tasks.InputTask
 import com.dailyyoga.plugin.miit.tasks.JarInputTask
+import com.dailyyoga.plugin.miit.util.GradleUtils
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import org.apache.commons.io.FileUtils

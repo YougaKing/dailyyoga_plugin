@@ -12,6 +12,8 @@ import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.List;
@@ -25,6 +27,18 @@ public class MIITMethodTransform {
 
     private static void println(String args) {
         Log.e(MIITMethodTransform.class.getName(), args);
+    }
+
+    public static Object invoke(String preArgs, Method method, Object obj, Object... args) {
+        println(preArgs);
+        try {
+            return method.invoke(obj, args);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static Location getLastKnownLocation(String args, LocationManager locationManager, String provider) {

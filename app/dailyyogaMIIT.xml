@@ -3,27 +3,26 @@
     xsi:noNamespaceSchemaLocation="dailyyogaMIIT.xsd">
     <Global>
         <Filter>
-            <!--<Exclude>android.*</Exclude>-->
-            <!--<Exclude>com.android.*</Exclude>-->
+            <Exclude>com.dailyyoga.plugin.miit.MIITMethodTransform</Exclude>
         </Filter>
     </Global>
 
     <Replace>
         <MethodCall>
-            <Method isStatic="true" type="Source">
-                <Declaring>java.net.NetworkInterface</Declaring>
-                <ReturnType>java.util.Enumeration</ReturnType>
-                <Name>getNetworkInterfaces</Name>
+            <Method type="Source">
+                <Declaring>java.lang.reflect.Method</Declaring>
+                <ReturnType>java.lang.Object</ReturnType>
+                <Name>invoke</Name>
+                <Parameters>java.lang.Object,java.lang.Object[]</Parameters>
             </Method>
             <Method isStatic="true" type="Target">
                 <Declaring>com.dailyyoga.plugin.miit.MIITMethodTransform</Declaring>
-                <ReturnType>java.util.Enumeration</ReturnType>
-                <Name>getNetworkInterfaces</Name>
-                <Parameters>java.lang.String</Parameters>
+                <ReturnType>java.lang.Object</ReturnType>
+                <Name>invoke</Name>
+                <Parameters>
+                    java.lang.String,java.lang.reflect.Method,java.lang.Object,java.lang.Object[]
+                </Parameters>
             </Method>
-            <Filter>
-                <Exclude>com.dailyyoga.plugin.miit.MIITMethodTransform</Exclude>
-            </Filter>
         </MethodCall>
     </Replace>
 

@@ -30,7 +30,7 @@
         <xs:complexType>
             <xs:sequence>
                 <xs:element maxOccurs="2" minOccurs="2" ref="Method" />
-                <xs:element ref="Filter" />
+                <xs:element ref="Filter" minOccurs="0"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -51,7 +51,7 @@
     <xs:element name="Declaring" type="xs:NCName" />
     <xs:element name="ReturnType" type="xs:NCName" />
     <xs:element name="Name" type="xs:NCName" />
-    <xs:element name="Parameters" type="xs:NCName" />
+    <xs:element name="Parameters" type="xs:string" />
 
     <xs:simpleType name="MethodType" id="MethodType">
         <xs:restriction base="xs:string">

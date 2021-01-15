@@ -48,22 +48,12 @@ public abstract class Transformer {
         return this;
     }
 
-    public ClassPool getClassPool() {
-        return classPool;
-    }
-
     public void check() {
     }
 
     //Get class in the class pool
     protected CtClass tryGetClass(String className, String loc) {
-        CtClass ctClass = classPool.getOrNull(className);
-        if (ctClass == null) {
-            String msg = "cannot find " + className + " in " + loc;
-            throw new DailyyogaMIITNotFoundException(msg);
-        } else {
-            return ctClass;
-        }
+        return classPool.getOrNull(className);
     }
 
     protected Boolean isInterface(CtClass inputClass) {
@@ -71,16 +61,6 @@ public abstract class Transformer {
             return inputClass.isInterface();
         } catch (Exception ignore) {
             return null;
-        }
-    }
-
-    //Get all interfaces of the specified class
-    protected CtClass[] tryGetInterfaces(CtClass inputClass) {
-        try {
-            return inputClass.getInterfaces();
-        } catch (NotFoundException e) {
-            String msg = "Cannot find interface " + e.getMessage() + " in " + inputClass.getName();
-            throw new DailyyogaMIITNotFoundException(msg);
         }
     }
 

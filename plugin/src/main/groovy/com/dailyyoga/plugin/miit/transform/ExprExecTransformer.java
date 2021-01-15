@@ -50,6 +50,9 @@ public abstract class ExprExecTransformer extends SourceTargetTransformer {
         if (!filterClass(inputClass, inputClassName)) {
             return false;
         }
+        if (!isMatchSourceClass(inputClass)) {
+            return false;
+        }
         if (!execute(inputClass, inputClassName)) {
             return false;
         }

@@ -57,6 +57,15 @@ public abstract class SourceTargetTransformer extends Transformer {
         return name.equals(getSourceMethodName());
     }
 
+    boolean isMatchSourceClass(CtClass insnClass) throws NotFoundException {
+        boolean match = false;
+        Boolean anInterface = isInterface(insnClass);
+        if (anInterface == null || anInterface) {
+            return false;
+        }
+        return match;
+    }
+
     protected String replaceInstrument(
             String sourceClassName,
             MethodCall methodCall)

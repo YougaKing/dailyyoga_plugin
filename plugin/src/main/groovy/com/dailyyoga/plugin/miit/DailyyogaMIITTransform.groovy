@@ -53,6 +53,11 @@ class DailyyogaMIITTransform extends Transform {
     }
 
     @Override
+    Set<? super QualifiedContent.Scope> getReferencedScopes() {
+        return TransformManager.SCOPE_FULL_PROJECT
+    }
+
+    @Override
     boolean isIncremental() {
         return gradleExtension.incremental
     }

@@ -15,7 +15,7 @@
                 <Name>invoke</Name>
                 <Parameters>java.lang.Object,java.lang.Object[]</Parameters>
             </Method>
-            <Method isStatic="true" type="Target">
+            <Method type="Target">
                 <Declaring>com.dailyyoga.plugin.miit.MIITMethodTransform</Declaring>
                 <ReturnType>java.lang.Object</ReturnType>
                 <Name>invoke</Name>

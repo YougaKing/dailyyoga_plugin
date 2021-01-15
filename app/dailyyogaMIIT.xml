@@ -16,13 +16,13 @@
                 <Name>getNetworkInterfaces</Name>
             </Method>
             <Method isStatic="true" type="Target">
-                <Declaring>com.dailyyoga.plugin.net.NetworkInterfaceTransform</Declaring>
+                <Declaring>com.dailyyoga.plugin.miit.MIITMethodTransform</Declaring>
                 <ReturnType>java.util.Enumeration</ReturnType>
                 <Name>getNetworkInterfaces</Name>
                 <Parameters>java.lang.String</Parameters>
             </Method>
             <Filter>
-                <Exclude>com.dailyyoga.plugin.net.NetworkInterfaceTransform</Exclude>
+                <Exclude>com.dailyyoga.plugin.miit.MIITMethodTransform</Exclude>
             </Filter>
         </MethodCall>
     </Replace>

@@ -1,4 +1,4 @@
-package com.dailyyoga.plugin.net.amap;
+package com.dailyyoga.plugin.miit.amap;
 
 /**
  * @author: YougaKingWu@gmail.com

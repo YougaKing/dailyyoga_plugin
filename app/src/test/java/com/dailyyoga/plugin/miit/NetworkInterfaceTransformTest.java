@@ -1,4 +1,4 @@
-package com.dailyyoga.plugin.net;
+package com.dailyyoga.plugin.miit;
 
 import org.junit.Test;
 

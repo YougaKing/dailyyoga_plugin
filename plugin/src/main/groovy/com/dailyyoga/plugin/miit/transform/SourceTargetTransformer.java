@@ -50,7 +50,8 @@ public abstract class SourceTargetTransformer extends Transformer {
         if (!getSource().getReturnType().equals(getTarget().getReturnType())) {
             throw new IllegalArgumentException("Different returnType source/target in node " + node);
         }
-        if (getSource().getParameters().length - getTarget().getParameters().length != -1) {
+        int dValue = getSource().isStatic() ? -1 : -2;
+        if (getSource().getParameters().length - getTarget().getParameters().length != dValue) {
             throw new IllegalArgumentException("Different parameters source/target in node " + node);
         }
         if (!String.class.getName().equals(getTarget().getParameters()[0])) {

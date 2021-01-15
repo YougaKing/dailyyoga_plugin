@@ -58,12 +58,11 @@ public abstract class SourceTargetTransformer extends Transformer {
     }
 
     boolean isMatchSourceClass(CtClass insnClass) throws NotFoundException {
-        boolean match = false;
         Boolean anInterface = isInterface(insnClass);
         if (anInterface == null || anInterface) {
             return false;
         }
-        return match;
+        return true;
     }
 
     protected String replaceInstrument(

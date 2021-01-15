@@ -51,11 +51,6 @@ public abstract class Transformer {
     public void check() {
     }
 
-    //Get class in the class pool
-    protected CtClass tryGetClass(String className, String loc) {
-        return classPool.getOrNull(className);
-    }
-
     protected Boolean isInterface(CtClass inputClass) {
         try {
             return inputClass.isInterface();

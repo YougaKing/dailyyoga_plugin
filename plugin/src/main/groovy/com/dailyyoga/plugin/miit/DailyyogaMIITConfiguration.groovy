@@ -71,12 +71,7 @@ class DailyyogaMIITConfiguration {
                     transformer.setMethod(type, methodSpec)
             }
 
-            if (!transformer.getSource()) {
-                throw new IllegalArgumentException("Empty source in node ${node}")
-            }
-            if (!transformer.getTarget()) {
-                throw new IllegalArgumentException("Empty target in node ${node}")
-            }
+            transformer.checkSourceTarget(${node})
 
             def excludes = []
 

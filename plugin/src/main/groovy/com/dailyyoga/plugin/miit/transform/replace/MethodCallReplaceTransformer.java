@@ -30,19 +30,11 @@ public class MethodCallReplaceTransformer extends ExprExecTransformer {
             return false;
         }
 
-        String insnClassName = methodCall.getClassName();
-        String insnName = methodCall.getMethodName();
-
-        CtClass insnClass = tryGetClass(insnClassName, inputClassName);
-        if (insnClass == null) {
+        if (!isMatchSourceMethod(methodCall)) {
             return false;
         }
 
-        if (!isMatchSourceMethod(insnClass, insnName)) {
-            return false;
-        }
-
-        String replacement = replaceInstrument(inputClassName, methodCall);
+        String replacement = replaceInstrument(methodCall);
         Logger.warning(getName() + " by: " + replacement
                 + " at " + inputClassName + ".java" + ":" + methodCall.getLineNumber());
         return true;

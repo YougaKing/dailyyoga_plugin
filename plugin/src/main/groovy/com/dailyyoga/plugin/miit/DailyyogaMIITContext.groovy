@@ -1,8 +1,6 @@
 package com.dailyyoga.plugin.miit
 
 import com.android.build.api.transform.Context
-import com.android.build.api.transform.DirectoryInput
-import com.android.build.api.transform.JarInput
 import com.android.build.api.transform.TransformInput
 import com.dailyyoga.plugin.miit.ex.DailyyogaMIITException
 import com.dailyyoga.plugin.miit.transform.Transformer
@@ -11,7 +9,6 @@ import com.dailyyoga.plugin.miit.util.Logger
 import javassist.ClassPool
 import org.gradle.api.Project
 
-import java.util.function.Function
 import java.util.stream.Collectors
 import java.util.stream.Stream
 
@@ -49,30 +46,14 @@ class DailyyogaMIITContext {
         classPool = new DailyyogaMIITClassPool()
         classPool.appendBootClasspath(project.android.bootClasspath)
 
-        Logger.info("createClassPool: " + referencedInputs.toString())
-
         def dirStream = referencedInputs
                 .parallelStream()
                 .flatMap { it.directoryInputs.parallelStream() }
-                .map(new Function<DirectoryInput, DirectoryInput>() {
-                    @Override
-                    DirectoryInput apply(DirectoryInput directoryInput) {
-                        Logger.info("map directoryInput: ${IOUtils.getPath(directoryInput.file)}")
-                        return directoryInput
-                    }
-                })
                 .filter { it.file.exists() }
 
         def jarStream = referencedInputs
                 .parallelStream()
                 .flatMap { it.jarInputs.parallelStream() }
-                .map(new Function<JarInput, JarInput>() {
-                    @Override
-                    JarInput apply(JarInput jarInput) {
-                        Logger.info("map jarInput: ${IOUtils.getPath(jarInput.file)}")
-                        return jarInput
-                    }
-                })
                 .filter { it.file.exists() }
 
         Stream.concat(dirStream, jarStream).forEach {

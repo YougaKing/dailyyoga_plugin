@@ -80,8 +80,6 @@ class DailyyogaMIITTransform extends Transform {
             Logger.init(logLevel < 0 ? Logger.LEVEL_CONSOLE : logLevel,
                     gradleExtension.logDir ?: project.file("${project.buildDir}/outputs/logs/"))
 
-            Logger.info("transform: " + transformInvocation.getReferencedInputs())
-
             onTransform(
                     transformInvocation.getContext(),
                     transformInvocation.getInputs(),

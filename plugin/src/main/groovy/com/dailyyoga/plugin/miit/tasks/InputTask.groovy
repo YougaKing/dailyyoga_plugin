@@ -82,14 +82,10 @@ abstract class InputTask<T extends QualifiedContent> implements Runnable {
             return false
         }
 
-//        Logger.info("executeClass: { className:" + className + ",directory:" + directory.getAbsolutePath() + "}")
-
         inputClass = context.classPool.getOrNull(className)
         if (inputClass == null) {
             return false
         }
-
-        Logger.debug("executeClass: { className:" + className + ",inputClass:" + inputClass + "}")
 
         transformers.each {
             try {

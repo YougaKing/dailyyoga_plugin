@@ -45,7 +45,7 @@ public class MethodSpec {
     }
 
     public String[] getParameters() {
-        return parameters;
+        return parameters == null ? new String[0] : parameters;
     }
 
     public boolean isStatic() {

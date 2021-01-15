@@ -68,7 +68,7 @@ public abstract class SourceTargetTransformer extends Transformer {
     protected String replaceInstrument(
             String sourceClassName,
             MethodCall methodCall)
-            throws CannotCompileException {
+            throws CannotCompileException, NotFoundException {
 
         String statement = getTarget().getName();
         String replacement = getReplaceStatement(sourceClassName, methodCall);
@@ -84,7 +84,29 @@ public abstract class SourceTargetTransformer extends Transformer {
 
     protected String getReplaceStatement(
             String sourceClassName,
-            MethodCall methodCall) {
-        return "";
+            MethodCall methodCall) throws NotFoundException {
+
+        StringBuilder builder = new StringBuilder();
+        builder.append(getTarget().getDeclaring())
+                .append(".")
+                .append(getTarget().getName())
+                .append("(\"");
+        builder.append(methodCall.getMethod().getLongName());
+
+        if (!getSource().isStatic()) {
+            builder.append(",")
+                    .append("$0");
+        }
+        for (int i = 0; i < getSource().getParameters().length; i++) {
+            builder.append(",")
+                    .append("$")
+                    .append(i + 1);
+        }
+        builder.append("\");");
+        return getReplaceStatement(builder.toString());
+    }
+
+    private String getReplaceStatement(String content) {
+        return "{ $_ = " + content + "}";
     }
 }

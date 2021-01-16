@@ -46,9 +46,8 @@ class DailyyogaMIITConfiguration {
             }
             node.Method.each {
                 method ->
-                    boolean isStatic = method.@isStatic ?: "true"
+                    String isStatic = method.@isStatic
                     String type = method.@type
-
                     String declaring = method.Declaring.text().trim()
                     String returnType = method.ReturnType.text().trim()
                     String name = method.Name.text().trim()

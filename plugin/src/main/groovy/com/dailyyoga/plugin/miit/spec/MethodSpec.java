@@ -54,7 +54,7 @@ public class MethodSpec {
     public static MethodSpec create(String declaring,
                                     String returnType,
                                     String name,
-                                    boolean isStatic) {
+                                    String isStatic) {
         return create(
                 declaring,
                 returnType,
@@ -67,7 +67,7 @@ public class MethodSpec {
                                     String returnType,
                                     String name,
                                     String parameters,
-                                    boolean isStatic) {
+                                    String isStatic) {
 
         String[] paramTypeNames = parseParamTypeNames(parameters);
 
@@ -76,7 +76,7 @@ public class MethodSpec {
                 returnType,
                 name,
                 paramTypeNames,
-                isStatic);
+                Boolean.parseBoolean(isStatic));
     }
 
     private static String[] parseParamTypeNames(String str) {

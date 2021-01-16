@@ -59,6 +59,8 @@ public class MethodHookTest {
                 parameters
         );
 
+        checkSourceTarget("");
+
         File file = new File("/Users/youga/StudioProjects/android_public/dailyyoga_plugin/plugin/MIITMethodTransform.class");
         try {
             ClassPool.getDefault().appendClassPath(file.getAbsolutePath());
@@ -101,6 +103,45 @@ public class MethodHookTest {
             outputStream.write(ctClass.toBytecode());
         } catch (CannotCompileException | IOException | NotFoundException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void checkSourceTarget(String node) {
+        if (getSource() == null) {
+            throw new IllegalArgumentException("Empty source " + node);
+        }
+        if (getTarget() == null) {
+            throw new IllegalArgumentException("Empty target " + node);
+        }
+        if (getSource().isStatic() != getTarget().isStatic()) {
+            throw new IllegalArgumentException("Different isStatic source/target " + node);
+        }
+        if (!getSource().getReturnType().equals(getTarget().getReturnType())) {
+            throw new IllegalArgumentException("Different returnType source/target " + node);
+        }
+        int dValue = Math.abs(getSource().isStatic() ? -1 : -2);
+        int result = Math.abs(getSource().getParameters().length - getTarget().getParameters().length);
+        int offset = result - dValue;
+
+        System.out.println("checkSourceTarget:" + getSource().getParameters().length + "--"
+                + getTarget().getParameters().length
+                + "--dValue:" + dValue
+                + "--result:" + result
+                + "--offset:" + offset
+        );
+
+        if (offset != 0) {
+            throw new IllegalArgumentException("Different parameters source/target " + node);
+        }
+        if (!String.class.getName().equals(getTarget().getParameters()[0])) {
+            throw new IllegalArgumentException("Target parameters [0] must " + String.class.getName() + " " + node);
+        }
+        for (int i = 0; i < getSource().getParameters().length; i++) {
+            String sourceParameter = getSource().getParameters()[i];
+            String targetParameter = getTarget().getParameters()[i + dValue];
+            if (!sourceParameter.equals(targetParameter)) {
+                throw new IllegalArgumentException("Different parameters source/target [" + i + "] " + node);
+            }
         }
     }
 

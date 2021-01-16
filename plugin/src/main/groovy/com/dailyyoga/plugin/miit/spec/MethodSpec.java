@@ -1,9 +1,6 @@
 package com.dailyyoga.plugin.miit.spec;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * This is a parser for custom aop pointcut expression.
  * <p>
@@ -84,17 +81,6 @@ public class MethodSpec {
         if (str == null || str.length() == 0) {
             return new String[0];
         }
-        List<String> l = new ArrayList<>();
-        int start = 0;
-        while (true) {
-            int i = str.indexOf(',', start);
-            if (i == -1) {
-                l.add(str.substring(start).trim());
-                break;
-            }
-            l.add(str.substring(start, i).trim());
-            start = i + 1;
-        }
-        return l.toArray(new String[l.size()]);
+        return str.split(",");
     }
 }

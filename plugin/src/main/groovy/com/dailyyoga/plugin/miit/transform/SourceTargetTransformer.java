@@ -50,8 +50,8 @@ public abstract class SourceTargetTransformer extends Transformer {
         if (!getSource().getReturnType().equals(getTarget().getReturnType())) {
             throw new IllegalArgumentException("Different returnType source/target " + node);
         }
-        int dValue = getSource().isStatic() ? -1 : -2;
-        if (getSource().getParameters().length - getTarget().getParameters().length != dValue) {
+        int dValue = getSource().isStatic() ? 1 : 2;
+        if (getTarget().getParameters().length - getSource().getParameters().length != dValue) {
             throw new IllegalArgumentException("Different parameters source/target " + node);
         }
         if (!String.class.getName().equals(getTarget().getParameters()[0])) {
@@ -59,7 +59,7 @@ public abstract class SourceTargetTransformer extends Transformer {
         }
         for (int i = 0; i < getSource().getParameters().length; i++) {
             String sourceParameter = getSource().getParameters()[i];
-            String targetParameter = getTarget().getParameters()[i + 1];
+            String targetParameter = getTarget().getParameters()[i + dValue];
             if (!sourceParameter.equals(targetParameter)) {
                 throw new IllegalArgumentException("Different parameters source/target [" + i + "] " + node);
             }

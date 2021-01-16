@@ -1,6 +1,8 @@
 package com.dailyyoga.plugin.miit.spec;
 
 
+import java.util.Arrays;
+
 /**
  * This is a parser for custom aop pointcut expression.
  * <p>
@@ -82,5 +84,16 @@ public class MethodSpec {
             return new String[0];
         }
         return str.split(",");
+    }
+
+    @Override
+    public String toString() {
+        return "MethodSpec{" +
+                "declaring='" + declaring + '\'' +
+                ", returnType='" + returnType + '\'' +
+                ", name='" + name + '\'' +
+                ", parameters=" + Arrays.toString(parameters) +
+                ", isStatic=" + isStatic +
+                '}';
     }
 }

@@ -54,19 +54,15 @@ class DailyyogaMIITConfiguration {
                     String name = method.Name.text().trim()
                     String parameters = method.Parameters ? method.Parameters.text().trim() : ""
 
-                    Logger.info "method:{isStatic:" + isStatic +
-                            ",  type:" + type +
-                            ",  declaring:" + declaring +
-                            ",  returnType:" + returnType +
-                            ",  name:" + name +
-                            ",  parameters:" + parameters + "}"
-
                     MethodSpec methodSpec
                     if (parameters) {
                         methodSpec = MethodSpec.create(declaring, returnType, name, parameters, isStatic);
                     } else {
                         methodSpec = MethodSpec.create(declaring, returnType, name, isStatic);
                     }
+
+                    Logger.info("methodSpec:" + methodSpec)
+
                     transformer.setMethod(type, methodSpec)
             }
             String nodeString = "in node ${node}"

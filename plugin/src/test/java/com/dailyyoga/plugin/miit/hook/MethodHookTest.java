@@ -1,11 +1,17 @@
 package com.dailyyoga.plugin.miit.hook;
 
+import com.dailyyoga.plugin.miit.ex.DailyyogaMIITBadStatementException;
+import com.dailyyoga.plugin.miit.spec.MethodSpec;
+import com.dailyyoga.plugin.miit.util.Logger;
+
 import org.junit.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import javassist.CannotCompileException;
 import javassist.ClassPool;
@@ -22,8 +28,36 @@ import javassist.expr.MethodCall;
  */
 public class MethodHookTest {
 
+    private MethodSpec sourceSpec;
+    private MethodSpec targetSpec;
+
     @Test
     public void methodCall() {
+
+        String[] parameters = new String[]{
+                "java.lang.Object",
+                "java.lang.Object[]"
+        };
+        sourceSpec = new MethodSpec(
+                "java.lang.reflect.Method",
+                "java.lang.Object",
+                "invoke",
+                parameters
+        );
+
+        parameters = new String[]{
+                "java.lang.String",
+                "java.lang.reflect.Method",
+                "java.lang.Object",
+                "java.lang.Object[]"
+        };
+
+        targetSpec = new MethodSpec(
+                "com.dailyyoga.plugin.miit.hook.MethodHookTest",
+                "java.lang.Object",
+                "invoke",
+                parameters
+        );
 
         File file = new File("/Users/youga/StudioProjects/android_public/dailyyoga_plugin/plugin/MIITMethodTransform.class");
         try {
@@ -41,15 +75,20 @@ public class MethodHookTest {
                 @Override
                 public void edit(MethodCall m) throws CannotCompileException {
                     System.out.println("getClassName:" + m.getClassName() + "--getMethodName:" + m.getMethodName());
-                    if (m.getClassName().equals("java.lang.reflect.Method")) {
+                    if (m.getClassName().equals(getSource().getDeclaring())
+                            && m.getMethodName().equals(getSource().getName())) {
                         try {
                             CtMethod ctMethod = m.getMethod();
-                            System.out.println("命中:" + ctMethod.toString());
+                            System.out.println("命中:" + ctMethod.getLongName());
 
                             for (int i = 0; i < ctMethod.getParameterTypes().length; i++) {
                                 CtClass ctClass = ctMethod.getParameterTypes()[i];
-                                System.out.println("命中:" + i + "--" + ctClass.getName());
+                                System.out.println("参数:" + i + "--" + ctClass.getName());
                             }
+
+                            String replacement = replaceInstrument(m);
+
+                            System.out.println("replacement:" + replacement);
                         } catch (NotFoundException e) {
                             e.printStackTrace();
                         }
@@ -63,5 +102,70 @@ public class MethodHookTest {
         } catch (CannotCompileException | IOException | NotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    protected String replaceInstrument(
+            MethodCall methodCall) throws NotFoundException {
+
+        String statement = getTarget().getName();
+        String replacement = getReplaceStatement(methodCall);
+
+        System.out.println("replacement:" + replacement);
+
+        try {
+            String s = replacement.replaceAll("\n", "");
+            methodCall.replace(s);
+        } catch (CannotCompileException e) {
+            Logger.error("Replace method call instrument error with statement: " + statement + "\n", e);
+            throw new DailyyogaMIITBadStatementException(e);
+        }
+        return replacement;
+    }
+
+    protected String getReplaceStatement(
+            MethodCall methodCall) throws NotFoundException {
+
+        StringBuilder builder = new StringBuilder();
+        builder.append(getTarget().getDeclaring())
+                .append(".")
+                .append(getTarget().getName())
+                .append("(\"")
+                .append(methodCall.getMethod().getLongName())
+                .append("\"");
+
+        if (!getSource().isStatic()) {
+            builder.append(",")
+                    .append("$0");
+        }
+        for (int i = 0; i < getSource().getParameters().length; i++) {
+            builder.append(",")
+                    .append("$")
+                    .append(i + 1);
+        }
+        builder.append(");");
+        return getReplaceStatement(builder.toString());
+    }
+
+    private String getReplaceStatement(String content) {
+        return "{ $_ = " + content + "}";
+    }
+
+    public MethodSpec getSource() {
+        return sourceSpec;
+    }
+
+    public MethodSpec getTarget() {
+        return targetSpec;
+    }
+
+    public static Object invoke(String preArgs, Method method, Object obj, Object... args) {
+        try {
+            return method.invoke(obj, args);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

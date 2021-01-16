@@ -120,8 +120,9 @@ public abstract class SourceTargetTransformer extends Transformer {
         builder.append(getTarget().getDeclaring())
                 .append(".")
                 .append(getTarget().getName())
-                .append("(\"");
-        builder.append(methodCall.getMethod().getLongName());
+                .append("(\"")
+                .append(methodCall.getMethod().getLongName())
+                .append("\"");
 
         if (!getSource().isStatic()) {
             builder.append(",")
@@ -132,7 +133,7 @@ public abstract class SourceTargetTransformer extends Transformer {
                     .append("$")
                     .append(i + 1);
         }
-        builder.append("\");");
+        builder.append(");");
         return getReplaceStatement(builder.toString());
     }
 

@@ -34,7 +34,7 @@ public class MethodCallReplaceTransformer extends ExprExecTransformer {
             return false;
         }
 
-        String replacement = replaceInstrument(methodCall);
+        String replacement = replaceInstrument(methodCall.where().getLongName(), methodCall);
         Logger.warning(getName() + " by: " + replacement
                 + " at " + inputClassName + ".java" + ":" + methodCall.getLineNumber());
         return true;

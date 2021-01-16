@@ -79,14 +79,14 @@ public class MethodHookTest {
                             && m.getMethodName().equals(getSource().getName())) {
                         try {
                             CtMethod ctMethod = m.getMethod();
-                            System.out.println("命中:" + ctMethod.getLongName());
+                            System.out.println("命中:" + m.where().getLongName());
 
                             for (int i = 0; i < ctMethod.getParameterTypes().length; i++) {
                                 CtClass ctClass = ctMethod.getParameterTypes()[i];
                                 System.out.println("参数:" + i + "--" + ctClass.getName());
                             }
 
-                            String replacement = replaceInstrument(m);
+                            String replacement = replaceInstrument(m.where().getLongName(), m);
 
                             System.out.println("replacement:" + replacement);
                         } catch (NotFoundException e) {
@@ -105,13 +105,11 @@ public class MethodHookTest {
     }
 
     protected String replaceInstrument(
+            String callMethodName,
             MethodCall methodCall) throws NotFoundException {
 
         String statement = getTarget().getName();
-        String replacement = getReplaceStatement(methodCall);
-
-        System.out.println("replacement:" + replacement);
-
+        String replacement = getReplaceStatement(callMethodName, methodCall);
         try {
             String s = replacement.replaceAll("\n", "");
             methodCall.replace(s);
@@ -123,6 +121,7 @@ public class MethodHookTest {
     }
 
     protected String getReplaceStatement(
+            String callMethodName,
             MethodCall methodCall) throws NotFoundException {
 
         StringBuilder builder = new StringBuilder();
@@ -130,7 +129,7 @@ public class MethodHookTest {
                 .append(".")
                 .append(getTarget().getName())
                 .append("(\"")
-                .append(methodCall.getMethod().getLongName())
+                .append(callMethodName)
                 .append("\"");
 
         if (!getSource().isStatic()) {

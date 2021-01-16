@@ -99,10 +99,11 @@ public abstract class SourceTargetTransformer extends Transformer {
     }
 
     protected String replaceInstrument(
+            String callMethodName,
             MethodCall methodCall) throws NotFoundException {
 
         String statement = getTarget().getName();
-        String replacement = getReplaceStatement(methodCall);
+        String replacement = getReplaceStatement(callMethodName, methodCall);
         try {
             String s = replacement.replaceAll("\n", "");
             methodCall.replace(s);
@@ -114,6 +115,7 @@ public abstract class SourceTargetTransformer extends Transformer {
     }
 
     protected String getReplaceStatement(
+            String callMethodName,
             MethodCall methodCall) throws NotFoundException {
 
         StringBuilder builder = new StringBuilder();
@@ -121,7 +123,7 @@ public abstract class SourceTargetTransformer extends Transformer {
                 .append(".")
                 .append(getTarget().getName())
                 .append("(\"")
-                .append(methodCall.getMethod().getLongName())
+                .append(callMethodName)
                 .append("\"");
 
         if (!getSource().isStatic()) {

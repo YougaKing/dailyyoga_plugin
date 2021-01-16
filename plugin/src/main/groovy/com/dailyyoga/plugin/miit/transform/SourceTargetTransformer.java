@@ -39,29 +39,29 @@ public abstract class SourceTargetTransformer extends Transformer {
 
     public void checkSourceTarget(String node) {
         if (getSource() == null) {
-            throw new IllegalArgumentException("Empty source in node " + node);
+            throw new IllegalArgumentException("Empty source " + node);
         }
         if (getTarget() == null) {
-            throw new IllegalArgumentException("Empty target in node " + node);
+            throw new IllegalArgumentException("Empty target " + node);
         }
         if (getSource().isStatic() != getTarget().isStatic()) {
-            throw new IllegalArgumentException("Different isStatic source/target in node " + node);
+            throw new IllegalArgumentException("Different isStatic source/target " + node);
         }
         if (!getSource().getReturnType().equals(getTarget().getReturnType())) {
-            throw new IllegalArgumentException("Different returnType source/target in node " + node);
+            throw new IllegalArgumentException("Different returnType source/target " + node);
         }
         int dValue = getSource().isStatic() ? -1 : -2;
         if (getSource().getParameters().length - getTarget().getParameters().length != dValue) {
-            throw new IllegalArgumentException("Different parameters source/target in node " + node);
+            throw new IllegalArgumentException("Different parameters source/target " + node);
         }
         if (!String.class.getName().equals(getTarget().getParameters()[0])) {
-            throw new IllegalArgumentException("Target parameters [0] must " + String.class.getName() + " in node " + node);
+            throw new IllegalArgumentException("Target parameters [0] must " + String.class.getName() + " " + node);
         }
         for (int i = 0; i < getSource().getParameters().length; i++) {
             String sourceParameter = getSource().getParameters()[i];
             String targetParameter = getTarget().getParameters()[i + 1];
             if (!sourceParameter.equals(targetParameter)) {
-                throw new IllegalArgumentException("Different parameters source/target [" + i + "] in node " + node);
+                throw new IllegalArgumentException("Different parameters source/target [" + i + "] " + node);
             }
         }
     }

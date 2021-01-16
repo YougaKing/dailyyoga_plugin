@@ -44,7 +44,6 @@ class DailyyogaMIITConfiguration {
             if (node.Method.size() != 2) {
                 throw new IllegalArgumentException("source and target must not null in node ${node}")
             }
-
             node.Method.each {
                 method ->
                     boolean isStatic = method.@isStatic ?: "true"
@@ -70,17 +69,14 @@ class DailyyogaMIITConfiguration {
                     }
                     transformer.setMethod(type, methodSpec)
             }
-
-            transformer.checkSourceTarget(${node})
-
+            String nodeString = "in node ${node}"
+            transformer.checkSourceTarget(nodeString)
             def excludes = []
-
             node.Filter.Exclude.each { excludes.add(it.text()) }
 
             if (!Boolean.valueOf(node.Filter.@ignoreGlobalExcludes[0])) {
                 excludes.addAll(globalExcludes)
             }
-
             transformer.classFilterSpec.addExcludes(excludes)
             transformers.add(transformer)
     }

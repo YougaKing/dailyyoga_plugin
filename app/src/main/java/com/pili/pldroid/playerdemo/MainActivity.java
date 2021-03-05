@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hpplay.common.utils.DeviceUtil;
+import com.orhanobut.logger.Logger;
 import com.pili.pldroid.player.AVOptions;
 import com.pili.pldroid.playerdemo.utils.GetPathFromUri;
 import com.pili.pldroid.playerdemo.utils.PermissionChecker;
@@ -106,11 +107,23 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        initLogger();
+
         DeviceUtil.getMac("wlan0");
 
         String androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
         System.out.println("主页--androidId:" + androidId);
         Log.d(TAG, "主页--androidId:" + androidId);
+
+        Logger.d("主页--androidId:" + androidId);
+    }
+
+    private void initLogger() {
+        try {
+            com.orhanobut.logger.Logger.addLogAdapter(new YogaLogAdapter());
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
     }
 
     @Override

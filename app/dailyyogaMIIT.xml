@@ -248,14 +248,14 @@
                 <Declaring>android.util.Log</Declaring>
                 <ReturnType>int</ReturnType>
                 <Name>println</Name>
-                <Parameters>int,java.lang.String,java.lang.Throwable</Parameters>
+                <Parameters>int,java.lang.String,java.lang.String</Parameters>
             </Method>
             <Method isStatic="true" type="Target">
                 <Declaring>com.dailyyoga.plugin.miit.LogTransform</Declaring>
                 <ReturnType>int</ReturnType>
                 <Name>println</Name>
                 <Parameters>
-                    java.lang.String,int,java.lang.String,java.lang.Throwable
+                    java.lang.String,int,java.lang.String,java.lang.String
                 </Parameters>
             </Method>
         </MethodCall>

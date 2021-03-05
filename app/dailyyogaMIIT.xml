@@ -329,17 +329,17 @@
         </MethodCall>
         <MethodCall>
             <Method isStatic="true" type="Source">
-                <Declaring>android.provider.Settings.Secure</Declaring>
+                <Declaring>android.provider.Settings$Secure</Declaring>
                 <ReturnType>java.lang.String</ReturnType>
                 <Name>getString</Name>
-                <Parameters>android.content.ContentProvider,java.lang.String</Parameters>
+                <Parameters>android.content.ContentResolver,java.lang.String</Parameters>
             </Method>
             <Method isStatic="true" type="Target">
                 <Declaring>com.dailyyoga.plugin.miit.MIITMethodTransform</Declaring>
                 <ReturnType>java.lang.String</ReturnType>
                 <Name>getString</Name>
                 <Parameters>
-                    java.lang.String,android.content.ContentProvider,java.lang.String
+                    java.lang.String,android.content.ContentResolver,java.lang.String
                 </Parameters>
             </Method>
         </MethodCall>

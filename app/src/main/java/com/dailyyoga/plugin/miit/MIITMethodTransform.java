@@ -155,6 +155,7 @@ public class MIITMethodTransform {
 
     public static String getString(String args, ContentResolver resolver, String name) {
         println(args + "_" + SECURE_GET_STRING.toString());
+        if (!agreePrivacyPolicy()) return "";
         return Secure.getString(resolver, name);
     }
 

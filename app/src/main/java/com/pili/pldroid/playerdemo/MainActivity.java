@@ -109,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
         DeviceUtil.getMac("wlan0");
 
         String androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        System.out.println("主页--androidId:" + androidId);
         Log.d(TAG, "主页--androidId:" + androidId);
     }
 

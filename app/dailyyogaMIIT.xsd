@@ -21,7 +21,7 @@
     <xs:element name="Replace">
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="MethodCall" />
+                <xs:element ref="MethodCall" maxOccurs="unbounded"/>
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -63,7 +63,7 @@
     <xs:element name="Filter">
         <xs:complexType>
             <xs:sequence>
-                <xs:element minOccurs="0" ref="Exclude" />
+                <xs:element minOccurs="0" ref="Exclude" maxOccurs="unbounded"/>
             </xs:sequence>
             <xs:attribute name="ignoreGlobalExcludes" type="xs:boolean" />
         </xs:complexType>

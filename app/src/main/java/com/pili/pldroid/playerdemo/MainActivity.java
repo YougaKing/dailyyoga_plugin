@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -106,6 +107,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         DeviceUtil.getMac("wlan0");
+
+        String androidId = Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID);
+        Log.d(TAG, "主页--androidId:" + androidId);
     }
 
     @Override

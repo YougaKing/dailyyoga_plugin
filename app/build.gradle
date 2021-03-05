@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 //apply from: rootProject.file('gradle/MobSDK.gradle')
-//apply plugin: 'com.dailyyoga.plugin.miit'
+apply plugin: 'com.dailyyoga.plugin.miit'
 
-//dailyyogaMIIT {
-//    enable true
-//    logLevel 3
-//    config file("dailyyogaMIIT.xml")
-//    logDir file("${project.buildDir.absolutePath}/logs")
-//}
+dailyyogaMIIT {
+    enable true
+    logLevel 3
+    config file("dailyyogaMIIT.xml")
+    logDir file("${project.buildDir.absolutePath}/logs")
+}
 
 android {
     compileSdkVersion 28

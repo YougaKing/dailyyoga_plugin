@@ -71,6 +71,7 @@ class DroidAssistContext {
                         return list.stream().peek {
                             transformer ->
                                 transformer.setClassPool(classPool)
+                                transformer.setAbortOnUndefinedClass(extension.abortOnUndefinedClass)
                                 transformer.check()
                         }
                     } catch (Throwable e) {

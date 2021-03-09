@@ -9,7 +9,6 @@
             <Exclude>android.*</Exclude>
             <Exclude>com.android.*</Exclude>
             <Exclude>okhttp3.*</Exclude>
-            <Exclude>com.xiaomi.account.openauth.internal.MiAccountPhoneInfo</Exclude>
         </Filter>
     </Global>
 
@@ -19,7 +18,7 @@
                 int android.util.Log.v(java.lang.String,java.lang.String)
             </Source>
             <Target>
-                $_= com.dailyyoga.plugin.miit.LogTransform.v($$);
+                $_= com.dailyyoga.plugin.miit.LogTransform.v($where,$1,$2);
             </Target>
         </MethodCall>
         <MethodCall>
@@ -27,7 +26,7 @@
                 int android.util.Log.v(java.lang.String,java.lang.String,java.lang.Throwable)
             </Source>
             <Target>
-                $_= com.dailyyoga.plugin.droidassist.LogTransform.v($$$);
+                $_= com.dailyyoga.plugin.droidassist.LogTransform.v($where,$1,$2,$3);
             </Target>
         </MethodCall>
 
@@ -36,7 +35,7 @@
                 int android.util.Log.d(java.lang.String,java.lang.String)
             </Source>
             <Target>
-                $_= com.dailyyoga.plugin.droidassist.LogTransform.d($$);
+                $_= com.dailyyoga.plugin.droidassist.LogTransform.d($where,$1,$2);
             </Target>
         </MethodCall>
         <MethodCall>
@@ -44,7 +43,7 @@
                 int android.util.Log.d(java.lang.String,java.lang.String,java.lang.Throwable)
             </Source>
             <Target>
-                $_= com.dailyyoga.plugin.droidassist.LogTransform.d($$$);
+                $_= com.dailyyoga.plugin.droidassist.LogTransform.d($where,$1,$2,$3);
             </Target>
         </MethodCall>
 
@@ -53,7 +52,7 @@
                 int android.util.Log.i(java.lang.String,java.lang.String)
             </Source>
             <Target>
-                $_= com.dailyyoga.plugin.droidassist.LogTransform.i($$);
+                $_= com.dailyyoga.plugin.droidassist.LogTransform.i($where,$1,$2);
             </Target>
         </MethodCall>
         <MethodCall>
@@ -61,7 +60,7 @@
                 int android.util.Log.i(java.lang.String,java.lang.String,java.lang.Throwable)
             </Source>
             <Target>
-                $_= com.dailyyoga.plugin.droidassist.LogTransform.i($$$);
+                $_= com.dailyyoga.plugin.droidassist.LogTransform.i($where,$1,$2,$3);
             </Target>
         </MethodCall>
 
@@ -70,7 +69,7 @@
                 int android.util.Log.w(java.lang.String,java.lang.String)
             </Source>
             <Target>
-                $_= com.dailyyoga.plugin.droidassist.LogTransform.w($$);
+                $_= com.dailyyoga.plugin.droidassist.LogTransform.w($where,$1,$2);
             </Target>
         </MethodCall>
         <MethodCall>
@@ -78,7 +77,7 @@
                 int android.util.Log.w(java.lang.String,java.lang.String,java.lang.Throwable)
             </Source>
             <Target>
-                $_= com.dailyyoga.plugin.droidassist.LogTransform.w($$$);
+                $_= com.dailyyoga.plugin.droidassist.LogTransform.w($where,$1,$2,$3);
             </Target>
         </MethodCall>
         <MethodCall>
@@ -86,7 +85,7 @@
                 int android.util.Log.w(java.lang.String,java.lang.Throwable)
             </Source>
             <Target>
-                $_= com.dailyyoga.plugin.droidassist.LogTransform.w($$);
+                $_= com.dailyyoga.plugin.droidassist.LogTransform.w($where,$1,$2);
             </Target>
         </MethodCall>
 
@@ -95,7 +94,7 @@
                 int android.util.Log.e(java.lang.String,java.lang.String)
             </Source>
             <Target>
-                $_= com.dailyyoga.plugin.droidassist.LogTransform.e($$);
+                $_= com.dailyyoga.plugin.droidassist.LogTransform.e($where,$1,$2);
             </Target>
         </MethodCall>
         <MethodCall>
@@ -103,7 +102,7 @@
                 int android.util.Log.e(java.lang.String,java.lang.String,java.lang.Throwable)
             </Source>
             <Target>
-                $_= com.dailyyoga.plugin.droidassist.LogTransform.e($$$);
+                $_= com.dailyyoga.plugin.droidassist.LogTransform.e($where,$1,$2,$3);
             </Target>
         </MethodCall>
 
@@ -112,7 +111,7 @@
                 int android.util.Log.wtf(java.lang.String,java.lang.String)
             </Source>
             <Target>
-                $_= com.dailyyoga.plugin.droidassist.LogTransform.wtf($$);
+                $_= com.dailyyoga.plugin.droidassist.LogTransform.wtf($where,$1,$2);
             </Target>
         </MethodCall>
         <MethodCall>
@@ -120,7 +119,7 @@
                 int android.util.Log.wtf(java.lang.String,java.lang.String,java.lang.Throwable)
             </Source>
             <Target>
-                $_= com.dailyyoga.plugin.droidassist.LogTransform.wtf($$$);
+                $_= com.dailyyoga.plugin.droidassist.LogTransform.wtf($where,$1,$2,$3);
             </Target>
         </MethodCall>
         <MethodCall>
@@ -128,7 +127,7 @@
                 int android.util.Log.wtf(java.lang.String,java.lang.Throwable)
             </Source>
             <Target>
-                $_= com.dailyyoga.plugin.droidassist.LogTransform.wtf($$);
+                $_= com.dailyyoga.plugin.droidassist.LogTransform.wtf($where,$1,$2);
             </Target>
         </MethodCall>
 
@@ -138,7 +137,7 @@
                 java.lang.reflect.Method.invoke(java.lang.Object,java.lang.Object[])
             </Source>
             <Target>
-                $_= com.dailyyoga.plugin.droidassist.ReflectionTransform.invoke($$);
+                $_= com.dailyyoga.plugin.droidassist.ReflectionTransform.invoke($where,$0,$1,$2);
             </Target>
         </MethodCall>
 
@@ -148,7 +147,7 @@
                 android.location.LocationManager.getLastKnownLocation(java.lang.String)
             </Source>
             <Target>
-                $_= com.dailyyoga.plugin.droidassist.PrivacyApiTransform.getLastKnownLocation($);
+                $_= com.dailyyoga.plugin.droidassist.PrivacyApiTransform.getLastKnownLocation($where,$0,$1);
             </Target>
             <Filter>
                 <Exclude>com.alipay.security.mobile.module.deviceinfo.e</Exclude>
@@ -160,7 +159,7 @@
                 java.util.List android.content.pm.PackageManager.getInstalledPackages(int)
             </Source>
             <Target>
-                $_= com.dailyyoga.plugin.droidassist.PrivacyApiTransform.getInstalledPackages($);
+                $_= com.dailyyoga.plugin.droidassist.PrivacyApiTransform.getInstalledPackages($where,$0,$1);
             </Target>
         </MethodCall>
 
@@ -169,7 +168,7 @@
                 java.util.List android.content.pm.PackageManager.getInstalledApplications()
             </Source>
             <Target>
-                $_= com.dailyyoga.plugin.droidassist.PrivacyApiTransform.getInstalledApplications();
+                $_= com.dailyyoga.plugin.droidassist.PrivacyApiTransform.getInstalledApplications($where,$0);
             </Target>
         </MethodCall>
 
@@ -179,7 +178,7 @@
                 android.provider.Settings$Secure.getString(android.content.ContentResolver,java.lang.String)
             </Source>
             <Target>
-                $_= com.dailyyoga.plugin.droidassist.PrivacyApiTransform.getString($$);
+                $_= com.dailyyoga.plugin.droidassist.PrivacyApiTransform.getString($where,$0,$1,$2);
             </Target>
         </MethodCall>
 
@@ -189,7 +188,7 @@
                 android.telephony.TelephonyManager.getDeviceId()
             </Source>
             <Target>
-                $_= com.dailyyoga.plugin.droidassist.PrivacyApiTransform.getDeviceId();
+                $_= com.dailyyoga.plugin.droidassist.PrivacyApiTransform.getDeviceId($where,$0);
             </Target>
         </MethodCall>
         <MethodCall>
@@ -198,7 +197,7 @@
                 android.telephony.TelephonyManager.getDeviceId(int)
             </Source>
             <Target>
-                $_= com.dailyyoga.plugin.droidassist.PrivacyApiTransform.getDeviceId($);
+                $_= com.dailyyoga.plugin.droidassist.PrivacyApiTransform.getDeviceId($where,$0,$1);
             </Target>
         </MethodCall>
 
@@ -208,7 +207,7 @@
                 android.telephony.TelephonyManager.getImei()
             </Source>
             <Target>
-                $_= com.dailyyoga.plugin.droidassist.PrivacyApiTransform.getImei();
+                $_= com.dailyyoga.plugin.droidassist.PrivacyApiTransform.getImei($where,$0);
             </Target>
         </MethodCall>
         <MethodCall>
@@ -217,7 +216,7 @@
                 android.telephony.TelephonyManager.getImei(int)
             </Source>
             <Target>
-                $_= com.dailyyoga.plugin.droidassist.PrivacyApiTransform.getImei($);
+                $_= com.dailyyoga.plugin.droidassist.PrivacyApiTransform.getImei($where,$0,$1);
             </Target>
         </MethodCall>
 
@@ -227,7 +226,7 @@
                 android.telephony.TelephonyManager.getSubscriberId()
             </Source>
             <Target>
-                $_= com.dailyyoga.plugin.droidassist.PrivacyApiTransform.getSubscriberId();
+                $_= com.dailyyoga.plugin.droidassist.PrivacyApiTransform.getSubscriberId($where,$0);
             </Target>
         </MethodCall>
 
@@ -237,7 +236,7 @@
                 android.net.wifi.WifiInfo.getMacAddress()
             </Source>
             <Target>
-                $_= com.dailyyoga.plugin.droidassist.PrivacyApiTransform.getMacAddress();
+                $_= com.dailyyoga.plugin.droidassist.PrivacyApiTransform.getMacAddress($where,$0);
             </Target>
         </MethodCall>
 
@@ -247,7 +246,7 @@
                 java.net.NetworkInterface.getHardwareAddress()
             </Source>
             <Target>
-                $_= com.dailyyoga.plugin.droidassist.PrivacyApiTransform.getHardwareAddress();
+                $_= com.dailyyoga.plugin.droidassist.PrivacyApiTransform.getHardwareAddress($where,$0);
             </Target>
         </MethodCall>
     </Replace>

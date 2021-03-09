@@ -21,6 +21,11 @@ public class MethodCallReplaceTransformer extends ExprExecTransformer {
     }
 
     @Override
+    protected String getTransformType() {
+        return TRANSFORM_EXPR;
+    }
+
+    @Override
     protected boolean execute(
             CtClass inputClass,
             String inputClassName,
@@ -30,11 +35,21 @@ public class MethodCallReplaceTransformer extends ExprExecTransformer {
             return false;
         }
 
-        if (!isMatchSourceMethod(methodCall)) {
+        String insnClassName = methodCall.getClassName();
+        String insnName = methodCall.getMethodName();
+        String insnSignature = methodCall.getSignature();
+
+        CtClass insnClass = tryGetClass(insnClassName, inputClassName);
+        if (insnClass == null) {
             return false;
         }
 
-        String replacement = replaceInstrument(methodCall.where().getLongName(), methodCall);
+        if (!isMatchSourceMethod(insnClass, insnName, insnSignature, false)) {
+            return false;
+        }
+
+        String target = getTarget();
+        String replacement = replaceInstrument(inputClassName, methodCall, target);
         Logger.warning(getName() + " by: " + replacement
                 + " at " + inputClassName + ".java" + ":" + methodCall.getLineNumber());
         return true;

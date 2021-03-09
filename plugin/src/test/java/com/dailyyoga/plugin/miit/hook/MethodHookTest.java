@@ -1,7 +1,6 @@
 package com.dailyyoga.plugin.miit.hook;
 
 import com.dailyyoga.plugin.droidassist.ex.DroidAssistBadStatementException;
-import com.dailyyoga.plugin.droidassist.spec.MethodSpec;
 import com.dailyyoga.plugin.droidassist.util.Logger;
 
 import org.junit.Test;

@@ -3,6 +3,7 @@ package com.dailyyoga.plugin.droidassist.transform;
 
 import com.dailyyoga.plugin.droidassist.ex.DroidAssistNotFoundException;
 import com.dailyyoga.plugin.droidassist.spec.ClassFilterSpec;
+import com.dailyyoga.plugin.droidassist.util.Logger;
 
 import javassist.CannotCompileException;
 import javassist.ClassPool;
@@ -12,8 +13,9 @@ import javassist.NotFoundException;
 
 public abstract class Transformer {
 
-    public ClassPool classPool;
-    public com.dailyyoga.plugin.droidassist.spec.ClassFilterSpec classFilterSpec = new ClassFilterSpec();
+    protected ClassPool classPool;
+    protected ClassFilterSpec classFilterSpec = new ClassFilterSpec();
+    protected boolean abortOnUndefinedClass = false;
 
     //Transformer name
     public abstract String getName();
@@ -48,7 +50,32 @@ public abstract class Transformer {
         return this;
     }
 
+    public boolean isAbortOnUndefinedClass() {
+        return abortOnUndefinedClass;
+    }
+
+    public Transformer setAbortOnUndefinedClass(boolean abortOnUndefinedClass) {
+        this.abortOnUndefinedClass = abortOnUndefinedClass;
+        return this;
+    }
+
     public void check() {
+    }
+
+    //Get class in the class pool
+    protected CtClass tryGetClass(String className, String loc) {
+        CtClass ctClass = classPool.getOrNull(className);
+        if (ctClass == null) {
+            String msg = "cannot find " + className + " in " + loc;
+            if (abortOnUndefinedClass) {
+                throw new DroidAssistNotFoundException(msg);
+            } else {
+                Logger.warning(msg);
+            }
+        } else {
+            return ctClass;
+        }
+        return null;
     }
 
     protected Boolean isInterface(CtClass inputClass) {

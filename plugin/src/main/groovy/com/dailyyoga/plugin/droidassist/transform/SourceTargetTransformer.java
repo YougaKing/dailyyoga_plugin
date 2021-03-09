@@ -2,144 +2,211 @@ package com.dailyyoga.plugin.droidassist.transform;
 
 
 import com.dailyyoga.plugin.droidassist.ex.DroidAssistBadStatementException;
-import com.dailyyoga.plugin.droidassist.ex.DroidAssistBadTypeException;
-import com.dailyyoga.plugin.droidassist.spec.MethodSpec;
+import com.dailyyoga.plugin.droidassist.spec.SourceSpec;
+import com.dailyyoga.plugin.droidassist.util.ClassUtils;
 import com.dailyyoga.plugin.droidassist.util.Logger;
+
+import java.lang.reflect.Method;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javassist.CannotCompileException;
 import javassist.CtClass;
+import javassist.CtMember;
 import javassist.CtMethod;
 import javassist.NotFoundException;
 import javassist.expr.MethodCall;
 
 public abstract class SourceTargetTransformer extends Transformer {
+    private String target;
+    private String source;
+    private SourceSpec sourceSpec;
 
-    private MethodSpec sourceSpec;
-    private MethodSpec targetSpec;
+    private CtClass sourceClass;
+    private String sourceDeclaringClassName;
+    private CtMember sourceMember;
+    private CtClass sourceReturnType;
 
-    public SourceTargetTransformer setMethod(String type,
-                                             MethodSpec methodSpec) {
-        if (MethodSpec.SOURCE.equals(type)) {
-            sourceSpec = methodSpec;
-        } else if (MethodSpec.TARGET.equals(type)) {
-            targetSpec = methodSpec;
-        } else {
-            throw new DroidAssistBadTypeException("Bad type :" + type);
-        }
+    private Class annotationClass;
+    private Set<Method> annotationTargetMembers;
+
+    public SourceTargetTransformer setSource(String source, String kind, boolean extend) {
+        this.source = source;
+        sourceSpec = SourceSpec.fromString(source, kind, extend);
         return this;
     }
 
-    public MethodSpec getSource() {
-        return sourceSpec;
+    public SourceTargetTransformer setTarget(String target) {
+        target = target.trim();
+        this.target = target;
+        return this;
     }
 
-    public MethodSpec getTarget() {
-        return targetSpec;
+    public String getSource() {
+        return source;
     }
 
-    public void checkSourceTarget(String node) {
-        if (getSource() == null) {
-            throw new IllegalArgumentException("Empty source " + node);
+    public String getTarget() {
+        return target;
+    }
+
+    protected String getSourceDeclaringClassName() {
+        if (sourceDeclaringClassName == null) {
+            sourceDeclaringClassName = sourceSpec.getDeclaringClassName();
         }
-        if (getTarget() == null) {
-            throw new IllegalArgumentException("Empty target " + node);
+        return sourceDeclaringClassName;
+    }
+
+    protected CtClass getSourceClass() throws NotFoundException {
+        if (sourceClass == null) {
+            sourceClass = classPool.getCtClass(getSourceDeclaringClassName());
         }
-        if (getSource().isStatic() != getTarget().isStatic()) {
-            throw new IllegalArgumentException("Different isStatic source/target " + node);
+        return sourceClass;
+    }
+
+    private CtMember getSourceMember(boolean declared) throws NotFoundException {
+        CtMember sourceMember = null;
+        CtClass sourceClass = getSourceClass();
+        String name = sourceSpec.getName();
+        String signature = sourceSpec.getSignature();
+        if (sourceSpec.getKind() == SourceSpec.Kind.METHOD) {
+            sourceMember = declared ? ClassUtils.getDeclaredMethod(sourceClass, name, signature)
+                    : ClassUtils.getMethod(sourceClass, name, signature);
         }
-        if (!getSource().getReturnType().equals(getTarget().getReturnType())) {
-            throw new IllegalArgumentException("Different returnType source/target " + node);
-        }
-        int dValue = getSource().isStatic() ? 1 : 2;
-        if (getTarget().getParameters().length - getSource().getParameters().length != dValue) {
-            throw new IllegalArgumentException("Different parameters source/target " + node);
-        }
-        if (!String.class.getName().equals(getTarget().getParameters()[0])) {
-            throw new IllegalArgumentException("Target parameters [0] must " + String.class.getName() + " " + node);
-        }
-        for (int i = 0; i < getSource().getParameters().length; i++) {
-            String sourceParameter = getSource().getParameters()[i];
-            String targetParameter = getTarget().getParameters()[i + dValue];
-            if (!sourceParameter.equals(targetParameter)) {
-                throw new IllegalArgumentException("Different parameters source/target [" + i + "] " + node);
-            }
-        }
+        return sourceMember;
     }
 
     boolean isMatchSourceClass(CtClass insnClass) throws NotFoundException {
+        if (sourceSpec.isAnnotation()) {
+            return true;
+        }
+        boolean match = false;
         Boolean anInterface = isInterface(insnClass);
         if (anInterface == null || anInterface) {
             return false;
         }
-        return true;
+        if (sourceSpec.isExtend()) {
+            // TODO: 3/9/21
+        } else {
+            match = insnClass.getName().equals(getSourceDeclaringClassName());
+        }
+        return match;
     }
 
-    protected boolean isMatchSourceMethod(MethodCall methodCall)
+    protected boolean isMatchSourceMethod(
+            CtClass insnClass,
+            String name,
+            String signature,
+            boolean declared)
             throws NotFoundException {
-        if (!methodCall.getClassName().equals(getSource().getDeclaring())) {
-            return false;
-        }
-        if (!methodCall.getMethodName().equals(getSource().getName())) {
-            return false;
-        }
-        CtMethod method = methodCall.getMethod();
-        if (!method.getReturnType().getName().equals(getSource().getReturnType())) {
-            return false;
-        }
-        CtClass[] parameterTypes = method.getParameterTypes() == null ? new CtClass[0] : method.getParameterTypes();
-        if (parameterTypes.length != getSource().getParameters().length) {
-            return false;
-        }
-        for (int i = 0; i < parameterTypes.length; i++) {
-            if (!parameterTypes[i].getName().equals(getSource().getParameters()[i])) {
-                return false;
+        return isMatchSourceMethod(insnClass, true, name, signature, declared);
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    protected boolean isMatchSourceMethod(
+            CtClass insnClass,
+            boolean checkClass,
+            String name,
+            String signature,
+            boolean declared)
+            throws NotFoundException {
+        return isMatchSourceMethod(insnClass, checkClass, name, signature, null, declared);
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    protected boolean isMatchSourceMethod(
+            CtClass insnClass,
+            boolean checkClass,
+            String name,
+            String signature,
+            CtMethod method,
+            boolean declared)
+            throws NotFoundException {
+        boolean match = true;
+        do {
+            if (!name.equals(sourceSpec.getName())
+                    || !signature.equals(sourceSpec.getSignature())) {
+                match = false;
+                break;
             }
-        }
-        return true;
+
+            if (checkClass) {
+                boolean matchClass = false;
+                if (sourceSpec.isExtend()) {
+                    // TODO: 3/9/21
+                } else {
+                    matchClass = insnClass.getName().equals(getSourceDeclaringClassName());
+                }
+                if (!matchClass) {
+                    match = false;
+                    break;
+                }
+            }
+
+            if (sourceSpec.getKind() == SourceSpec.Kind.METHOD) {
+                CtMember member = getSourceMember(declared);
+                boolean visible = member.visibleFrom(insnClass);
+                if (!visible) {
+                    match = false;
+                    break;
+                }
+            }
+
+        } while (false);
+        return match;
     }
 
     protected String replaceInstrument(
-            String callMethodName,
-            MethodCall methodCall) throws NotFoundException {
-
-        String statement = getTarget().getName();
-        String replacement = getReplaceStatement(callMethodName, methodCall);
+            String sourceClassName,
+            MethodCall methodCall,
+            String statement)
+            throws CannotCompileException {
+        String replacement = getReplaceStatement(sourceClassName, methodCall, statement);
         try {
             String s = replacement.replaceAll("\n", "");
             methodCall.replace(s);
         } catch (CannotCompileException e) {
-            Logger.error("Replace method call instrument error with statement: " + statement + "\n", e);
+            Logger.error("Replace method call instrument error with statement: "
+                    + statement + "\n", e);
             throw new DroidAssistBadStatementException(e);
         }
         return replacement;
     }
 
     protected String getReplaceStatement(
-            String callMethodName,
-            MethodCall methodCall) throws NotFoundException {
-
-        StringBuilder builder = new StringBuilder();
-        builder.append(getTarget().getDeclaring())
-                .append(".")
-                .append(getTarget().getName())
-                .append("(\"")
-                .append(callMethodName)
-                .append("\"");
-
-        if (!getSource().isStatic()) {
-            builder.append(",")
-                    .append("$0");
-        }
-        for (int i = 0; i < getSource().getParameters().length; i++) {
-            builder.append(",")
-                    .append("$")
-                    .append(i + 1);
-        }
-        builder.append(");");
-        return getReplaceStatement(builder.toString());
+            String sourceClassName,
+            MethodCall methodCall,
+            String statement) {
+        String where = methodCall.where().getLongName();
+        int line = methodCall.getLineNumber();
+        String name = methodCall.getMethodName();
+        String fileName = methodCall.getFileName();
+        return getReplaceStatement(statement, where, line, name, sourceClassName, fileName);
     }
 
-    private String getReplaceStatement(String content) {
-        return "{ $_ = " + content + "}";
+    private String getReplaceStatement(
+            String statement,
+            String where,
+            int line,
+            String name,
+            String className,
+            String fileName) {
+        fileName = fileName == null ? "unknown" : fileName;
+        className = className == null ? "unknown" : className;
+        name = name == null ? "unknown" : name;
+
+        statement = statement.replaceAll(
+                Pattern.quote("$where"), Matcher.quoteReplacement(where));
+
+        statement = statement.replaceAll(
+                Pattern.quote("$class"), Matcher.quoteReplacement(className));
+        statement = statement.replaceAll(
+                Pattern.quote("$line"), Matcher.quoteReplacement(String.valueOf(line)));
+        statement = statement.replaceAll(
+                Pattern.quote("$name"), Matcher.quoteReplacement(name));
+        statement = statement.replaceAll(
+                Pattern.quote("$file"), Matcher.quoteReplacement(fileName));
+        return statement;
     }
 }

@@ -22,6 +22,9 @@ public abstract class ExprExecTransformer extends SourceTargetTransformer {
 
     protected static final String METHOD_CALL = "MethodCall";
 
+    public static final String TRANSFORM_EXEC = "exec";
+    public static final String TRANSFORM_EXPR = "expr";
+
     class Editor extends ExprEditor {
         CtBehavior behavior;
         AtomicBoolean modified;
@@ -33,13 +36,24 @@ public abstract class ExprExecTransformer extends SourceTargetTransformer {
         return Sets.newHashSet();
     }
 
+    protected abstract String getTransformType();
+
     @Override
     protected final boolean onTransform(
             CtClass inputClass,
             String inputClassName)
             throws NotFoundException, CannotCompileException {
 
-        return onTransformExpr(inputClass, inputClassName);
+        //expr
+        if (TRANSFORM_EXPR.equals(getTransformType())) {
+            return onTransformExpr(inputClass, inputClassName);
+        }
+        //exec
+        if (TRANSFORM_EXEC.equals(getTransformType())) {
+//            return onTransformExec(inputClass, inputClassName);
+        }
+
+        return false;
     }
 
     private boolean onTransformExpr(
@@ -50,9 +64,7 @@ public abstract class ExprExecTransformer extends SourceTargetTransformer {
         if (!filterClass(inputClass, inputClassName)) {
             return false;
         }
-        if (!isMatchSourceClass(inputClass)) {
-            return false;
-        }
+
         if (!execute(inputClass, inputClassName)) {
             return false;
         }

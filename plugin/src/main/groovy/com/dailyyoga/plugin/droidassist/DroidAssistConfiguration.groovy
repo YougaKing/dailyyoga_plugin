@@ -1,8 +1,9 @@
 package com.dailyyoga.plugin.droidassist
 
-import com.dailyyoga.plugin.droidassist.spec.MethodSpec
+
+import com.dailyyoga.plugin.droidassist.transform.SourceTargetTransformer
 import com.dailyyoga.plugin.droidassist.transform.Transformer
-import com.dailyyoga.plugin.droidassist.util.Logger
+import com.dailyyoga.plugin.droidassist.transform.replace.MethodCallReplaceTransformer
 import com.dailyyoga.plugin.droidassist.util.XmlErrorHandler
 import org.gradle.api.Project
 
@@ -29,7 +30,7 @@ class DroidAssistConfiguration {
         configs.Replace.MethodCall.each {
             node ->
                 sourceTargetTransformerNodeHandler(METHOD, node) {
-                    return new com.dailyyoga.plugin.droidassist.transform.replace.MethodCallReplaceTransformer()
+                    return new MethodCallReplaceTransformer()
                 }
         }
 
@@ -38,32 +39,18 @@ class DroidAssistConfiguration {
 
     def sourceTargetTransformerNodeHandler = {
         kind, node, transformerFeather ->
-            com.dailyyoga.plugin.droidassist.transform.SourceTargetTransformer transformer = transformerFeather.call()
-            if (node.Method.size() != 2) {
-                throw new IllegalArgumentException("source and target must not null in node ${node}")
+            SourceTargetTransformer transformer = transformerFeather.call()
+            def extend = node.Source.@extend[0] ?: "true"
+            transformer.setSource(node.Source.text().trim(), kind, Boolean.valueOf(extend))
+            transformer.setTarget(node.Target.text().trim())
+
+            if (transformer.getSource() == '') {
+                throw new IllegalArgumentException("Empty source in node ${node}")
             }
-            node.Method.each {
-                method ->
-                    String isStatic = method.@isStatic
-                    String type = method.@type
-                    String declaring = method.Declaring.text().trim()
-                    String returnType = method.ReturnType.text().trim()
-                    String name = method.Name.text().trim()
-                    String parameters = method.Parameters ? method.Parameters.text().trim() : ""
-
-                    MethodSpec methodSpec
-                    if (parameters) {
-                        methodSpec = MethodSpec.create(declaring, returnType, name, parameters, isStatic);
-                    } else {
-                        methodSpec = MethodSpec.create(declaring, returnType, name, isStatic);
-                    }
-
-                    Logger.info("methodSpec:" + methodSpec)
-
-                    transformer.setMethod(type, methodSpec)
+            if (transformer.getTarget() == '') {
+                throw new IllegalArgumentException("Empty target in node ${node}")
             }
-            String nodeString = "in node ${node}"
-            transformer.checkSourceTarget(nodeString)
+
             def excludes = []
             node.Filter.Exclude.each { excludes.add(it.text()) }
 

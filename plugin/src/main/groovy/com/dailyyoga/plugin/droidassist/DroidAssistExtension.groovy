@@ -23,6 +23,7 @@ class DroidAssistExtension {
     int logLevel
     List<File> configFiles = Lists.newArrayList()
     File logDir
+    boolean abortOnUndefinedClass = false
     boolean incremental = true
 
     void config(File... file) {

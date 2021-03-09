@@ -36,8 +36,12 @@
         </xs:complexType>
     </xs:element>
 
-    <xs:element name="Source" type="xs:string"/>
-    <xs:element name="Target" type="xs:string"/>
+    <xs:element name="Source" type="xs:string">
+<!--        <xs:complexType>-->
+<!--            <xs:attribute name="extend" type="xs:boolean" />-->
+<!--        </xs:complexType>-->
+    </xs:element>
+    <xs:element name="Target" type="xs:string" />
 
     <xs:element name="Filter">
         <xs:complexType>

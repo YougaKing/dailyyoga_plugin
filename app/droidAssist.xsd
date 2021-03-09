@@ -21,7 +21,7 @@
     <xs:element name="Replace">
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="MethodCall" maxOccurs="unbounded"/>
+                <xs:element maxOccurs="unbounded" ref="MethodCall" />
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -29,41 +29,20 @@
     <xs:element name="MethodCall">
         <xs:complexType>
             <xs:sequence>
-                <xs:element maxOccurs="2" minOccurs="2" ref="Method" />
-                <xs:element ref="Filter" minOccurs="0"/>
+                <xs:element ref="Source" />
+                <xs:element ref="Target" />
+                <xs:element minOccurs="0" ref="Filter" />
             </xs:sequence>
         </xs:complexType>
     </xs:element>
 
-    <xs:element name="Method">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element ref="Declaring" />
-                <xs:element ref="ReturnType" />
-                <xs:element ref="Name" />
-                <xs:element minOccurs="0" ref="Parameters" />
-            </xs:sequence>
-            <xs:attribute name="isStatic" type="xs:boolean" />
-            <xs:attribute name="type" type="MethodType" use="required" />
-        </xs:complexType>
-    </xs:element>
-
-    <xs:element name="Declaring" type="xs:string" />
-    <xs:element name="ReturnType" type="xs:NCName" />
-    <xs:element name="Name" type="xs:NCName" />
-    <xs:element name="Parameters" type="xs:string" />
-
-    <xs:simpleType name="MethodType" id="MethodType">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="Target" />
-            <xs:enumeration value="Source" />
-        </xs:restriction>
-    </xs:simpleType>
+    <xs:element name="Source" type="xs:string"/>
+    <xs:element name="Target" type="xs:string"/>
 
     <xs:element name="Filter">
         <xs:complexType>
             <xs:sequence>
-                <xs:element minOccurs="0" ref="Exclude" maxOccurs="unbounded"/>
+                <xs:element maxOccurs="unbounded" minOccurs="0" ref="Exclude" />
             </xs:sequence>
             <xs:attribute name="ignoreGlobalExcludes" type="xs:boolean" />
         </xs:complexType>

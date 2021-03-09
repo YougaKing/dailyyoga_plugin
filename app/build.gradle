@@ -1,11 +1,11 @@
 apply plugin: 'com.android.application'
 //apply from: rootProject.file('gradle/MobSDK.gradle')
-apply plugin: 'com.dailyyoga.plugin.miit'
+apply plugin: 'com.dailyyoga.plugin.droidassist'
 
-dailyyogaMIIT {
+droidAssist {
     enable true
     logLevel 3
-    config file("dailyyogaMIIT.xml")
+    config file("droidAssist.xml")
     logDir file("${project.buildDir.absolutePath}/logs")
 }
 

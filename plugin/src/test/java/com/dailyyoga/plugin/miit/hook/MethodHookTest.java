@@ -1,8 +1,8 @@
 package com.dailyyoga.plugin.miit.hook;
 
-import com.dailyyoga.plugin.miit.ex.DailyyogaMIITBadStatementException;
-import com.dailyyoga.plugin.miit.spec.MethodSpec;
-import com.dailyyoga.plugin.miit.util.Logger;
+import com.dailyyoga.plugin.droidassist.ex.DroidAssistBadStatementException;
+import com.dailyyoga.plugin.droidassist.spec.MethodSpec;
+import com.dailyyoga.plugin.droidassist.util.Logger;
 
 import org.junit.Test;
 
@@ -156,7 +156,7 @@ public class MethodHookTest {
             methodCall.replace(s);
         } catch (CannotCompileException e) {
             Logger.error("Replace method call instrument error with statement: " + statement + "\n", e);
-            throw new DailyyogaMIITBadStatementException(e);
+            throw new DroidAssistBadStatementException(e);
         }
         return replacement;
     }

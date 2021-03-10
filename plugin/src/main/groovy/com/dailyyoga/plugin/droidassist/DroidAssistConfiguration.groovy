@@ -3,6 +3,7 @@ package com.dailyyoga.plugin.droidassist
 
 import com.dailyyoga.plugin.droidassist.transform.SourceTargetTransformer
 import com.dailyyoga.plugin.droidassist.transform.Transformer
+import com.dailyyoga.plugin.droidassist.transform.insert.MethodCallInsertTransformer
 import com.dailyyoga.plugin.droidassist.transform.replace.MethodCallReplaceTransformer
 import com.dailyyoga.plugin.droidassist.util.XmlErrorHandler
 import org.gradle.api.Project
@@ -31,6 +32,16 @@ class DroidAssistConfiguration {
             node ->
                 sourceTargetTransformerNodeHandler(METHOD, node) {
                     return new MethodCallReplaceTransformer()
+                }
+        }
+
+        //insert
+        //
+        //before call
+        configs.Insert.BeforeMethodCall.each {
+            node ->
+                sourceTargetTransformerNodeHandler(METHOD, node) {
+                    return new MethodCallInsertTransformer().setAsBefore(true)
                 }
         }
 

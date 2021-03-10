@@ -147,7 +147,8 @@
                 android.location.LocationManager.getLastKnownLocation(java.lang.String)
             </Source>
             <Target>
-                $_= com.dailyyoga.plugin.droidassist.PrivacyApiTransform.getLastKnownLocation($where,$0,$1);
+                $_=
+                com.dailyyoga.plugin.droidassist.PrivacyApiTransform.getLastKnownLocation($where,$0,$1);
             </Target>
             <Filter>
                 <Exclude>com.alipay.security.mobile.module.deviceinfo.e</Exclude>
@@ -159,7 +160,8 @@
                 java.util.List android.content.pm.PackageManager.getInstalledPackages(int)
             </Source>
             <Target>
-                $_= com.dailyyoga.plugin.droidassist.PrivacyApiTransform.getInstalledPackages($where,$0,$1);
+                $_=
+                com.dailyyoga.plugin.droidassist.PrivacyApiTransform.getInstalledPackages($where,$0,$1);
             </Target>
         </MethodCall>
 
@@ -168,7 +170,8 @@
                 java.util.List android.content.pm.PackageManager.getInstalledApplications()
             </Source>
             <Target>
-                $_= com.dailyyoga.plugin.droidassist.PrivacyApiTransform.getInstalledApplications($where,$0);
+                $_=
+                com.dailyyoga.plugin.droidassist.PrivacyApiTransform.getInstalledApplications($where,$0);
             </Target>
         </MethodCall>
 
@@ -246,9 +249,20 @@
                 java.net.NetworkInterface.getHardwareAddress()
             </Source>
             <Target>
-                $_= com.dailyyoga.plugin.droidassist.PrivacyApiTransform.getHardwareAddress($where,$0);
+                $_=
+                com.dailyyoga.plugin.droidassist.PrivacyApiTransform.getHardwareAddress($where,$0);
             </Target>
         </MethodCall>
     </Replace>
+
+    <Insert>
+        <BeforeMethodCall>
+            <Source>int com.qiyukf.basesdk.c.d.e()</Source>
+            <Target>if (this.a == null) {
+                return 0;
+                }
+            </Target>
+        </BeforeMethodCall>
+    </Insert>
 
 </DailyyogaMIIT>

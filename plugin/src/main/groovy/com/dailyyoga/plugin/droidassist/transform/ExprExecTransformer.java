@@ -20,7 +20,14 @@ import javassist.expr.MethodCall;
  */
 public abstract class ExprExecTransformer extends SourceTargetTransformer {
 
+    protected static final String CONSTRUCTOR_CALL = "ConstructorCall";
     protected static final String METHOD_CALL = "MethodCall";
+    protected static final String FIELD_ACCESS = "FieldAccess";
+    protected static final String NEW_EXPR = "NewExpr";
+
+    protected static final String METHOD = "method";
+    protected static final String INITIALIZER = "initializer";
+    protected static final String CONSTRUCTOR = "constructor";
 
     public static final String TRANSFORM_EXEC = "exec";
     public static final String TRANSFORM_EXPR = "expr";
@@ -37,6 +44,47 @@ public abstract class ExprExecTransformer extends SourceTargetTransformer {
     }
 
     protected abstract String getTransformType();
+
+    @Override
+    public String getPrettyName() {
+        StringBuilder name = new StringBuilder(getCategoryName() + " [");
+
+        String disposeType = getExecuteType();
+        if (FIELD_ACCESS.equals(disposeType)) {
+            name.append("field");
+        }
+        if (METHOD_CALL.equals(disposeType)) {
+            name.append("method");
+        }
+
+        if (NEW_EXPR.equals(disposeType)) {
+            name.append("constructor");
+        }
+
+        if (METHOD.equals(disposeType)) {
+            name.append("method");
+        }
+
+        if (CONSTRUCTOR.equals(disposeType)) {
+            name.append("constructor");
+        }
+
+        if (INITIALIZER.equals(disposeType)) {
+            name.append("initializer");
+        }
+
+        //expr
+        String transformType = getTransformType();
+        if (TRANSFORM_EXPR.equals(transformType)) {
+            name.append(" call");
+        }
+        //exec
+        if (TRANSFORM_EXEC.equals(getTransformType())) {
+            name.append(" exec");
+        }
+        name.append("]");
+        return name.toString();
+    }
 
     @Override
     protected final boolean onTransform(

@@ -16,6 +16,7 @@ import javassist.CtClass;
 import javassist.CtMember;
 import javassist.CtMethod;
 import javassist.NotFoundException;
+import javassist.bytecode.Descriptor;
 import javassist.expr.MethodCall;
 
 public abstract class SourceTargetTransformer extends Transformer {
@@ -77,21 +78,8 @@ public abstract class SourceTargetTransformer extends Transformer {
         return sourceMember;
     }
 
-    boolean isMatchSourceClass(CtClass insnClass) throws NotFoundException {
-        if (sourceSpec.isAnnotation()) {
-            return true;
-        }
-        boolean match = false;
-        Boolean anInterface = isInterface(insnClass);
-        if (anInterface == null || anInterface) {
-            return false;
-        }
-        if (sourceSpec.isExtend()) {
-            // TODO: 3/9/21
-        } else {
-            match = insnClass.getName().equals(getSourceDeclaringClassName());
-        }
-        return match;
+    protected boolean isVoidSourceReturnType() throws NotFoundException {
+        return Descriptor.getReturnType(sourceSpec.getSignature(), classPool) == CtClass.voidType;
     }
 
     protected boolean isMatchSourceMethod(

@@ -1,6 +1,5 @@
-package com.dailyyoga.plugin.droidassist.transform.replace;
+package com.dailyyoga.plugin.droidassist.transform.insert;
 
-import com.dailyyoga.plugin.droidassist.transform.ExprExecTransformer;
 import com.dailyyoga.plugin.droidassist.util.Logger;
 
 import javassist.CannotCompileException;
@@ -8,12 +7,12 @@ import javassist.CtClass;
 import javassist.NotFoundException;
 import javassist.expr.MethodCall;
 
-public class MethodCallReplaceTransformer extends ReplaceTransformer {
-
-    @Override
-    public String getName() {
-        return "MethodCallReplaceTransformer";
-    }
+/**
+ * @author: YougaKingWu@gmail.com
+ * @created on: 3/10/21 9:45 AM
+ * @description:
+ */
+public class MethodCallInsertTransformer extends InsertTransformer {
 
     @Override
     protected String getExecuteType() {
@@ -26,15 +25,20 @@ public class MethodCallReplaceTransformer extends ReplaceTransformer {
     }
 
     @Override
+    public String getName() {
+        return "MethodCallInsertTransformer";
+    }
+
+    @Override
     protected boolean execute(
             CtClass inputClass,
             String inputClassName,
             MethodCall methodCall)
             throws CannotCompileException, NotFoundException {
+
         if (methodCall.isSuper()) {
             return false;
         }
-
         String insnClassName = methodCall.getClassName();
         String insnName = methodCall.getMethodName();
         String insnSignature = methodCall.getSignature();
@@ -43,15 +47,32 @@ public class MethodCallReplaceTransformer extends ReplaceTransformer {
         if (insnClass == null) {
             return false;
         }
-
         if (!isMatchSourceMethod(insnClass, insnName, insnSignature, false)) {
             return false;
         }
 
         String target = getTarget();
-        String replacement = replaceInstrument(inputClassName, methodCall, target);
-        Logger.warning(getPrettyName() + " by: " + replacement
-                + " at " + inputClassName + ".java" + ":" + methodCall.getLineNumber());
+        int line = methodCall.getLineNumber();
+        if (!target.endsWith(";")) target = target + ";";
+
+        String before = isAsBefore() ? target : "";
+        String after = isAsAfter() ? target : "";
+
+        String proceed = isVoidSourceReturnType() ? "$proceed($$);" : "$_ =$proceed($$);";
+
+        String statement = before + proceed + after;
+
+        String replacement = replaceInstrument(inputClassName, methodCall, statement);
+
+        if (isAsBefore()) {
+            Logger.warning(getPrettyName() + " insert before call by: " + replacement
+                    + " at " + inputClassName + ".java" + ":" + line);
+        }
+
+        if (isAsAfter()) {
+            Logger.warning(getPrettyName() + " insert after call by: " + replacement
+                    + " at " + inputClassName + ".java" + ":" + line);
+        }
         return true;
     }
 }

@@ -20,6 +20,11 @@ public abstract class Transformer {
     //Transformer name
     public abstract String getName();
 
+    //Category name that transformer belongs to
+    public abstract String getCategoryName();
+
+    public abstract String getPrettyName();
+
     protected abstract boolean onTransform(
             CtClass inputClass,
             String inputClassName)

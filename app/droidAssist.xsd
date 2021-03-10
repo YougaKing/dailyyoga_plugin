@@ -6,6 +6,7 @@
             <xs:sequence>
                 <xs:element ref="Global" />
                 <xs:element ref="Replace" />
+                <xs:element ref="Insert" />
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -26,6 +27,14 @@
         </xs:complexType>
     </xs:element>
 
+    <xs:element name="Insert">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="BeforeMethodCall" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
     <xs:element name="MethodCall">
         <xs:complexType>
             <xs:sequence>
@@ -36,11 +45,22 @@
         </xs:complexType>
     </xs:element>
 
+    <xs:element name="BeforeMethodCall">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Source" />
+                <xs:element ref="Target" />
+                <xs:element minOccurs="0" ref="Filter" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
     <xs:element name="Source" type="xs:string">
-<!--        <xs:complexType>-->
+<!--        <xs:complexType >-->
 <!--            <xs:attribute name="extend" type="xs:boolean" />-->
 <!--        </xs:complexType>-->
     </xs:element>
+
     <xs:element name="Target" type="xs:string" />
 
     <xs:element name="Filter">

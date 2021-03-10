@@ -2,21 +2,27 @@ package com.dailyyoga.plugin.droidassist.transform;
 
 
 import com.dailyyoga.plugin.droidassist.ex.DroidAssistBadStatementException;
+import com.dailyyoga.plugin.droidassist.ex.DroidAssistException;
 import com.dailyyoga.plugin.droidassist.spec.SourceSpec;
 import com.dailyyoga.plugin.droidassist.util.ClassUtils;
 import com.dailyyoga.plugin.droidassist.util.Logger;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javassist.CannotCompileException;
+import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.CtMember;
 import javassist.CtMethod;
 import javassist.NotFoundException;
+import javassist.bytecode.ClassFile;
 import javassist.bytecode.Descriptor;
+import javassist.bytecode.MethodInfo;
+import javassist.bytecode.annotation.AnnotationImpl;
 import javassist.expr.MethodCall;
 
 public abstract class SourceTargetTransformer extends Transformer {
@@ -78,8 +84,36 @@ public abstract class SourceTargetTransformer extends Transformer {
         return sourceMember;
     }
 
+    private Class getAnnotationClass() {
+        if (annotationClass == null) {
+            try {
+                annotationClass = getSourceClass().toClass();
+            } catch (CannotCompileException | NotFoundException e) {
+                try {
+                    annotationClass = classPool.getClassLoader().loadClass(getSourceDeclaringClassName());
+                } catch (ClassNotFoundException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        }
+        return annotationClass;
+    }
+
     protected boolean isVoidSourceReturnType() throws NotFoundException {
         return Descriptor.getReturnType(sourceSpec.getSignature(), classPool) == CtClass.voidType;
+    }
+
+    boolean isMatchSourceClass(CtClass insnClass) throws NotFoundException {
+        if (sourceSpec.isAnnotation()) {
+            return true;
+        }
+        boolean match;
+        Boolean anInterface = isInterface(insnClass);
+        if (anInterface == null || anInterface) {
+            return false;
+        }
+        match = insnClass.getName().equals(getSourceDeclaringClassName());
+        return match;
     }
 
     protected boolean isMatchSourceMethod(
@@ -190,6 +224,37 @@ public abstract class SourceTargetTransformer extends Transformer {
                 Pattern.quote("$name"), Matcher.quoteReplacement(name));
         statement = statement.replaceAll(
                 Pattern.quote("$file"), Matcher.quoteReplacement(fileName));
+        return statement;
+    }
+
+    protected String getReplaceStatement(String sourceClassName, CtMethod method, String statement) {
+        statement = replaceAnnotationStatement(method, statement);
+        MethodInfo methodInfo = method.getMethodInfo();
+        int line = methodInfo.getLineNumber(0);
+        String name = method.getName();
+        ClassFile classFile2 = method.getDeclaringClass().getClassFile2();
+        String fileName = classFile2 == null ? null : classFile2.getSourceFile();
+        return getReplaceStatement(statement, null, line, name, sourceClassName, fileName);
+    }
+
+    private String replaceAnnotationStatement(CtBehavior behavior, String statement) {
+        if (!sourceSpec.isAnnotation() || annotationTargetMembers == null || annotationTargetMembers.isEmpty()) {
+            return statement;
+        }
+        try {
+            Object proxy = behavior.getAnnotation(getAnnotationClass());
+            if (proxy != null) {
+                AnnotationImpl impl = (AnnotationImpl) Proxy.getInvocationHandler(proxy);
+                for (Method member : annotationTargetMembers) {
+                    Object invoke = impl.invoke(proxy, member, null);
+                    statement = statement.replaceAll(
+                            Pattern.quote("$" + member.getName()), Matcher.quoteReplacement(invoke.toString()));
+                }
+            }
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+            throw new DroidAssistException(throwable);
+        }
         return statement;
     }
 }

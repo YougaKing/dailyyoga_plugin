@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <DailyyogaMIIT xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="droidAssist.xsd">
+
+    <!--java -jar /Users/youga/Public/trang-20091111/trang.jar droidAssist.xml droidAssist.xsd-->
     <Global>
         <Filter>
             <Exclude>com.dailyyoga.plugin.droidassist.LogTransform</Exclude>
@@ -257,13 +259,13 @@
     </Replace>
 
     <Insert>
-        <BeforeMethodCall>
+        <BeforeMethodExecution>
             <Source>int com.qiyukf.basesdk.c.d.c.e()</Source>
-            <Target>if (this.a == null) {
+            <Target>if (a == null) {
                 return 0;
                 }
             </Target>
-        </BeforeMethodCall>
+        </BeforeMethodExecution>
     </Insert>
 
 </DailyyogaMIIT>

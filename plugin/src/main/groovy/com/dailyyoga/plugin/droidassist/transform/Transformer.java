@@ -8,6 +8,7 @@ import com.dailyyoga.plugin.droidassist.util.Logger;
 import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
+import javassist.CtConstructor;
 import javassist.CtMethod;
 import javassist.NotFoundException;
 
@@ -91,6 +92,21 @@ public abstract class Transformer {
         }
     }
 
+    //Get all interfaces of the specified class
+    protected CtClass[] tryGetInterfaces(CtClass inputClass) {
+        try {
+            return inputClass.getInterfaces();
+        } catch (NotFoundException e) {
+            String msg = "Cannot find interface " + e.getMessage() + " in " + inputClass.getName();
+            if (abortOnUndefinedClass) {
+                throw new DroidAssistNotFoundException(msg);
+            } else {
+                Logger.warning(msg);
+            }
+        }
+        return new CtClass[0];
+    }
+
     //Get all declared methods of the specified class
     protected CtMethod[] tryGetDeclaredMethods(CtClass inputClass) {
         try {
@@ -99,5 +115,37 @@ public abstract class Transformer {
             String msg = "Cannot get declared methods " + " in " + inputClass.getName();
             throw new DroidAssistNotFoundException(msg);
         }
+    }
+
+    //Get all declared constructors of the specified class
+    protected CtConstructor[] tryGetDeclaredConstructors(CtClass inputClass) {
+        CtConstructor[] declaredConstructors = new CtConstructor[0];
+        try {
+            declaredConstructors = inputClass.getDeclaredConstructors();
+        } catch (Exception e) {
+            String msg = "Cannot get declared constructors " + " in " + inputClass.getName();
+            if (abortOnUndefinedClass) {
+                throw new DroidAssistNotFoundException(msg);
+            } else {
+                Logger.warning(msg);
+            }
+        }
+        return declaredConstructors;
+    }
+
+    //Get initialization method of the specified class
+    protected CtConstructor tryGetClassInitializer(CtClass inputClass) {
+        CtConstructor initializer = null;
+        try {
+            initializer = inputClass.getClassInitializer();
+        } catch (Exception e) {
+            String msg = "Cannot get class initializer " + " in " + inputClass.getName();
+            if (abortOnUndefinedClass) {
+                throw new DroidAssistNotFoundException(msg);
+            } else {
+                Logger.warning(msg);
+            }
+        }
+        return initializer;
     }
 }

@@ -8,7 +8,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javassist.CannotCompileException;
 import javassist.CtBehavior;
 import javassist.CtClass;
+import javassist.CtConstructor;
 import javassist.CtMethod;
+import javassist.Modifier;
 import javassist.NotFoundException;
 import javassist.expr.ExprEditor;
 import javassist.expr.MethodCall;
@@ -98,7 +100,7 @@ public abstract class ExprExecTransformer extends SourceTargetTransformer {
         }
         //exec
         if (TRANSFORM_EXEC.equals(getTransformType())) {
-//            return onTransformExec(inputClass, inputClassName);
+            return onTransformExec(inputClass, inputClassName);
         }
 
         return false;
@@ -146,6 +148,56 @@ public abstract class ExprExecTransformer extends SourceTargetTransformer {
         return modified.get();
     }
 
+    private boolean onTransformExec(
+            CtClass inputClass,
+            String inputClassName)
+            throws NotFoundException, CannotCompileException {
+
+        if (!filterClass(inputClass, inputClassName)) {
+            return false;
+        }
+        if (!isMatchSourceClass(inputClass)) {
+            return false;
+        }
+        if (!execute(inputClass, inputClassName)) {
+            return false;
+        }
+
+        boolean modified = false;
+        Set<String> executeTypes = getExtraExecuteTypes();
+        executeTypes.add(getExecuteType());
+        if (executeTypes.contains(METHOD)) {
+            CtMethod[] declaredMethods = tryGetDeclaredMethods(inputClass);
+            for (CtMethod method : declaredMethods) {
+                if (Modifier.isAbstract(method.getModifiers())) {
+                    continue;
+                }
+                if (execute(inputClass, inputClassName, method)) {
+                    modified = true;
+                }
+            }
+        }
+
+        if (executeTypes.contains(CONSTRUCTOR)) {
+            CtConstructor[] declaredConstructors = tryGetDeclaredConstructors(inputClass);
+            for (CtConstructor constructor : declaredConstructors) {
+                if (execute(inputClass, inputClassName, constructor)) {
+                    modified = true;
+                }
+            }
+        }
+
+        if (executeTypes.contains(INITIALIZER)) {
+            CtConstructor initializer = tryGetClassInitializer(inputClass);
+            if (initializer != null) {
+                if (execute(inputClass, inputClassName, initializer)) {
+                    modified = true;
+                }
+            }
+        }
+        return modified;
+    }
+
     private boolean instrument(CtBehavior behavior, Editor editor) throws CannotCompileException {
         editor.modified = new AtomicBoolean(false);
         editor.behavior = behavior;
@@ -165,6 +217,22 @@ public abstract class ExprExecTransformer extends SourceTargetTransformer {
             String inputClassName)
             throws CannotCompileException, NotFoundException {
         return true;
+    }
+
+    protected boolean execute(
+            CtClass inputClass,
+            String inputClassName,
+            CtMethod method)
+            throws CannotCompileException, NotFoundException {
+        return false;
+    }
+
+    protected boolean execute(
+            CtClass inputClass,
+            String inputClassName,
+            CtConstructor constructor)
+            throws CannotCompileException, NotFoundException {
+        return false;
     }
 
     protected boolean execute(

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
-
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    elementFormDefault="qualified">
+    <xs:import namespace="http://www.w3.org/2001/XMLSchema-instance" schemaLocation="xsi.xsd" />
     <xs:element name="DailyyogaMIIT">
         <xs:complexType>
             <xs:sequence>
@@ -8,9 +9,9 @@
                 <xs:element ref="Replace" />
                 <xs:element ref="Insert" />
             </xs:sequence>
+            <xs:attribute ref="xsi:noNamespaceSchemaLocation" use="required" />
         </xs:complexType>
     </xs:element>
-
     <xs:element name="Global">
         <xs:complexType>
             <xs:sequence>
@@ -18,7 +19,6 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-
     <xs:element name="Replace">
         <xs:complexType>
             <xs:sequence>
@@ -26,15 +26,6 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-
-    <xs:element name="Insert">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element maxOccurs="unbounded" ref="BeforeMethodCall" />
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-
     <xs:element name="MethodCall">
         <xs:complexType>
             <xs:sequence>
@@ -44,35 +35,33 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-
-    <xs:element name="BeforeMethodCall">
+    <xs:element name="Insert">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="BeforeMethodExecution" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="BeforeMethodExecution">
         <xs:complexType>
             <xs:sequence>
                 <xs:element ref="Source" />
                 <xs:element ref="Target" />
-                <xs:element minOccurs="0" ref="Filter" />
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-
-    <xs:element name="Source" type="xs:string">
-<!--        <xs:complexType >-->
-<!--            <xs:attribute name="extend" type="xs:boolean" />-->
-<!--        </xs:complexType>-->
-    </xs:element>
-
-    <xs:element name="Target" type="xs:string" />
-
     <xs:element name="Filter">
         <xs:complexType>
             <xs:sequence>
-                <xs:element maxOccurs="unbounded" minOccurs="0" ref="Exclude" />
+                <xs:element maxOccurs="unbounded" ref="Exclude" />
             </xs:sequence>
-            <xs:attribute name="ignoreGlobalExcludes" type="xs:boolean" />
         </xs:complexType>
     </xs:element>
-
     <xs:element name="Exclude" type="xs:string" />
-
-
+    <xs:element name="Source">
+        <xs:complexType mixed="true">
+            <xs:attribute name="extend" type="xs:boolean" default="false"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Target" type="xs:string" />
 </xs:schema>

@@ -9,6 +9,7 @@
             <Exclude>android.*</Exclude>
             <Exclude>com.android.*</Exclude>
             <Exclude>okhttp3.*</Exclude>
+            <Exclude>com.xiaomi.account.openauth.internal.MiAccountPhoneInfo</Exclude>
         </Filter>
     </Global>
 
@@ -257,7 +258,7 @@
 
     <Insert>
         <BeforeMethodCall>
-            <Source>int com.qiyukf.basesdk.c.d.e()</Source>
+            <Source>int com.qiyukf.basesdk.c.d.c.e()</Source>
             <Target>if (this.a == null) {
                 return 0;
                 }

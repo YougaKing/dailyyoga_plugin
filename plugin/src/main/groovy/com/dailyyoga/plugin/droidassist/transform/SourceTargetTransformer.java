@@ -120,12 +120,8 @@ public abstract class SourceTargetTransformer extends Transformer {
             }
 
             if (checkClass) {
-                boolean matchClass = false;
-                if (sourceSpec.isExtend()) {
-                    // TODO: 3/9/21
-                } else {
-                    matchClass = insnClass.getName().equals(getSourceDeclaringClassName());
-                }
+                boolean matchClass;
+                matchClass = insnClass.getName().equals(getSourceDeclaringClassName());
                 if (!matchClass) {
                     match = false;
                     break;
@@ -156,7 +152,7 @@ public abstract class SourceTargetTransformer extends Transformer {
             methodCall.replace(s);
         } catch (CannotCompileException e) {
             Logger.error("Replace method call instrument error with statement: "
-                    + statement + "\n", e);
+                    + statement + "\n" + "replacement:" + replacement + "\n", e);
             throw new DroidAssistBadStatementException(e);
         }
         return replacement;
@@ -185,8 +181,7 @@ public abstract class SourceTargetTransformer extends Transformer {
         name = name == null ? "unknown" : name;
 
         statement = statement.replaceAll(
-                Pattern.quote("$where"), Matcher.quoteReplacement(where));
-
+                Pattern.quote("$where"), Matcher.quoteReplacement("\"" + where + "\""));
         statement = statement.replaceAll(
                 Pattern.quote("$class"), Matcher.quoteReplacement(className));
         statement = statement.replaceAll(

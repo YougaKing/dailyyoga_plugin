@@ -181,7 +181,7 @@
                 android.provider.Settings$Secure.getString(android.content.ContentResolver,java.lang.String)
             </Source>
             <Target>
-                $_= com.dailyyoga.plugin.droidassist.PrivacyApiTransform.getString($where,$0,$1,$2);
+                $_= com.dailyyoga.plugin.droidassist.PrivacyApiTransform.getString($where,$1,$2);
             </Target>
         </MethodCall>
 

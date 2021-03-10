@@ -2,6 +2,7 @@ package com.dailyyoga.plugin.droidassist;
 
 import android.util.Log;
 
+import com.dailyyoga.h2.util.PersistencePreferencesUtil;
 
 /**
  * @author: YougaKingWu@gmail.com
@@ -11,7 +12,8 @@ import android.util.Log;
 public class LogTransform {
 
     public static boolean isLoggable(String tag, int level) {
-        return false;
+        boolean open = PersistencePreferencesUtil.getBoolean(LogTransform.class.getName(), false);
+        return open;
     }
 
     public static void println(int priority, String tag, String msg) {

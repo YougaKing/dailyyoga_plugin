@@ -1,5 +1,6 @@
 package com.dailyyoga.plugin.droidassist;
 
+import android.app.ActivityManager;
 import android.content.ContentResolver;
 import android.content.pm.PackageManager;
 import android.location.LocationManager;
@@ -25,15 +26,16 @@ public class ReflectionTransform {
     public static Object invoke(String preArgs, Method method, Object obj, Object... args) {
         try {
             preArgs += "_invoke";
-
-            println(preArgs + "_" + method.toString());
-
             if (method.equals(PrivacyApiTransform.LOCATION_GET_LAST_KNOWN_LOCATION)) {
                 return PrivacyApiTransform.getLastKnownLocation(preArgs, (LocationManager) obj, (String) args[0]);
             } else if (method.equals(PrivacyApiTransform.PACKAGE_MANAGER_GET_INSTALLED_PACKAGES)) {
                 return PrivacyApiTransform.getInstalledPackages(preArgs, (PackageManager) obj, (int) args[0]);
             } else if (method.equals(PrivacyApiTransform.PACKAGE_MANAGER_GET_INSTALLED_APPLICATIONS)) {
                 return PrivacyApiTransform.getInstalledApplications(preArgs, (PackageManager) obj, (int) args[0]);
+            } else if (method.equals(PrivacyApiTransform.ACTIVITY_MANAGER_GET_RUNNING_TASKS)) {
+                return PrivacyApiTransform.getRunningTasks(preArgs, (ActivityManager) obj, (int) args[0]);
+            } else if (method.equals(PrivacyApiTransform.ACTIVITY_MANAGER_GET_RUNNING_APP_PROCESSES)) {
+                return PrivacyApiTransform.getRunningAppProcesses(preArgs, (ActivityManager) obj);
             } else if (method.equals(PrivacyApiTransform.SECURE_GET_STRING)) {
                 return PrivacyApiTransform.getString(preArgs, (ContentResolver) args[0], (String) args[1]);
             } else if (method.equals(PrivacyApiTransform.TELEPHONY_MANAGER_GET_DEVICE_ID)) {
@@ -53,11 +55,10 @@ public class ReflectionTransform {
             } else {
                 return method.invoke(obj, args);
             }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
         return null;
     }
+
 }

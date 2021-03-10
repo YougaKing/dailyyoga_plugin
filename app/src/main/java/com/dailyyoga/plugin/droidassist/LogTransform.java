@@ -1,4 +1,4 @@
-package com.dailyyoga.plugin.miit;
+package com.dailyyoga.plugin.droidassist;
 
 import android.util.Log;
 
@@ -12,6 +12,10 @@ public class LogTransform {
 
     public static boolean isLoggable(String tag, int level) {
         return false;
+    }
+
+    public static void println(int priority, String tag, String msg) {
+        Log.println(priority, tag, msg);
     }
 
     public static int v(String args, String tag, String msg) {

@@ -1,4 +1,4 @@
-package com.dailyyoga.plugin.miit;
+package com.dailyyoga.plugin.droidassist;
 
 import android.content.ContentResolver;
 import android.content.pm.ApplicationInfo;
@@ -12,7 +12,6 @@ import android.provider.Settings.Secure;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -24,19 +23,19 @@ import java.util.List;
  * @created on: 2020/8/31 21:08
  * @description:
  */
-public class MIITMethodTransform {
+public class PrivacyApiTransform {
 
-    private static Method LOCATION_GET_LAST_KNOWN_LOCATION;
-    private static Method PACKAGE_MANAGER_GET_INSTALLED_PACKAGES;
-    private static Method PACKAGE_MANAGER_GET_INSTALLED_APPLICATIONS;
-    private static Method SECURE_GET_STRING;
-    private static Method TELEPHONY_MANAGER_GET_DEVICE_ID;
-    private static Method TELEPHONY_MANAGER_GET_DEVICE_ID_SLOT_INDEX;
-    private static Method TELEPHONY_MANAGER_GET_IMEI;
-    private static Method TELEPHONY_MANAGER_GET_IMEI_SLOT_INDEX;
-    private static Method TELEPHONY_MANAGER_GET_SUBSCRIBER_ID;
-    private static Method WIFI_INFO_GET_MAC_ADDRESS;
-    private static Method NETWORK_INTERFACE_GET_HARDWARE_ADDRESS;
+    public static Method LOCATION_GET_LAST_KNOWN_LOCATION;
+    public static Method PACKAGE_MANAGER_GET_INSTALLED_PACKAGES;
+    public static Method PACKAGE_MANAGER_GET_INSTALLED_APPLICATIONS;
+    public static Method SECURE_GET_STRING;
+    public static Method TELEPHONY_MANAGER_GET_DEVICE_ID;
+    public static Method TELEPHONY_MANAGER_GET_DEVICE_ID_SLOT_INDEX;
+    public static Method TELEPHONY_MANAGER_GET_IMEI;
+    public static Method TELEPHONY_MANAGER_GET_IMEI_SLOT_INDEX;
+    public static Method TELEPHONY_MANAGER_GET_SUBSCRIBER_ID;
+    public static Method WIFI_INFO_GET_MAC_ADDRESS;
+    public static Method NETWORK_INTERFACE_GET_HARDWARE_ADDRESS;
 
     static {
         try {
@@ -93,46 +92,7 @@ public class MIITMethodTransform {
     }
 
     private static void println(String args) {
-        Log.e(MIITMethodTransform.class.getName(), args);
-    }
-
-    public static Object invoke(String preArgs, Method method, Object obj, Object... args) {
-        try {
-            preArgs += "_invoke";
-
-            Log.d(MIITMethodTransform.class.getName(), preArgs + "_" + method.toString());
-
-            if (method.equals(LOCATION_GET_LAST_KNOWN_LOCATION)) {
-                return getLastKnownLocation(preArgs, (LocationManager) obj, (String) args[0]);
-            } else if (method.equals(PACKAGE_MANAGER_GET_INSTALLED_PACKAGES)) {
-                return getInstalledPackages(preArgs, (PackageManager) obj, (int) args[0]);
-            } else if (method.equals(PACKAGE_MANAGER_GET_INSTALLED_APPLICATIONS)) {
-                return getInstalledApplications(preArgs, (PackageManager) obj, (int) args[0]);
-            } else if (method.equals(SECURE_GET_STRING)) {
-                return getString(preArgs, (ContentResolver) args[0], (String) args[1]);
-            } else if (method.equals(TELEPHONY_MANAGER_GET_DEVICE_ID)) {
-                return getDeviceId(preArgs, (TelephonyManager) obj);
-            } else if (method.equals(TELEPHONY_MANAGER_GET_DEVICE_ID_SLOT_INDEX)) {
-                return getDeviceId(preArgs, (TelephonyManager) obj, (int) args[0]);
-            } else if (method.equals(TELEPHONY_MANAGER_GET_IMEI)) {
-                return getImei(preArgs, (TelephonyManager) obj);
-            } else if (method.equals(TELEPHONY_MANAGER_GET_IMEI_SLOT_INDEX)) {
-                return getImei(preArgs, (TelephonyManager) obj, (int) args[0]);
-            } else if (method.equals(TELEPHONY_MANAGER_GET_SUBSCRIBER_ID)) {
-                return getSubscriberId(preArgs, (TelephonyManager) obj);
-            } else if (method.equals(WIFI_INFO_GET_MAC_ADDRESS)) {
-                return getMacAddress(preArgs, (WifiInfo) obj);
-            } else if (method.equals(NETWORK_INTERFACE_GET_HARDWARE_ADDRESS)) {
-                return getHardwareAddress(preArgs, (NetworkInterface) obj);
-            } else {
-                return method.invoke(obj, args);
-            }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        }
-        return null;
+        LogTransform.println(Log.ERROR, PrivacyApiTransform.class.getName(), args);
     }
 
     public static Location getLastKnownLocation(String args, LocationManager locationManager, String provider) {

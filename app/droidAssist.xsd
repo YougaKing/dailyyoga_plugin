@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    elementFormDefault="qualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" elementFormDefault="qualified">
     <xs:import namespace="http://www.w3.org/2001/XMLSchema-instance" schemaLocation="xsi.xsd" />
     <xs:element name="DailyyogaMIIT">
         <xs:complexType>
             <xs:sequence>
-                <xs:element ref="Global" />
-                <xs:element ref="Replace" />
-                <xs:element ref="Insert" />
+                <xs:element minOccurs="0" ref="Global" />
+                <xs:element minOccurs="0" ref="Replace" />
+                <xs:element minOccurs="0" ref="Insert" />
+                <xs:element minOccurs="0" ref="Enhance" />
             </xs:sequence>
             <xs:attribute ref="xsi:noNamespaceSchemaLocation" use="required" />
         </xs:complexType>
@@ -47,6 +48,34 @@
             <xs:sequence>
                 <xs:element ref="Source" />
                 <xs:element ref="Target" />
+                <xs:element minOccurs="0" ref="Filter" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Enhance">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" ref="TryCatchMethodCall" />
+                <xs:element minOccurs="0" ref="TryCatchMethodExecution" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="TryCatchMethodCall">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Source" />
+                <xs:element ref="Target" />
+                <xs:element minOccurs="0" ref="Filter" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="TryCatchMethodExecution">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="Source" />
+                <xs:element ref="Exception" />
+                <xs:element ref="Target" />
+                <xs:element minOccurs="0" ref="Filter" />
             </xs:sequence>
         </xs:complexType>
     </xs:element>
@@ -60,8 +89,9 @@
     <xs:element name="Exclude" type="xs:string" />
     <xs:element name="Source">
         <xs:complexType mixed="true">
-            <xs:attribute name="extend" type="xs:boolean" default="false"/>
+            <xs:attribute name="extend" default="false" type="xs:boolean" />
         </xs:complexType>
     </xs:element>
     <xs:element name="Target" type="xs:string" />
+    <xs:element name="Exception" type="xs:string" />
 </xs:schema>

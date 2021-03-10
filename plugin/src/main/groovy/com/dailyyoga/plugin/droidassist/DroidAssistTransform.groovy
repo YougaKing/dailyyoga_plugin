@@ -39,7 +39,7 @@ class DroidAssistTransform extends Transform {
 
     @Override
     String getName() {
-        return "dailyyogaMIITAutoRevise"
+        return "droidAssist"
     }
 
     @Override

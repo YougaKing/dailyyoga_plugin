@@ -11,4 +11,8 @@ public class PersistencePreferencesUtil {
     public static boolean getBoolean(String key) {
         return false;
     }
+
+    public static boolean getBoolean(String key,boolean defaultValue) {
+        return false;
+    }
 }

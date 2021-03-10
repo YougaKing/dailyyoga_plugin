@@ -3,6 +3,9 @@ package com.dailyyoga.plugin.droidassist
 
 import com.dailyyoga.plugin.droidassist.transform.SourceTargetTransformer
 import com.dailyyoga.plugin.droidassist.transform.Transformer
+import com.dailyyoga.plugin.droidassist.transform.enhance.MethodCallTryCatchTransformer
+import com.dailyyoga.plugin.droidassist.transform.enhance.MethodExecutionTryCatchTransformer
+import com.dailyyoga.plugin.droidassist.transform.enhance.TryCatchTransformer
 import com.dailyyoga.plugin.droidassist.transform.insert.MethodCallInsertTransformer
 import com.dailyyoga.plugin.droidassist.transform.insert.MethodExecutionInsertTransformer
 import com.dailyyoga.plugin.droidassist.transform.replace.MethodCallReplaceTransformer
@@ -54,6 +57,21 @@ class DroidAssistConfiguration {
                 }
         }
 
+        //add
+        //addcatch
+        configs.Enhance.TryCatchMethodCall.each {
+            node ->
+                addCatchTransformerNodeHandler(METHOD, node) {
+                    return new MethodCallTryCatchTransformer()
+                }
+        }
+        configs.Enhance.TryCatchMethodExecution.each {
+            node ->
+                addCatchTransformerNodeHandler(METHOD, node) {
+                    return new MethodExecutionTryCatchTransformer()
+                }
+        }
+
         return transformers
     }
 
@@ -77,6 +95,29 @@ class DroidAssistConfiguration {
             if (!Boolean.valueOf(node.Filter.@ignoreGlobalExcludes[0])) {
                 excludes.addAll(globalExcludes)
             }
+            transformer.classFilterSpec.addExcludes(excludes)
+            transformers.add(transformer)
+    }
+
+    def addCatchTransformerNodeHandler = {
+        kind, node, transformerFeather ->
+            TryCatchTransformer transformer = transformerFeather.call()
+            def extend = node.Source.@extend[0] ?: "true"
+            transformer.setSource(node.Source.text().trim(), kind, Boolean.parseBoolean(extend))
+            transformer.setException(node.Exception.text().trim())
+            transformer.setTarget(node.Target.text().trim())
+
+            if (transformer.getSource() == '') {
+                throw new IllegalArgumentException("Empty source in node ${node}")
+            }
+            if (transformer.getTarget() == '') {
+                throw new IllegalArgumentException("Empty target in node ${node}")
+            }
+
+            def excludes = []
+            node.Filter.Exclude.each { excludes.add(it.text()) }
+            excludes.addAll(globalExcludes)
+
             transformer.classFilterSpec.addExcludes(excludes)
             transformers.add(transformer)
     }

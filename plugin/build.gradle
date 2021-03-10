@@ -12,15 +12,9 @@ sourceCompatibility = JavaVersion.VERSION_1_8
 dependencies {
     implementation gradleApi()
 
-    implementation 'org.ow2.asm:asm:7.0'
-    implementation 'org.ow2.asm:asm-commons:7.0'
-    implementation 'org.ow2.asm:asm-analysis:7.0'
-    implementation 'org.ow2.asm:asm-util:7.0'
-    implementation 'org.ow2.asm:asm-tree:7.0'
-
     compileOnly 'com.android.tools.build:gradle:4.0.2'
     //很重要 千万不要动
-    implementation 'org.javassist:javassist:3.20.0-GA'
+    implementation 'org.javassist:javassist:3.27.0-GA'
 
     testImplementation 'junit:junit:4.12'
 }

@@ -7,6 +7,7 @@
         <Filter>
             <Exclude>com.dailyyoga.plugin.droidassist.LogTransform</Exclude>
             <Exclude>com.dailyyoga.plugin.droidassist.ReflectionTransform</Exclude>
+            <Exclude>com.dailyyoga.plugin.droidassist.SystemTransform</Exclude>
             <Exclude>com.dailyyoga.plugin.droidassist.PrivacyApiTransform</Exclude>
             <Exclude>android.*</Exclude>
             <Exclude>com.android.*</Exclude>
@@ -146,6 +147,24 @@
 
         <MethodCall>
             <Source>
+                void java.lang.System.loadLibrary(java.lang.String)
+            </Source>
+            <Target>
+                com.dailyyoga.plugin.droidassist.SystemTransform.loadLibrary($where,$1);
+            </Target>
+        </MethodCall>
+
+        <MethodCall>
+            <Source>
+                void android.media.AudioTrack.stop()
+            </Source>
+            <Target>
+                com.dailyyoga.plugin.droidassist.SystemTransform.stop($where,$0);
+            </Target>
+        </MethodCall>
+
+        <MethodCall>
+            <Source>
                 android.location.Location
                 android.location.LocationManager.getLastKnownLocation(java.lang.String)
             </Source>
@@ -153,9 +172,6 @@
                 $_=
                 com.dailyyoga.plugin.droidassist.PrivacyApiTransform.getLastKnownLocation($where,$0,$1);
             </Target>
-            <Filter>
-                <Exclude>com.alipay.security.mobile.module.deviceinfo.e</Exclude>
-            </Filter>
         </MethodCall>
 
         <MethodCall>
@@ -267,5 +283,19 @@
             </Target>
         </BeforeMethodExecution>
     </Insert>
+
+    <Enhance>
+        <TryCatchMethodExecution>
+            <Source>
+                boolean com.tencent.liteav.basic.log.TXCLog.init()
+            </Source>
+            <Exception>
+                java.lang.Throwable
+            </Exception>
+            <Target>
+                $e.printStackTrace();return;
+            </Target>
+        </TryCatchMethodExecution>
+    </Enhance>
 
 </DailyyogaMIIT>

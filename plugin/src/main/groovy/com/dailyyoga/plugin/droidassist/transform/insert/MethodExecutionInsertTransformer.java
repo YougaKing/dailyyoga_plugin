@@ -45,12 +45,14 @@ public class MethodExecutionInsertTransformer extends InsertTransformer {
 
         String target = getTarget();
         target = getReplaceStatement(inputClassName, method, target);
-        if (isAsBefore()) {
+        count++;
+
+        if (isAsBefore() && isJournal()) {
             method.insertBefore(target);
             Logger.warning(getPrettyName() + " by before: " + target
                     + " at " + inputClassName + ".java" + ":" + name);
         }
-        if (isAsAfter()) {
+        if (isAsAfter() && isJournal()) {
             method.insertAfter(target);
             Logger.warning(getPrettyName() + " by after: " + target
                     + " at " + inputClassName + ".java" + ":" + name);

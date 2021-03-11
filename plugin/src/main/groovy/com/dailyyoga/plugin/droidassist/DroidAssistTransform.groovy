@@ -18,6 +18,8 @@ package com.dailyyoga.plugin.droidassist
 
 import com.android.build.api.transform.*
 import com.android.build.gradle.internal.pipeline.TransformManager
+import com.dailyyoga.plugin.droidassist.transform.SourceTargetTransformer
+import com.dailyyoga.plugin.droidassist.transform.Transformer
 import com.dailyyoga.plugin.droidassist.util.GradleUtils
 import com.dailyyoga.plugin.droidassist.util.Logger
 import com.dailyyoga.plugin.droidassist.util.TimingLogger
@@ -25,6 +27,7 @@ import com.google.common.collect.Lists
 import org.apache.commons.io.FileUtils
 import org.gradle.api.Project
 
+import java.util.function.Consumer
 import java.util.stream.Stream
 
 class DroidAssistTransform extends Transform {
@@ -166,7 +169,17 @@ class DroidAssistTransform extends Transform {
         timingLogger.addSplit("execute inputs")
 
         timingLogger.dumpToLog()
-        Logger.info("Transform end, " +
+
+        context.transformers.forEach(new Consumer<Transformer>() {
+            @Override
+            void accept(Transformer transformer) {
+                SourceTargetTransformer targetTransformer = (SourceTargetTransformer) transformer;
+                Logger.info(targetTransformer.source.replaceAll("\n", "").replaceAll(" +", " ") +
+                        " count:${targetTransformer.count}")
+            }
+        })
+
+        Logger.debug("Transform end, " +
                 "input classes count:${executor.classCount}, " +
                 "affected classes:${executor.affectedCount}, " +
                 "time use:${System.currentTimeMillis() - start} ms")

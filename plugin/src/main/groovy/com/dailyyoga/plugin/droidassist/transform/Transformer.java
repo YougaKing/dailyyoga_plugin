@@ -17,6 +17,8 @@ public abstract class Transformer {
     protected ClassPool classPool;
     protected ClassFilterSpec classFilterSpec = new ClassFilterSpec();
     protected boolean abortOnUndefinedClass = false;
+    protected boolean journal;
+    protected int count;
 
     //Transformer name
     public abstract String getName();
@@ -56,6 +58,15 @@ public abstract class Transformer {
         return this;
     }
 
+    public Transformer setJournal(boolean journal) {
+        this.journal = journal;
+        return this;
+    }
+
+    public boolean isJournal() {
+        return journal;
+    }
+
     public boolean isAbortOnUndefinedClass() {
         return abortOnUndefinedClass;
     }
@@ -63,6 +74,10 @@ public abstract class Transformer {
     public Transformer setAbortOnUndefinedClass(boolean abortOnUndefinedClass) {
         this.abortOnUndefinedClass = abortOnUndefinedClass;
         return this;
+    }
+
+    public int getCount() {
+        return count;
     }
 
     public void check() {

@@ -63,13 +63,13 @@ public class MethodCallInsertTransformer extends InsertTransformer {
         String statement = before + proceed + after;
 
         String replacement = replaceInstrument(inputClassName, methodCall, statement);
+        count++;
 
-        if (isAsBefore()) {
+        if (isAsBefore() && isJournal()) {
             Logger.warning(getPrettyName() + " insert before call by: " + replacement
                     + " at " + inputClassName + ".java" + ":" + line);
         }
-
-        if (isAsAfter()) {
+        if (isAsAfter() && isJournal()) {
             Logger.warning(getPrettyName() + " insert after call by: " + replacement
                     + " at " + inputClassName + ".java" + ":" + line);
         }

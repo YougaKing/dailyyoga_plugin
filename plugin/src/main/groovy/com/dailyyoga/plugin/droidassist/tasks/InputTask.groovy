@@ -46,7 +46,6 @@ abstract class InputTask<T extends QualifiedContent> implements Runnable {
     @Override
     final void run() {
         try {
-            Logger.debug("execute ${inputType}: ${IOUtils.getPath(taskInput.input.file)}")
             execute()
         } catch (DroidAssistException e) {
             throw e

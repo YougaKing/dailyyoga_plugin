@@ -264,7 +264,7 @@
 
         <MethodCall>
             <Source>
-                java.lang.String
+                byte[]
                 java.net.NetworkInterface.getHardwareAddress()
             </Source>
             <Target>

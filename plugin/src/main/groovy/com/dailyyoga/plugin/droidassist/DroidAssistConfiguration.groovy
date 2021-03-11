@@ -45,7 +45,8 @@ class DroidAssistConfiguration {
         configs.Insert.BeforeMethodCall.each {
             node ->
                 sourceTargetTransformerNodeHandler(METHOD, node) {
-                    return new MethodCallInsertTransformer().setAsBefore(true)
+                    return new MethodCallInsertTransformer()
+                            .setAsBefore(true)
                 }
         }
 
@@ -53,7 +54,8 @@ class DroidAssistConfiguration {
         configs.Insert.BeforeMethodExecution.each {
             node ->
                 sourceTargetTransformerNodeHandler(METHOD, node) {
-                    return new MethodExecutionInsertTransformer().setAsBefore(true)
+                    return new MethodExecutionInsertTransformer()
+                            .setAsBefore(true)
                 }
         }
 
@@ -78,6 +80,9 @@ class DroidAssistConfiguration {
     def sourceTargetTransformerNodeHandler = {
         kind, node, transformerFeather ->
             SourceTargetTransformer transformer = transformerFeather.call()
+            def journal = node.@journal ?: "true"
+            transformer.setJournal(Boolean.parseBoolean(journal))
+
             def extend = node.Source.@extend[0] ?: "true"
             transformer.setSource(node.Source.text().trim(), kind, Boolean.valueOf(extend))
             transformer.setTarget(node.Target.text().trim())
@@ -102,6 +107,9 @@ class DroidAssistConfiguration {
     def addCatchTransformerNodeHandler = {
         kind, node, transformerFeather ->
             TryCatchTransformer transformer = transformerFeather.call()
+            def journal = node.@journal ?: "true"
+            transformer.setJournal(Boolean.parseBoolean(journal))
+
             def extend = node.Source.@extend[0] ?: "true"
             transformer.setSource(node.Source.text().trim(), kind, Boolean.parseBoolean(extend))
             transformer.setException(node.Exception.text().trim())

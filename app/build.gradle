@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
-//apply from: rootProject.file('gradle/MobSDK.gradle')
-//apply plugin: 'com.dailyyoga.plugin.droidassist'
-//
-//droidAssist {
-//    enable true
-//    logLevel 3
-//    config file("droidAssist.xml")
-//    logDir file("${project.buildDir.absolutePath}/logs")
-//}
+apply from: rootProject.file('gradle/MobSDK.gradle')
+apply plugin: 'com.dailyyoga.plugin.droidassist'
+
+droidAssist {
+    enable true
+    logLevel 3
+    config file("droidAssist.xml")
+    logDir file("${project.buildDir.absolutePath}/logs")
+}
 
 android {
     compileSdkVersion 28

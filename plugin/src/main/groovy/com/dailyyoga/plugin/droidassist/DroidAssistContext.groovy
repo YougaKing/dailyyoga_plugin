@@ -57,7 +57,6 @@ class DroidAssistContext {
                 .filter { it.file.exists() }
 
         Stream.concat(dirStream, jarStream).forEach {
-            Logger.info("Append classpath: ${IOUtils.getPath(it.file)}")
             classPool.appendClassPath(it.file)
         }
     }
@@ -81,11 +80,6 @@ class DroidAssistContext {
                     }
                 }//parse each file
                 .collect(Collectors.toList())
-
-        Logger.info("Dump transformers:")
-        transformers.each {
-            Logger.info("transformer: $it")
-        }
         return transformers
     }
 
@@ -99,7 +93,6 @@ class DroidAssistContext {
         void appendBootClasspath(Collection<File> paths) {
             paths.stream().parallel().forEach {
                 appendClassPath(it)
-                Logger.info "Append boot classpath: ${IOUtils.getPath(it)}"
             }
         }
 

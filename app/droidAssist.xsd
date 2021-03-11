@@ -60,7 +60,7 @@
     </xs:element>
     <xs:element name="Source">
         <xs:complexType mixed="true">
-            <xs:attribute name="extend" type="xs:boolean" />
+            <xs:attribute name="extend" default="true" type="xs:boolean" />
         </xs:complexType>
     </xs:element>
     <xs:element name="Target" type="xs:string" />

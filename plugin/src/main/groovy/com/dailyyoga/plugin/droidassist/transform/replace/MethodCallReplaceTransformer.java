@@ -1,6 +1,5 @@
 package com.dailyyoga.plugin.droidassist.transform.replace;
 
-import com.dailyyoga.plugin.droidassist.transform.ExprExecTransformer;
 import com.dailyyoga.plugin.droidassist.util.Logger;
 
 import javassist.CannotCompileException;
@@ -50,8 +49,12 @@ public class MethodCallReplaceTransformer extends ReplaceTransformer {
 
         String target = getTarget();
         String replacement = replaceInstrument(inputClassName, methodCall, target);
-        Logger.warning(getPrettyName() + " by: " + replacement
-                + " at " + inputClassName + ".java" + ":" + methodCall.getLineNumber());
+        count++;
+
+        if (isJournal()) {
+            Logger.warning(getPrettyName() + " by: " + replacement
+                    + " at " + inputClassName + ".java" + ":" + methodCall.getLineNumber());
+        }
         return true;
     }
 }

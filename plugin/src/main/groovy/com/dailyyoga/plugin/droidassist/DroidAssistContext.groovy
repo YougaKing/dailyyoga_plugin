@@ -89,7 +89,7 @@ class DroidAssistContext {
         return transformers
     }
 
-    class DailyyogaMIITClassPool extends ClassPool {
+    static class DailyyogaMIITClassPool extends ClassPool {
 
         DailyyogaMIITClassPool() {
             super(true)

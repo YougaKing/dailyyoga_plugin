@@ -5,10 +5,9 @@
     <xs:element name="DailyyogaMIIT">
         <xs:complexType>
             <xs:sequence>
-                <xs:element minOccurs="0" ref="Global" />
-                <xs:element minOccurs="0" ref="Replace" />
-                <xs:element minOccurs="0" ref="Insert" />
-                <xs:element minOccurs="0" ref="Enhance" />
+                <xs:element ref="Global" />
+                <xs:element ref="Replace" />
+                <xs:element ref="Insert" />
             </xs:sequence>
             <xs:attribute ref="xsi:noNamespaceSchemaLocation" use="required" />
         </xs:complexType>
@@ -20,6 +19,14 @@
             </xs:sequence>
         </xs:complexType>
     </xs:element>
+    <xs:element name="Filter">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="unbounded" ref="Exclude" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="Exclude" type="xs:string" />
     <xs:element name="Replace">
         <xs:complexType>
             <xs:sequence>
@@ -32,8 +39,8 @@
             <xs:sequence>
                 <xs:element ref="Source" />
                 <xs:element ref="Target" />
-                <xs:element minOccurs="0" ref="Filter" />
             </xs:sequence>
+            <xs:attribute name="journal" default="true" type="xs:boolean" />
         </xs:complexType>
     </xs:element>
     <xs:element name="Insert">
@@ -48,50 +55,13 @@
             <xs:sequence>
                 <xs:element ref="Source" />
                 <xs:element ref="Target" />
-                <xs:element minOccurs="0" ref="Filter" />
             </xs:sequence>
         </xs:complexType>
     </xs:element>
-    <xs:element name="Enhance">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element minOccurs="0" ref="TryCatchMethodCall" />
-                <xs:element minOccurs="0" ref="TryCatchMethodExecution" />
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="TryCatchMethodCall">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element ref="Source" />
-                <xs:element ref="Target" />
-                <xs:element minOccurs="0" ref="Filter" />
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="TryCatchMethodExecution">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element ref="Source" />
-                <xs:element ref="Exception" />
-                <xs:element ref="Target" />
-                <xs:element minOccurs="0" ref="Filter" />
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="Filter">
-        <xs:complexType>
-            <xs:sequence>
-                <xs:element maxOccurs="unbounded" ref="Exclude" />
-            </xs:sequence>
-        </xs:complexType>
-    </xs:element>
-    <xs:element name="Exclude" type="xs:string" />
     <xs:element name="Source">
         <xs:complexType mixed="true">
-            <xs:attribute name="extend" default="false" type="xs:boolean" />
+            <xs:attribute name="extend" type="xs:boolean" />
         </xs:complexType>
     </xs:element>
     <xs:element name="Target" type="xs:string" />
-    <xs:element name="Exception" type="xs:string" />
 </xs:schema>

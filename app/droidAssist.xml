@@ -17,7 +17,7 @@
     </Global>
 
     <Replace>
-        <MethodCall>
+        <MethodCall journal="false">
             <Source>
                 int android.util.Log.v(java.lang.String,java.lang.String)
             </Source>
@@ -25,7 +25,7 @@
                 $_= com.dailyyoga.plugin.droidassist.LogTransform.v($where,$1,$2);
             </Target>
         </MethodCall>
-        <MethodCall>
+        <MethodCall journal="false">
             <Source>
                 int android.util.Log.v(java.lang.String,java.lang.String,java.lang.Throwable)
             </Source>
@@ -34,7 +34,7 @@
             </Target>
         </MethodCall>
 
-        <MethodCall>
+        <MethodCall journal="false">
             <Source>
                 int android.util.Log.d(java.lang.String,java.lang.String)
             </Source>
@@ -42,7 +42,7 @@
                 $_= com.dailyyoga.plugin.droidassist.LogTransform.d($where,$1,$2);
             </Target>
         </MethodCall>
-        <MethodCall>
+        <MethodCall journal="false">
             <Source>
                 int android.util.Log.d(java.lang.String,java.lang.String,java.lang.Throwable)
             </Source>
@@ -51,7 +51,7 @@
             </Target>
         </MethodCall>
 
-        <MethodCall>
+        <MethodCall journal="false">
             <Source>
                 int android.util.Log.i(java.lang.String,java.lang.String)
             </Source>
@@ -59,7 +59,7 @@
                 $_= com.dailyyoga.plugin.droidassist.LogTransform.i($where,$1,$2);
             </Target>
         </MethodCall>
-        <MethodCall>
+        <MethodCall journal="false">
             <Source>
                 int android.util.Log.i(java.lang.String,java.lang.String,java.lang.Throwable)
             </Source>
@@ -68,7 +68,7 @@
             </Target>
         </MethodCall>
 
-        <MethodCall>
+        <MethodCall journal="false">
             <Source>
                 int android.util.Log.w(java.lang.String,java.lang.String)
             </Source>
@@ -76,7 +76,7 @@
                 $_= com.dailyyoga.plugin.droidassist.LogTransform.w($where,$1,$2);
             </Target>
         </MethodCall>
-        <MethodCall>
+        <MethodCall journal="false">
             <Source>
                 int android.util.Log.w(java.lang.String,java.lang.String,java.lang.Throwable)
             </Source>
@@ -84,7 +84,7 @@
                 $_= com.dailyyoga.plugin.droidassist.LogTransform.w($where,$1,$2,$3);
             </Target>
         </MethodCall>
-        <MethodCall>
+        <MethodCall journal="false">
             <Source>
                 int android.util.Log.w(java.lang.String,java.lang.Throwable)
             </Source>
@@ -93,7 +93,7 @@
             </Target>
         </MethodCall>
 
-        <MethodCall>
+        <MethodCall journal="false">
             <Source>
                 int android.util.Log.e(java.lang.String,java.lang.String)
             </Source>
@@ -101,7 +101,7 @@
                 $_= com.dailyyoga.plugin.droidassist.LogTransform.e($where,$1,$2);
             </Target>
         </MethodCall>
-        <MethodCall>
+        <MethodCall journal="false">
             <Source>
                 int android.util.Log.e(java.lang.String,java.lang.String,java.lang.Throwable)
             </Source>
@@ -110,7 +110,7 @@
             </Target>
         </MethodCall>
 
-        <MethodCall>
+        <MethodCall journal="false">
             <Source>
                 int android.util.Log.wtf(java.lang.String,java.lang.String)
             </Source>
@@ -118,7 +118,7 @@
                 $_= com.dailyyoga.plugin.droidassist.LogTransform.wtf($where,$1,$2);
             </Target>
         </MethodCall>
-        <MethodCall>
+        <MethodCall journal="false">
             <Source>
                 int android.util.Log.wtf(java.lang.String,java.lang.String,java.lang.Throwable)
             </Source>
@@ -126,7 +126,7 @@
                 $_= com.dailyyoga.plugin.droidassist.LogTransform.wtf($where,$1,$2,$3);
             </Target>
         </MethodCall>
-        <MethodCall>
+        <MethodCall journal="false">
             <Source>
                 int android.util.Log.wtf(java.lang.String,java.lang.Throwable)
             </Source>
@@ -135,7 +135,7 @@
             </Target>
         </MethodCall>
 
-        <MethodCall>
+        <MethodCall journal="false">
             <Source>
                 java.lang.Object
                 java.lang.reflect.Method.invoke(java.lang.Object,java.lang.Object[])

@@ -284,18 +284,4 @@
         </BeforeMethodExecution>
     </Insert>
 
-    <Enhance>
-        <TryCatchMethodExecution>
-            <Source>
-                boolean com.tencent.liteav.basic.log.TXCLog.init()
-            </Source>
-            <Exception>
-                java.lang.Throwable
-            </Exception>
-            <Target>
-                $e.printStackTrace();return;
-            </Target>
-        </TryCatchMethodExecution>
-    </Enhance>
-
 </DailyyogaMIIT>

@@ -29,8 +29,8 @@ uploadArchives {
         mavenDeployer {
             //设置插件的GAV参数
             pom.groupId = 'com.github.YougaKing'
-            pom.artifactId = 'dailyyoga-plugin-DroidAssist'
-            pom.version = '2.0.5'
+            pom.artifactId = 'dailyyoga_plugin'
+            pom.version = '2.0.8'
             //文件发布到下面目录
             repository(url: uri('../maven'))
         }

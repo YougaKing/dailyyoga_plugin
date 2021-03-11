@@ -13,11 +13,11 @@ import java.util.logging.LogRecord
  * Plugin logger
  */
 class Logger {
-    public static final String TAG = "DailyyogaMIIT: "
-    public static final String LOG_FILE_PREFIX = "dailyyogamiit-"
+    public static final String TAG = "DroidAssist: "
+    public static final String LOG_FILE_PREFIX = "droidAssist-"
 
     private static java.util.logging.Logger sLogger =
-            java.util.logging.Logger.getLogger("DailyyogaMIIT")
+            java.util.logging.Logger.getLogger("DroidAssist")
     private static ExecutorService sExecutor
 
     public static final int LEVEL_CONSOLE = 1
@@ -30,7 +30,7 @@ class Logger {
         }
     }
 
-    static void init(int level, File dir) {
+    static void init(int level, File dir, String filePrefix) {
         sLogger.handlers.each {
             sLogger.removeHandler(it)
         }
@@ -63,9 +63,7 @@ class Logger {
 
         if (fileOutput) {
             dir.mkdirs()
-            def format = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss")
-            def ts = format.format(Calendar.getInstance().getTime())
-            def file = new File(dir, LOG_FILE_PREFIX + ts + ".log")
+            def file = new File(dir, LOG_FILE_PREFIX + filePrefix + ".log")
             def fileHandler = new FileHandler(file.absolutePath).with {
                 setLevel(Level.ALL)
                 return it

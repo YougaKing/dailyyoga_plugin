@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-<DailyyogaMIIT xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<DroidAssist xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="droidAssist.xsd">
 
     <!--java -jar /Users/youga/Public/trang-20091111/trang.jar droidAssist.xml droidAssist.xsd-->
@@ -284,4 +284,4 @@
         </BeforeMethodExecution>
     </Insert>
 
-</DailyyogaMIIT>
+</DroidAssist>

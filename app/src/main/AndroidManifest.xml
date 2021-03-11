@@ -33,6 +33,15 @@
         android:supportsRtl="true"
         tools:remove="android:requestLegacyExternalStorage"
         android:theme="@style/AppTheme">
+
+        <!-- 渠道 -->
+        <meta-data
+            android:name="CHANNEL_NAME"
+            android:value="${CHANNEL_NAME}" />
+        <meta-data
+            android:name="CHANNEL_ID"
+            android:value="${CHANNEL_ID}" />
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -2,7 +2,7 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" elementFormDefault="qualified">
     <xs:import namespace="http://www.w3.org/2001/XMLSchema-instance" schemaLocation="xsi.xsd" />
-    <xs:element name="DailyyogaMIIT">
+    <xs:element name="DroidAssist">
         <xs:complexType>
             <xs:sequence>
                 <xs:element ref="Global" />

@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 apply from: rootProject.file('gradle/MobSDK.gradle')
-//apply plugin: 'com.dailyyoga.plugin.droidassist'
-//
-//droidAssist {
-//    enable true
-//    logLevel 3
-//    config file("droidAssist.xml")
-//    logDir file("${project.buildDir.absolutePath}/logs")
-//}
+apply plugin: 'com.dailyyoga.plugin.droidassist'
+
+droidAssist {
+    enable true
+    logLevel 3
+    config file("droidAssist.xml")
+    logDir file("${project.buildDir.absolutePath}/outputs/logs")
+}
 
 android {
     compileSdkVersion 28
@@ -22,11 +22,25 @@ android {
         buildConfigField "long", "BUILD_TIMESTAMP", System.currentTimeMillis() + "L"
 
         multiDexEnabled true
+        flavorDimensions "CHANNEL"
     }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    productFlavors {
+        Properties properties = new Properties()
+        InputStream inputStream = project.rootProject.file('channel.properties').newDataInputStream()
+        properties.load(inputStream)
+        for (key in properties.keys()) {
+            def id = properties.getProperty(key)
+            "$key" {
+                manifestPlaceholders = [CHANNEL_NAME: name, CHANNEL_ID: "$id"]
+            }
         }
     }
 

@@ -80,8 +80,11 @@ class DroidAssistTransform extends Transform {
     void transform(TransformInvocation transformInvocation) throws TransformException, InterruptedException, IOException {
         try {
             def logLevel = gradleExtension.logLevel
-            Logger.init(logLevel < 0 ? Logger.LEVEL_CONSOLE : logLevel,
-                    gradleExtension.logDir ?: project.file("${project.buildDir}/outputs/logs/"))
+            def logDir = gradleExtension.logDir ?: project.file("${project.buildDir}/outputs/logs")
+
+            def variant = transformInvocation.getContext().variantName
+
+            Logger.init(logLevel < 0 ? Logger.LEVEL_CONSOLE : logLevel, logDir, variant)
 
             onTransform(
                     transformInvocation.getContext(),

@@ -4,8 +4,6 @@ import com.android.build.api.transform.Context
 import com.android.build.api.transform.TransformInput
 import com.dailyyoga.plugin.droidassist.ex.DroidAssistException
 import com.dailyyoga.plugin.droidassist.transform.Transformer
-import com.dailyyoga.plugin.droidassist.util.IOUtils
-import com.dailyyoga.plugin.droidassist.util.Logger
 import javassist.ClassPool
 import org.gradle.api.Project
 

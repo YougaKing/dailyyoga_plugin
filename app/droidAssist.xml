@@ -10,8 +10,13 @@
             <Exclude>com.dailyyoga.plugin.droidassist.SystemTransform</Exclude>
             <Exclude>com.dailyyoga.plugin.droidassist.PrivacyApiTransform</Exclude>
             <Exclude>android.*</Exclude>
+            <Exclude>androidx.*</Exclude>
             <Exclude>com.android.*</Exclude>
+            <Exclude>com.google.*</Exclude>
             <Exclude>okhttp3.*</Exclude>
+            <Exclude>retrofit2.*</Exclude>
+            <Exclude>okio.*</Exclude>
+            <Exclude>io.reactivex.*</Exclude>
             <Exclude>com.xiaomi.account.openauth.internal.MiAccountPhoneInfo</Exclude>
         </Filter>
     </Global>

@@ -45,9 +45,16 @@ android {
     }
 
     compileOptions {
+//        coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+//    buildFeatures {
+//        buildConfig = true
+//        viewBinding = true
+//        dataBinding = true
+//    }
 
     applicationVariants.all { variant ->
 //        def dexTask = project.tasks.findByName("transformClassesWithDexBuilderForDebug")
@@ -83,9 +90,12 @@ repositories {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'com.android.support:recyclerview-v7:28.0.0'
-    implementation 'com.android.support:multidex:1.0.3'
+
+//    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.9'
+
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'androidx.multidex:multidex:2.0.0'
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
     implementation 'com.orhanobut:logger:2.1.1'
     implementation 'com.facebook.fresco:fresco:1.9.0'
@@ -110,6 +120,16 @@ dependencies {
     implementation(name: 'mio_sdk_app_3.1.1', ext: 'aar')
     implementation 'com.xiaomi.account:oauth-android:latest.release'
     implementation 'com.sina.weibo.sdk:core:10.10.0:openDefaultRelease@aar'
+
+    implementation 'com.huawei.android.hms:base:2.6.3.306'
+    implementation 'com.huawei.android.hms:push:2.6.3.306'
+    implementation 'com.huawei.android.hms:hwid:2.6.3.306'
+    implementation 'com.huawei.hmf:tasks:1.3.3.300'
+    implementation(name: 'wearengine-5.0.0.301', ext: 'aar')
+    implementation(name: 'alipaySdk-15.6.5-20190718211148', ext: 'aar')
+    implementation 'com.huawei.hmf:tasks:1.3.3.300'
+    implementation(name: 'wearengine-5.0.0.301', ext: 'aar')
+
     testImplementation 'junit:junit:4.12'
     //    implementation 'com.mob:MobTools:2020.0806.1802'
     //    implementation 'com.mob:MobCommons:2020.0806.1815'

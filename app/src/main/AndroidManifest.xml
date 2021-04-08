@@ -3,7 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.pili.pldroid.playerdemo">
 
-    <uses-sdk tools:overrideLibrary="com.xiaomi.gamecenter.sdk.oauth" />
+    <uses-sdk tools:overrideLibrary="com.xiaomi.gamecenter.sdk.oauth
+    ,com.huawei.android.hms.push
+    ,com.huawei.android.hms.hwid
+    ,com.huawei.hmf.tasks
+    ,com.huawei.android.hms.base
+    ,com.huawei.wearengine" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -31,8 +36,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        tools:remove="android:requestLegacyExternalStorage"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:remove="android:requestLegacyExternalStorage">
 
         <!-- 渠道 -->
         <meta-data

@@ -4,7 +4,7 @@ buildscript {
     repositories {
         maven { url uri("./maven") }
         maven { url "http://mvn.mob.com/android" }
-//        maven { url 'https://www.jitpack.io' }
+        maven { url 'https://www.jitpack.io' }
         google()
         jcenter()
         mavenCentral()

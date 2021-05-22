@@ -1,6 +1,7 @@
 package com.dailyyoga.plugin.droidassist.transform;
 
 
+import com.android.annotations.NonNull;
 import com.dailyyoga.plugin.droidassist.ex.DroidAssistNotFoundException;
 import com.dailyyoga.plugin.droidassist.spec.ClassFilterSpec;
 import com.dailyyoga.plugin.droidassist.util.Logger;
@@ -91,7 +92,7 @@ public abstract class Transformer {
             if (abortOnUndefinedClass) {
                 throw new DroidAssistNotFoundException(msg);
             } else {
-//                Logger.warning(msg);
+                Logger.warning(msg);
             }
         } else {
             return ctClass;
@@ -107,32 +108,24 @@ public abstract class Transformer {
         }
     }
 
-    //Get all interfaces of the specified class
-    protected CtClass[] tryGetInterfaces(CtClass inputClass) {
+    //Get all declared methods of the specified class
+    @NonNull
+    protected CtMethod[] tryGetDeclaredMethods(CtClass inputClass) {
         try {
-            return inputClass.getInterfaces();
-        } catch (NotFoundException e) {
-            String msg = "Cannot find interface " + e.getMessage() + " in " + inputClass.getName();
+            return inputClass.getDeclaredMethods();
+        } catch (Exception e) {
+            String msg = "Cannot get declared methods " + " in " + inputClass.getName();
             if (abortOnUndefinedClass) {
                 throw new DroidAssistNotFoundException(msg);
             } else {
                 Logger.warning(msg);
             }
         }
-        return new CtClass[0];
-    }
-
-    //Get all declared methods of the specified class
-    protected CtMethod[] tryGetDeclaredMethods(CtClass inputClass) {
-        try {
-            return inputClass.getDeclaredMethods();
-        } catch (Exception e) {
-            String msg = "Cannot get declared methods " + " in " + inputClass.getName();
-            throw new DroidAssistNotFoundException(msg);
-        }
+        return new CtMethod[]{};
     }
 
     //Get all declared constructors of the specified class
+    @NonNull
     protected CtConstructor[] tryGetDeclaredConstructors(CtClass inputClass) {
         CtConstructor[] declaredConstructors = new CtConstructor[0];
         try {
